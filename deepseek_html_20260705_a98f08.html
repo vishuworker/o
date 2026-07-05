@@ -1,0 +1,1525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Vishu Civil Contractor – Accounting</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background: #f4f7fb;
+            min-height: 100vh;
+            padding: 1rem;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        body.dark {
+            background: #0b1120;
+            color: #e8edf5;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(4px);
+            border-radius: 1.75rem;
+            padding: 1.5rem 1.75rem;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            transition: background 0.3s, border 0.3s;
+        }
+
+        body.dark .card {
+            background: rgba(18, 30, 50, 0.92);
+            border-color: rgba(255, 255, 255, 0.06);
+        }
+
+        .btn {
+            padding: 0.6rem 1.4rem;
+            border: none;
+            border-radius: 2rem;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: #fff;
+        }
+        .btn-success {
+            background: #059669;
+            color: #fff;
+        }
+        .btn-warning {
+            background: #d97706;
+            color: #fff;
+        }
+        .btn-danger {
+            background: #dc2626;
+            color: #fff;
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1.5px solid #94a3b8;
+            color: #1e293b;
+        }
+        body.dark .btn-outline {
+            border-color: #475569;
+            color: #e2e8f0;
+        }
+        .btn-sm {
+            padding: 0.3rem 1rem;
+            font-size: 0.75rem;
+        }
+        .btn-lg {
+            padding: 0.8rem 2rem;
+            font-size: 1rem;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 0.7rem 1rem;
+            border-radius: 1.2rem;
+            border: 1px solid #d1d9e6;
+            background: #fff;
+            font-size: 0.9rem;
+            transition: 0.2s;
+        }
+        body.dark input,
+        body.dark select {
+            background: #1e2a3a;
+            border-color: #334155;
+            color: #f1f5f9;
+        }
+        input:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+        label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.8rem;
+            margin-bottom: 0.3rem;
+            opacity: 0.8;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+        .flex-between {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .gap-1 {
+            gap: 0.5rem;
+        }
+        .gap-2 {
+            gap: 1rem;
+        }
+        .mt-1 {
+            margin-top: 0.8rem;
+        }
+        .mb-1 {
+            margin-bottom: 0.8rem;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .text-muted {
+            opacity: 0.6;
+            font-size: 0.8rem;
+        }
+        .badge {
+            padding: 0.2rem 0.7rem;
+            border-radius: 2rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        .badge-green {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .badge-red {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        .badge-blue {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        body.dark .badge-green {
+            background: #064e3b;
+            color: #a7f3d0;
+        }
+        body.dark .badge-red {
+            background: #7f1d1d;
+            color: #fca5a5;
+        }
+        body.dark .badge-blue {
+            background: #1e3a5f;
+            color: #93c5fd;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+        }
+        .stat-card {
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 1.2rem;
+            padding: 1rem 0.8rem;
+            text-align: center;
+            transition: 0.2s;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+        }
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        }
+        body.dark .stat-card {
+            background: rgba(30, 41, 59, 0.5);
+        }
+        .stat-number {
+            font-size: 1.7rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+        .stat-label {
+            font-size: 0.7rem;
+            opacity: 0.6;
+            margin-top: 0.2rem;
+        }
+
+        .worker-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.7rem 0;
+            border-bottom: 1px solid #e9edf4;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .worker-item:hover {
+            background: rgba(37, 99, 235, 0.04);
+            padding-left: 0.5rem;
+            border-radius: 0.5rem;
+        }
+        body.dark .worker-item {
+            border-bottom-color: #293548;
+        }
+        body.dark .worker-item:hover {
+            background: rgba(37, 99, 235, 0.08);
+        }
+        .worker-item:last-child {
+            border-bottom: none;
+        }
+
+        .record-card {
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 1rem;
+            padding: 0.7rem 1rem;
+            margin-bottom: 0.6rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            border-left: 4px solid #059669;
+        }
+        body.dark .record-card {
+            background: rgba(30, 41, 59, 0.5);
+        }
+        .record-card.deduction {
+            border-left-color: #dc2626;
+        }
+
+        .cal-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.3rem;
+            margin-top: 0.5rem;
+        }
+        .cal-day-name {
+            text-align: center;
+            font-weight: 700;
+            font-size: 0.7rem;
+            padding: 0.3rem 0;
+            opacity: 0.6;
+        }
+        .cal-date {
+            text-align: center;
+            padding: 0.45rem 0;
+            border-radius: 0.6rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: default;
+            background: rgba(255, 255, 255, 0.5);
+            transition: 0.15s;
+            position: relative;
+            min-height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        body.dark .cal-date {
+            background: rgba(30, 41, 59, 0.4);
+        }
+        .cal-date.payment {
+            background: #059669;
+            color: #fff;
+            font-weight: 700;
+        }
+        .cal-date.deduction {
+            background: #dc2626;
+            color: #fff;
+            font-weight: 700;
+        }
+        .cal-date.mixed {
+            background: linear-gradient(to right, #059669 50%, #dc2626 50%);
+            color: #fff;
+            font-weight: 700;
+        }
+        .cal-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.4rem 0;
+        }
+        .cal-nav button {
+            background: transparent;
+            border: none;
+            font-size: 1.2rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: 0.2s;
+            color: #1e293b;
+        }
+        body.dark .cal-nav button {
+            color: #e2e8f0;
+        }
+        .cal-nav button:hover {
+            background: rgba(0, 0, 0, 0.06);
+        }
+        .cal-nav .month-label {
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .dark-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 999;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        .dark-toggle:hover {
+            transform: scale(1.05);
+            background: rgba(255, 255, 255, 0.3);
+        }
+        .dark-toggle i {
+            font-size: 1.2rem;
+            color: #fbbf24;
+        }
+        body.dark .dark-toggle {
+            background: rgba(30, 41, 59, 0.7);
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+        body.dark .dark-toggle i {
+            color: #fcd34d;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(6px);
+            z-index: 2000;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+        .modal-box {
+            max-width: 820px;
+            margin: 1rem auto;
+            background: #fff;
+            border-radius: 1.8rem;
+            padding: 1.8rem;
+        }
+        body.dark .modal-box {
+            background: #162133;
+        }
+
+        .page-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 1500;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+        .page-box {
+            max-width: 900px;
+            margin: 1rem auto;
+            background: #fff;
+            border-radius: 1.8rem;
+            padding: 1.8rem;
+            min-height: 80vh;
+        }
+        body.dark .page-box {
+            background: #162133;
+        }
+
+        @media (max-width: 640px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+            .grid-3 {
+                grid-template-columns: 1fr 1fr;
+            }
+            .card {
+                padding: 1.2rem;
+            }
+            .stat-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .dark-toggle {
+                top: 14px;
+                right: 14px;
+                width: 40px;
+                height: 40px;
+            }
+            .modal-box,
+            .page-box {
+                padding: 1.2rem;
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 10px;
+        }
+        body.dark ::-webkit-scrollbar-thumb {
+            background: #475569;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            max-width: 340px;
+            padding: 12px 22px;
+            border-radius: 3rem;
+            color: #fff;
+            font-size: 0.85rem;
+            font-weight: 500;
+            z-index: 3000;
+            animation: slideUp 0.3s ease;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        }
+        .toast.success {
+            background: #059669;
+        }
+        .toast.error {
+            background: #dc2626;
+        }
+        .toast.info {
+            background: #2563eb;
+        }
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .welcome-gradient {
+            background: linear-gradient(135deg, #1e3a5f, #2a5298);
+            color: #fff;
+            border-radius: 1.8rem;
+            padding: 1.8rem 2rem;
+        }
+        body.dark .welcome-gradient {
+            background: linear-gradient(135deg, #0b1a30, #1a2d4a);
+        }
+        .quick-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.8rem;
+        }
+        .quick-actions .btn {
+            background: rgba(255, 255, 255, 0.12);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(4px);
+        }
+        .quick-actions .btn:hover {
+            background: rgba(255, 255, 255, 0.22);
+        }
+
+        .tab-btn {
+            padding: 0.4rem 1.2rem;
+            border-radius: 2rem;
+            border: 1px solid #d1d9e6;
+            background: transparent;
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .tab-btn.active {
+            background: #2563eb;
+            color: #fff;
+            border-color: #2563eb;
+        }
+        body.dark .tab-btn {
+            border-color: #334155;
+            color: #e2e8f0;
+        }
+        body.dark .tab-btn.active {
+            background: #2563eb;
+            border-color: #2563eb;
+            color: #fff;
+        }
+
+        .time-option {
+            padding: 0.3rem 0.8rem;
+            border-radius: 2rem;
+            border: 1px solid #d1d9e6;
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: 0.2s;
+        }
+        .time-option:hover {
+            background: #e9edf4;
+        }
+        .time-option.selected {
+            background: #2563eb;
+            color: #fff;
+            border-color: #2563eb;
+        }
+        body.dark .time-option {
+            border-color: #475569;
+        }
+        body.dark .time-option:hover {
+            background: #1e2a3a;
+        }
+
+        .worker-stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.6rem 0.8rem;
+            border-bottom: 1px solid #e9edf4;
+            transition: 0.2s;
+            border-radius: 0.5rem;
+        }
+        .worker-stat-item:hover {
+            background: rgba(37, 99, 235, 0.05);
+        }
+        body.dark .worker-stat-item {
+            border-bottom-color: #293548;
+        }
+        body.dark .worker-stat-item:hover {
+            background: rgba(37, 99, 235, 0.08);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="dark-toggle" id="darkToggle">
+        <i class="fas fa-moon"></i>
+    </div>
+
+    <div id="app"></div>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "firebase/app": "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js",
+                "firebase/database": "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import { initializeApp } from "firebase/app";
+        import { getDatabase, ref, push, onValue, remove, get, set } from "firebase/database";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAwnD_POO-SoQymqDrtby0t2uC9Mvgau3Q",
+            authDomain: "utr-cc0a9.firebaseapp.com",
+            databaseURL: "https://utr-cc0a9-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "utr-cc0a9",
+            storageBucket: "utr-cc0a9.firebasestorage.app",
+            messagingSenderId: "157513922891",
+            appId: "1:157513922891:web:c6e172e09fb1775a1fd0ce"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const workersRef = ref(db, 'workers');
+        const ratesRef = ref(db, 'workerRates');
+
+        let allWorkers = [];
+        let workerRates = {};
+        let currentUser = null;
+        let currentAttendances = [];
+        let currentWorkerId = null;
+        let calendarViewDate = new Date();
+        let pageHistory = [];
+
+        const ADMIN_ID = "7700836128Vishu";
+        const TIME_OPTIONS = ["30 Min", "1 Hr", "1.5 Hr", "2 Hr", "2.5 Hr", "3 Hr", "3.5 Hr", "4 Hr", "4.5 Hr", "5 Hr"];
+        const TIME_HOURS_MAP = {
+            "30 Min": 0.5,
+            "1 Hr": 1,
+            "1.5 Hr": 1.5,
+            "2 Hr": 2,
+            "2.5 Hr": 2.5,
+            "3 Hr": 3,
+            "3.5 Hr": 3.5,
+            "4 Hr": 4,
+            "4.5 Hr": 4.5,
+            "5 Hr": 5
+        };
+
+        function timeToHours(t) { return TIME_HOURS_MAP[t] || 0; }
+
+        function calcExtraPayment(hourlyRate, timeStr) { return timeToHours(timeStr) * hourlyRate; }
+
+        function formatDate(d) {
+            if (!d) return '';
+            const p = d.split('-');
+            return p.length === 3 ? `${p[2]}-${p[1]}-${p[0]}` : d;
+        }
+
+        function getToday() {
+            const d = new Date();
+            return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        }
+
+        function showToast(msg, type = 'success') {
+            const t = document.createElement('div');
+            t.className = `toast ${type}`;
+            t.innerHTML = msg;
+            document.body.appendChild(t);
+            setTimeout(() => t.remove(), 3200);
+        }
+
+        function calcTotals(atts) {
+            let earn = 0,
+                ded = 0;
+            atts.forEach(a => {
+                const amt = parseFloat(a.payment) || 0;
+                if (a.type === 'deduction') ded += amt;
+                else earn += amt;
+            });
+            return { earn, ded, net: earn - ded };
+        }
+
+        function getWorkerTotals(workerId) {
+            return new Promise((resolve) => {
+                const attRef = ref(db, `attendance/${workerId}`);
+                onValue(attRef, (s) => {
+                    const d = s.val();
+                    const atts = d ? Object.entries(d).map(([id, val]) => ({ id, ...val })) : [];
+                    resolve(calcTotals(atts));
+                }, { onlyOnce: true });
+            });
+        }
+
+        async function getAllWorkersTotals() {
+            const totals = [];
+            for (const w of allWorkers) {
+                const t = await getWorkerTotals(w.id);
+                totals.push({ ...w, ...t });
+            }
+            return totals;
+        }
+
+        function initDarkMode() {
+            const dark = localStorage.getItem('darkMode') === 'true';
+            if (dark) document.body.classList.add('dark');
+            updateDarkIcon();
+        }
+
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark');
+            localStorage.setItem('darkMode', document.body.classList.contains('dark'));
+            updateDarkIcon();
+        }
+
+        function updateDarkIcon() {
+            const icon = document.querySelector('#darkToggle i');
+            if (icon) {
+                icon.className = document.body.classList.contains('dark') ? 'fas fa-sun' : 'fas fa-moon';
+            }
+        }
+        document.getElementById('darkToggle').addEventListener('click', toggleDarkMode);
+
+        async function getRates(wid) { return workerRates[wid] || { dayRate: 350, hourlyRate: 50 }; }
+
+        async function updateRates(wid, dr, hr) {
+            await set(ref(db, `workerRates/${wid}`), { dayRate: dr, hourlyRate: hr });
+            workerRates[wid] = { dayRate: dr, hourlyRate: hr };
+            showToast(`✅ Rates updated: Day ₹${dr}, Extra ₹${hr}/hr`);
+        }
+
+        function loadRates() {
+            onValue(ratesRef, (s) => { workerRates = s.val() || {}; });
+        }
+
+        function loadWorkersList() {
+            onValue(workersRef, (s) => {
+                allWorkers = s.val() ? Object.entries(s.val()).map(([id, val]) => ({ id, ...val })) : [];
+                if (document.getElementById('workersList')) renderWorkersList();
+                if (document.getElementById('adminStats')) updateAdminStats();
+            });
+        }
+
+        function renderCalendar(attendances, containerId) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            const year = calendarViewDate.getFullYear();
+            const month = calendarViewDate.getMonth();
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            const attMap = new Map();
+            attendances.forEach(a => {
+                if (!attMap.has(a.date)) attMap.set(a.date, []);
+                attMap.get(a.date).push(a);
+            });
+
+            const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+            let html = `
+                <div class="cal-nav">
+                    <button class="cal-prev" data-container="${containerId}"><i class="fas fa-chevron-left"></i></button>
+                    <span class="month-label">${monthNames[month]} ${year}</span>
+                    <button class="cal-next" data-container="${containerId}"><i class="fas fa-chevron-right"></i></button>
+                </div>
+                <div class="cal-grid">
+                    ${['Su','Mo','Tu','We','Th','Fr','Sa'].map(d => `<div class="cal-day-name">${d}</div>`).join('')}
+            `;
+
+            for (let i = 0; i < firstDay; i++) {
+                html += `<div></div>`;
+            }
+
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+                const records = attMap.get(dateStr) || [];
+                const hasPayment = records.some(r => r.type === 'earning');
+                const hasDeduction = records.some(r => r.type === 'deduction');
+
+                let cls = '';
+                if (hasPayment && hasDeduction) cls = 'mixed';
+                else if (hasPayment) cls = 'payment';
+                else if (hasDeduction) cls = 'deduction';
+
+                html += `<div class="cal-date ${cls}" onclick="window.showDateDetail('${dateStr}')">${day}</div>`;
+            }
+
+            html += `</div>`;
+            container.innerHTML = html;
+
+            container.querySelector('.cal-prev')?.addEventListener('click', (e) => {
+                e.stopPropagation();
+                calendarViewDate.setMonth(calendarViewDate.getMonth() - 1);
+                renderCalendar(attendances, containerId);
+            });
+            container.querySelector('.cal-next')?.addEventListener('click', (e) => {
+                e.stopPropagation();
+                calendarViewDate.setMonth(calendarViewDate.getMonth() + 1);
+                renderCalendar(attendances, containerId);
+            });
+        }
+
+        window.showDateDetail = (dateStr) => {
+            const records = currentAttendances.filter(a => a.date === dateStr);
+            let msg = `<strong>${formatDate(dateStr)}</strong><br/>`;
+            if (records.length) {
+                msg += records.map(r =>
+                    `${r.siteName} ${r.type === 'deduction' ? `(-₹${r.payment})` : `(+₹${r.payment})`} ${r.extraTime ? `(${r.extraTime})` : ''}`
+                ).join('<br/>');
+            } else {
+                msg += '📭 No records';
+            }
+            showToast(msg, 'info');
+        };
+
+        function loadWorkerData(wid) {
+            onValue(ref(db, `attendance/${wid}`), (s) => {
+                const d = s.val();
+                currentAttendances = d ? Object.entries(d).map(([id, val]) => ({ id, ...val })) : [];
+                currentAttendances.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+                if (document.getElementById('workerRecordsList')) {
+                    renderWorkerRecords();
+                }
+                if (document.getElementById('workerAttendanceList')) {
+                    renderWorkerAttendanceList();
+                    const { earn, ded, net } = calcTotals(currentAttendances);
+                    document.getElementById('workerTotalDays') && (document.getElementById('workerTotalDays').innerText =
+                        currentAttendances.filter(a => a.type !== 'deduction').length);
+                    document.getElementById('workerTotalEarned') && (document.getElementById('workerTotalEarned').innerText =
+                        '₹' + earn.toLocaleString());
+                    document.getElementById('workerTotalDeduction') && (document.getElementById('workerTotalDeduction')
+                        .innerText = '₹' + ded.toLocaleString());
+                    document.getElementById('workerNetPayment') && (document.getElementById('workerNetPayment').innerText =
+                        '₹' + net.toLocaleString());
+                    renderCalendar(currentAttendances, 'workerCalendar');
+                }
+                if (document.getElementById('adminWorkerCalendar')) {
+                    renderCalendar(currentAttendances, 'adminWorkerCalendar');
+                }
+                if (document.getElementById('adminStats')) {
+                    updateAdminStats();
+                }
+            });
+        }
+
+        // ========== LOGIN ==========
+        function renderLogin() {
+            document.getElementById('app').innerHTML = `
+                <div style="max-width:440px; margin: 2rem auto;">
+                    <div class="card" style="padding:2.2rem 2rem 1.8rem;">
+                        <div style="text-align:center; margin-bottom:1.8rem;">
+                            <i class="fas fa-hard-hat" style="font-size:2.8rem; color:#2563eb;"></i>
+                            <h2 style="margin-top:0.3rem; font-size:1.6rem;">Vishu Civil Contractor</h2>
+                            <p class="text-muted">Accounting &amp; Attendance Portal</p>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-id-card"></i> Login ID</label>
+                            <input type="text" id="loginId" placeholder="Enter your Login ID" />
+                        </div>
+                        <div style="margin-top:0.8rem;">
+                            <button id="loginBtn" class="btn btn-primary" style="width:100%; justify-content:center; padding:0.8rem;">
+                                <i class="fas fa-sign-in-alt"></i> Login
+                            </button>
+                        </div>
+                        <div style="text-align:center; margin-top:1.8rem; font-size:0.75rem; opacity:0.6;">
+                            <hr style="margin-bottom:0.8rem;" />
+                            <p><i class="fas fa-phone-alt"></i> Contact: 7700836128</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('loginBtn').addEventListener('click', handleLogin);
+            document.getElementById('loginId').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') handleLogin();
+            });
+            const modal = document.getElementById('detailModal');
+            if (modal) modal.remove();
+            const page = document.getElementById('pageView');
+            if (page) page.remove();
+            document.body.style.overflow = 'auto';
+            pageHistory = [];
+        }
+
+        async function handleLogin() {
+            const lid = document.getElementById('loginId').value.trim().toLowerCase();
+            if (!lid) return showToast('Please enter Login ID', 'error');
+
+            if (lid === ADMIN_ID.toLowerCase()) {
+                currentUser = { id: 'admin', name: 'Admin', isAdmin: true };
+                showToast('Welcome Admin!', 'success');
+                renderAdmin();
+                return;
+            }
+
+            const w = allWorkers.find(w => w.loginId === lid);
+            if (w) {
+                currentUser = { id: w.id, name: w.name, loginId: w.loginId, isAdmin: false };
+                showToast(`Welcome ${w.name}!`, 'success');
+                renderWorker();
+                loadWorkerData(w.id);
+            } else {
+                showToast('Invalid Login ID', 'error');
+            }
+        }
+
+        // ========== ADMIN DASHBOARD ==========
+        async function updateAdminStats() {
+            const stats = await getAllWorkersTotals();
+            let totalEarn = 0,
+                totalDed = 0,
+                totalNet = 0;
+            stats.forEach(s => {
+                totalEarn += s.earn || 0;
+                totalDed += s.ded || 0;
+                totalNet += s.net || 0;
+            });
+
+            document.getElementById('statTotalWorkers') && (document.getElementById('statTotalWorkers').innerText = allWorkers
+                .length);
+            document.getElementById('statTotalEarned') && (document.getElementById('statTotalEarned').innerText = '₹' + totalEarn
+                .toLocaleString());
+            document.getElementById('statTotalDeduction') && (document.getElementById('statTotalDeduction').innerText = '₹' +
+                totalDed.toLocaleString());
+            document.getElementById('statNetPayable') && (document.getElementById('statNetPayable').innerText = '₹' + totalNet
+                .toLocaleString());
+
+            // Store stats for detail views
+            window._adminStats = { stats, totalEarn, totalDed, totalNet };
+        }
+
+        function renderAdmin() {
+            const modal = document.getElementById('detailModal');
+            if (modal) modal.remove();
+            const page = document.getElementById('pageView');
+            if (page) page.remove();
+            document.body.style.overflow = 'auto';
+
+            document.getElementById('app').innerHTML = `
+                <div style="max-width:1100px; margin:0 auto;">
+                    <div class="welcome-gradient" style="margin-bottom:1.5rem;">
+                        <div class="flex-between">
+                            <div>
+                                <h1 style="font-size:1.6rem;"><i class="fas fa-hard-hat"></i> Vishu Civil Contractor</h1>
+                                <p style="opacity:0.8; margin-top:0.2rem;">Admin · Accountant Dashboard</p>
+                            </div>
+                            <button id="logoutBtn" class="btn" style="background:rgba(255,255,255,0.15); color:#fff; border:1px solid rgba(255,255,255,0.2);">
+                                <i class="fas fa-sign-out-alt"></i> Logout
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="stat-grid" id="adminStats">
+                        <div class="stat-card" onclick="window.viewStatDetail('workers')">
+                            <div class="stat-number" id="statTotalWorkers">0</div>
+                            <div class="stat-label">Total Workers</div>
+                        </div>
+                        <div class="stat-card" onclick="window.viewStatDetail('earned')">
+                            <div class="stat-number" id="statTotalEarned">₹0</div>
+                            <div class="stat-label">Total Earned</div>
+                        </div>
+                        <div class="stat-card" onclick="window.viewStatDetail('deduction')">
+                            <div class="stat-number" id="statTotalDeduction">₹0</div>
+                            <div class="stat-label">Total Deduction</div>
+                        </div>
+                        <div class="stat-card" onclick="window.viewStatDetail('net')">
+                            <div class="stat-number" id="statNetPayable">₹0</div>
+                            <div class="stat-label">Net Payable</div>
+                        </div>
+                    </div>
+
+                    <div class="card" style="margin:1.5rem 0;">
+                        <div class="flex-between">
+                            <h3 style="font-size:1rem;"><i class="fas fa-users"></i> All Workers</h3>
+                            <span class="badge badge-green" id="workerCount">0 active</span>
+                        </div>
+                        <div id="workersList" style="margin-top:0.8rem;"></div>
+                    </div>
+
+                    <div class="card">
+                        <h3 style="font-size:1rem; margin-bottom:0.8rem;"><i class="fas fa-user-plus"></i> Add New Worker</h3>
+                        <div class="grid-2">
+                            <div><label>Full Name</label><input type="text" id="newName" placeholder="e.g., Ramesh" /></div>
+                            <div><label>Date of Birth</label><input type="date" id="newDob" /></div>
+                            <div><label>Phone</label><input type="text" id="newPhone" placeholder="Mobile Number" /></div>
+                            <div><label>Day Rate (₹)</label><input type="number" id="newDayRate" value="350" /></div>
+                            <div><label>Extra ₹/hour</label><input type="number" id="newHourlyRate" value="50" /></div>
+                            <div style="display:flex; align-items:flex-end;"><button id="addWorkerBtn" class="btn btn-primary" style="width:100%; justify-content:center;"><i class="fas fa-plus"></i> Add Worker</button></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('logoutBtn').addEventListener('click', () => { currentUser = null;
+                renderLogin(); });
+            document.getElementById('addWorkerBtn').addEventListener('click', addWorker);
+            renderWorkersList();
+            updateAdminStats();
+
+            // Stat detail view function
+            window.viewStatDetail = (type) => {
+                const stats = window._adminStats?.stats || [];
+                if (!stats.length) return showToast('No data available', 'info');
+
+                let title = '',
+                    data = [];
+                if (type === 'workers') {
+                    title = 'All Workers';
+                    data = stats.map(s => ({ name: s.name, id: s.id, loginId: s.loginId, value: 'Active' }));
+                } else if (type === 'earned') {
+                    title = 'Total Earned by Worker';
+                    data = stats.filter(s => s.earn > 0).sort((a, b) => b.earn - a.earn).map(s => ({ name: s.name,
+                        id: s.id, loginId: s.loginId, value: '₹' + s.earn.toLocaleString() }));
+                } else if (type === 'deduction') {
+                    title = 'Total Deduction by Worker';
+                    data = stats.filter(s => s.ded > 0).sort((a, b) => b.ded - a.ded).map(s => ({ name: s.name,
+                        id: s.id, loginId: s.loginId, value: '₹' + s.ded.toLocaleString() }));
+                } else if (type === 'net') {
+                    title = 'Net Payable by Worker';
+                    data = stats.sort((a, b) => b.net - a.net).map(s => ({ name: s.name, id: s.id, loginId: s
+                            .loginId, value: '₹' + s.net.toLocaleString() }));
+                }
+
+                if (!data.length) return showToast('No data available', 'info');
+
+                renderStatDetailPage(title, data);
+            };
+        }
+
+        function renderStatDetailPage(title, data) {
+            const existing = document.getElementById('pageView');
+            if (existing) existing.remove();
+
+            const page = document.createElement('div');
+            page.id = 'pageView';
+            page.className = 'page-overlay';
+            page.innerHTML = `
+                <div class="page-box">
+                    <div class="flex-between" style="border-bottom:1px solid #e9edf4; padding-bottom:1rem; margin-bottom:1.2rem;">
+                        <h2 style="font-size:1.3rem;"><i class="fas fa-chart-bar"></i> ${title}</h2>
+                        <div style="display:flex; gap:0.5rem;">
+                            <button id="pageBackBtn" class="btn btn-outline btn-sm"><i class="fas fa-arrow-left"></i> Back</button>
+                            <button id="pageCloseBtn" class="btn btn-outline btn-sm"><i class="fas fa-times"></i> Close</button>
+                        </div>
+                    </div>
+                    <div style="max-height:70vh; overflow-y:auto;">
+                        ${data.map((item, index) => `
+                            <div class="worker-stat-item" style="cursor:pointer;" onclick="window.openWorkerFromStat('${item.id}')">
+                                <div>
+                                    <strong>${item.name}</strong>
+                                    <span class="text-muted" style="font-size:0.75rem; margin-left:0.5rem;">${item.loginId}</span>
+                                </div>
+                                <span style="font-weight:700; color:#2563eb;">${item.value}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(page);
+
+            document.getElementById('pageBackBtn').onclick = () => {
+                page.remove();
+                goBack();
+            };
+            document.getElementById('pageCloseBtn').onclick = () => {
+                page.remove();
+                if (currentUser?.isAdmin) renderAdmin();
+                else if (currentUser) { renderWorker();
+                    loadWorkerData(currentUser.id); }
+                else renderLogin();
+            };
+
+            window.openWorkerFromStat = (wid) => {
+                const worker = allWorkers.find(w => w.id === wid);
+                if (worker) {
+                    page.remove();
+                    openWorkerDetail(worker);
+                }
+            };
+        }
+
+        function renderWorkersList() {
+            const container = document.getElementById('workersList');
+            if (!container) return;
+            if (!allWorkers.length) {
+                container.innerHTML = '<p class="text-muted">No workers added yet</p>';
+                return;
+            }
+
+            container.innerHTML = allWorkers.map(w => `
+                <div class="worker-item" onclick="window.openWorkerFromList('${w.id}')">
+                    <div>
+                        <strong>${w.name}</strong>
+                        <span class="text-muted" style="font-size:0.75rem; margin-left:0.5rem;">${w.loginId}</span>
+                    </div>
+                    <i class="fas fa-chevron-right" style="opacity:0.4;"></i>
+                </div>
+            `).join('');
+
+            window.openWorkerFromList = (wid) => {
+                const worker = allWorkers.find(w => w.id === wid);
+                if (worker) openWorkerDetail(worker);
+            };
+
+            document.getElementById('workerCount') && (document.getElementById('workerCount').innerText = allWorkers.length +
+                ' active');
+        }
+
+        // ========== WORKER DETAIL MODAL ==========
+        async function openWorkerDetail(w) {
+            currentWorkerId = w.id;
+            const rates = await getRates(w.id);
+            await loadWorkerData(w.id);
+            const { earn, ded, net } = calcTotals(currentAttendances);
+            calendarViewDate = new Date();
+
+            const existing = document.getElementById('detailModal');
+            if (existing) existing.remove();
+
+            const modal = document.createElement('div');
+            modal.id = 'detailModal';
+            modal.className = 'modal-overlay';
+            modal.innerHTML = `
+                <div class="modal-box">
+                    <div class="flex-between" style="border-bottom:1px solid #e9edf4; padding-bottom:1rem; margin-bottom:1rem;">
+                        <div>
+                            <h2 style="font-size:1.4rem;"><i class="fas fa-user-circle"></i> ${w.name}</h2>
+                            <p class="text-muted" style="font-size:0.85rem;">${w.loginId}</p>
+                            <div style="display:flex; gap:0.8rem; flex-wrap:wrap; margin-top:0.5rem;">
+                                <span class="badge badge-green">💰 Earned: ₹${earn.toLocaleString()}</span>
+                                <span class="badge badge-red">📉 Deduction: ₹${ded.toLocaleString()}</span>
+                                <span class="badge badge-blue" style="font-weight:700;">✅ Net: ₹${net.toLocaleString()}</span>
+                            </div>
+                        </div>
+                        <div style="display:flex; gap:0.5rem;">
+                            <button id="backHomeBtn" class="btn btn-outline btn-sm"><i class="fas fa-arrow-left"></i> Back</button>
+                            <button id="closeModalBtn" class="btn btn-outline btn-sm"><i class="fas fa-times"></i> Close</button>
+                            <button id="deleteWorkerBtn" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="card" style="padding:1rem; margin-bottom:1rem; background:rgba(37,99,235,0.05); border:1px solid rgba(37,99,235,0.15);">
+                        <div style="display:flex; gap:1rem; flex-wrap:wrap; align-items:flex-end;">
+                            <div><label style="font-size:0.75rem;">Day Rate (₹)</label><input type="number" id="dayRate" value="${rates.dayRate}" step="10" style="width:120px;" /></div>
+                            <div><label style="font-size:0.75rem;">Extra ₹/hr</label><input type="number" id="hourlyRate" value="${rates.hourlyRate}" step="5" style="width:120px;" /></div>
+                            <button id="saveRatesBtn" class="btn btn-primary btn-sm">💾 Save Rates</button>
+                        </div>
+                    </div>
+
+                    <div style="display:flex; gap:0.4rem; flex-wrap:wrap; margin-bottom:1rem;">
+                        <button class="tab-btn active" data-tab="records"><i class="fas fa-list"></i> Records</button>
+                        <button class="tab-btn" data-tab="addAttend"><i class="fas fa-plus-circle"></i> Attendance</button>
+                        <button class="tab-btn" data-tab="addExtra"><i class="fas fa-clock"></i> Extra Time</button>
+                        <button class="tab-btn" data-tab="addDeduction"><i class="fas fa-minus-circle"></i> Deduction</button>
+                    </div>
+
+                    <div id="recordsTab" class="tab-content">
+                        <button id="downloadPDF" class="btn btn-warning btn-sm" style="margin-bottom:0.8rem;"><i class="fas fa-download"></i> PDF Report</button>
+                        <div id="workerRecordsList" style="max-height:300px; overflow-y:auto;"></div>
+                    </div>
+
+                    <div id="addAttendTab" class="tab-content" style="display:none;">
+                        <div class="form-group"><label>📅 Date</label><input type="date" id="attDate" value="${getToday()}" /></div>
+                        <div class="form-group"><label>📍 Site</label><input type="text" id="attSite" placeholder="Enter site name" /></div>
+                        <button id="saveAttendBtn" class="btn btn-primary"><i class="fas fa-save"></i> Save Attendance (Day Rate)</button>
+                    </div>
+
+                    <div id="addExtraTab" class="tab-content" style="display:none;">
+                        <div class="form-group"><label>📅 Date</label><input type="date" id="extraDate" value="${getToday()}" /></div>
+                        <div class="form-group"><label>📍 Site</label><input type="text" id="extraSite" placeholder="Enter site name" /></div>
+                        <div class="form-group"><label>⏱️ Duration</label>
+                            <div id="timeOptsAdmin" style="display:flex; flex-wrap:wrap; gap:0.3rem;"></div>
+                            <input type="hidden" id="selExtra" />
+                        </div>
+                        <div class="form-group"><label>💰 Extra Payment</label><input type="text" id="extraPayDisplay" readonly style="background:#f0f0f0;" /></div>
+                        <button id="saveExtraBtn" class="btn btn-success"><i class="fas fa-clock"></i> Add Extra Time</button>
+                    </div>
+
+                    <div id="addDeductionTab" class="tab-content" style="display:none;">
+                        <div class="form-group"><label>📅 Date</label><input type="date" id="dedDate" value="${getToday()}" /></div>
+                        <div class="form-group"><label>📝 Reason</label><input type="text" id="dedReason" placeholder="e.g., Advance, Fine" /></div>
+                        <div class="form-group"><label>💰 Amount (₹)</label><input type="number" id="dedAmount" placeholder="Enter amount" /></div>
+                        <button id="saveDedBtn" class="btn btn-danger"><i class="fas fa-minus-circle"></i> Add Deduction</button>
+                    </div>
+
+                    <div style="margin-top:1.2rem;">
+                        <h4 style="font-size:0.9rem;"><i class="fas fa-calendar-alt"></i> Attendance Calendar</h4>
+                        <div id="adminWorkerCalendar"></div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+
+            // Setup time options
+            const tContainer = document.getElementById('timeOptsAdmin');
+            if (tContainer) {
+                TIME_OPTIONS.forEach(t => {
+                    const el = document.createElement('span');
+                    el.className = 'time-option';
+                    el.innerText = t;
+                    el.onclick = () => {
+                        document.querySelectorAll('#timeOptsAdmin .time-option').forEach(x => x.classList
+                            .remove('selected'));
+                        el.classList.add('selected');
+                        document.getElementById('selExtra').value = t;
+                        const hr = parseFloat(document.getElementById('hourlyRate').value) || 0;
+                        document.getElementById('extraPayDisplay').value = '₹' + calcExtraPayment(hr, t);
+                    };
+                    tContainer.appendChild(el);
+                });
+            }
+
+            renderWorkerRecords();
+            renderCalendar(currentAttendances, 'adminWorkerCalendar');
+
+            document.getElementById('closeModalBtn').onclick = () => {
+                modal.remove();
+                document.body.style.overflow = 'auto';
+                if (currentUser?.isAdmin) renderAdmin();
+                else if (currentUser) { renderWorker();
+                    loadWorkerData(currentUser.id); }
+                else renderLogin();
+            };
+
+            document.getElementById('backHomeBtn').onclick = () => {
+                modal.remove();
+                document.body.style.overflow = 'auto';
+                goBack();
+            };
+
+            document.getElementById('deleteWorkerBtn').onclick = async () => {
+                if (confirm(`Delete "${w.name}" and all their data?`)) {
+                    await remove(ref(db, `workers/${w.id}`));
+                    await remove(ref(db, `attendance/${w.id}`));
+                    await remove(ref(db, `workerRates/${w.id}`));
+                    modal.remove();
+                    showToast('Worker deleted');
+                    if (currentUser?.isAdmin) renderAdmin();
+                    else renderLogin();
+                }
+            };
+
+            document.getElementById('saveRatesBtn').onclick = async () => {
+                await updateRates(w.id, parseFloat(document.getElementById('dayRate').value), parseFloat(document
+                    .getElementById('hourlyRate').value));
+            };
+            document.getElementById('saveAttendBtn').onclick = async () => {
+                await saveAttendanceOnly(w.id);
+                document.querySelector('[data-tab="records"]')?.click();
+                renderCalendar(currentAttendances, 'adminWorkerCalendar');
+                renderWorkerRecords();
+                updateAdminStats();
+            };
+            document.getElementById('saveExtraBtn').onclick = async () => {
+                await saveExtraOnly(w.id);
+                document.querySelector('[data-tab="records"]')?.click();
+                renderCalendar(currentAttendances, 'adminWorkerCalendar');
+                renderWorkerRecords();
+                updateAdminStats();
+            };
+            document.getElementById('saveDedBtn').onclick = async () => {
+                await saveDeduction(w.id);
+                document.querySelector('[data-tab="records"]')?.click();
+                renderCalendar(currentAttendances, 'adminWorkerCalendar');
+                renderWorkerRecords();
+                updateAdminStats();
+            };
+            document.getElementById('downloadPDF').onclick = () => generatePDF(w, currentAttendances);
+
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.onclick = () => {
+                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+                    document.getElementById(btn.dataset.tab + 'Tab').style.display = 'block';
+                };
+            });
+        }
+
+        function goBack() {
+            if (currentUser?.isAdmin) {
+                renderAdmin();
+            } else if (currentUser) {
+                renderWorker();
+                loadWorkerData(currentUser.id);
+            } else {
+                renderLogin();
+            }
+        }
+
+        // ========== SAVE HELPERS ==========
+        async function saveAttendanceOnly(wid) {
+            const date = document.getElementById('attDate').value;
+            const site = document.getElementById('attSite').value.trim() || 'Work Site';
+            const rates = await getRates(wid);
+            if (!date) return showToast('Date required', 'error');
+            await push(ref(db, `attendance/${wid}`), { date, siteName: site, payment: rates.dayRate, type: 'earning',
+                timestamp: Date.now() });
+            showToast(`✅ Day attendance: +₹${rates.dayRate}`);
+            document.getElementById('attSite').value = '';
+        }
+
+        async function saveExtraOnly(wid) {
+            const date = document.getElementById('extraDate').value;
+            const site = document.getElementById('extraSite').value.trim() || 'Extra Work';
+            const extra = document.getElementById('selExtra').value;
+            const rates = await getRates(wid);
+            if (!date || !extra) return showToast('Date and time required', 'error');
+            const pay = calcExtraPayment(rates.hourlyRate, extra);
+            await push(ref(db, `attendance/${wid}`), { date, siteName: site, payment: pay, extraTime: extra,
+                type: 'earning', timestamp: Date.now() });
+            showToast(`⏱️ Extra time: +₹${pay}`);
+            document.getElementById('extraSite').value = '';
+            document.getElementById('selExtra').value = '';
+            document.querySelectorAll('#timeOptsAdmin .time-option').forEach(x => x.classList.remove('selected'));
+            document.getElementById('extraPayDisplay').value = '';
+        }
+
+        async function saveDeduction(wid) {
+            const date = document.getElementById('dedDate').value;
+            const reason = document.getElementById('dedReason').value.trim() || 'Deduction';
+            const amt = parseFloat(document.getElementById('dedAmount').value);
+            if (!date || !amt) return showToast('Date and amount required', 'error');
+            await push(ref(db, `attendance/${wid}`), { date, siteName: reason, payment: amt, type: 'deduction',
+                timestamp: Date.now() });
+            showToast(`📉 Deduction: -₹${amt}`);
+            document.getElementById('dedReason').value = '';
+            document.getElementById('dedAmount').value = '';
+        }
+
+        // ========== WORKER DASHBOARD ==========
+        function renderWorker() {
+            const modal = document.getElementById('detailModal');
+            if (modal) modal.remove();
+            const page = document.getElementById('pageView');
+            if (page) page.remove();
+            document.body.style.overflow = 'auto';
+            calendarViewDate = new Date();
+
+            document.getElementById('app').innerHTML = `
+                <div style="max-width:760px; margin:0 auto;">
+                    <div class="card" style="margin-bottom:1.2rem; background:linear-gradient(135deg,#1e3a5f,#2a5298); color:#fff; border:none;">
+                        <div class="flex-between">
+                            <div>
+                                <h1 style="font-size:1.4rem;"><i class="fas fa-hard-hat"></i> Vishu Civil Contractor</h1>
+                                <p style="opacity:0.8; font-size:0.9rem;">Welcome <strong>${currentUser.name}</strong> · ${currentUser.loginId}</p>
+                            </div>
+                            <button id="logoutBtn" class="btn" style="background:rgba(255,255,255,0.12); color:#fff; border:1px solid rgba(255,255,255,0.15);"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                        </div>
+                    </div>
+
+                    <div class="stat-grid">
+                        <div class="stat-card"><div class="stat-number" id="workerTotalDays">0</div><div class="stat-label">Attendance Days</div></div>
+                        <div class="stat-card"><div class="stat-number" id="workerTotalEarned">0</div><div class="stat-label">Total Earned</div></div>
+                        <div class="stat-card"><div class="stat-number" id="workerTotalDeduction">0</div><div class="stat-label">Deductions</div></div>
+                        <div class="stat-card"><div class="stat-number" id="workerNetPayment">0</div><div class="stat-label">Net Payable</div></div>
+                    </div>
+
+                    <div class="card" style="margin:1.2rem 0;">
+                        <div id="workerCalendar"></div>
+                    </div>
+
+                    <div class="card">
+                        <button id="downloadPDFBtn" class="btn btn-warning btn-sm" style="margin-bottom:0.8rem;"><i class="fas fa-download"></i> Download My PDF Report</button>
+                        <div id="workerAttendanceList"></div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('logoutBtn').addEventListener('click', () => { currentUser = null;
+                renderLogin(); });
+            document.getElementById('downloadPDFBtn').addEventListener('click', () =>
+                generatePDF({ name: currentUser.name, loginId: currentUser.loginId, id: currentUser.id },
+                currentAttendances)
+            );
+            loadWorkerData(currentUser.id);
+        }
+
+        function renderWorkerAttendanceList() {
+            const container = document.getElementById('workerAttendanceList');
+            if (!container) return;
+            if (!currentAttendances.length) {
+                container.innerHTML = '<p class="text-muted">📭 No records found</p>';
+                return;
+            }
+            container.innerHTML = currentAttendances.map(a => `
+                <div class="record-card ${a.type==='deduction'?'deduction':''}">
+                    <div>
+                        <strong>📅 ${formatDate(a.date)}</strong><br/>
+                        <span style="font-size:0.85rem;">📍 ${a.siteName||'N/A'}</span>
+                        ${a.extraTime ? `<span class="badge badge-green" style="margin-left:0.4rem;">⏱️ ${a.extraTime}</span>` : ''}
+                        ${a.type==='deduction' ? `<span class="badge badge-red" style="margin-left:0.4rem;">Deduction</span>` : ''}
+                    </div>
+                    <div style="font-weight:700; color:${a.type==='deduction'?'#dc2626':'#059669'};">${a.type==='deduction'?'-':'+'} ₹${(a.payment||0).toLocaleString()}</div>
+                </div>
+            `).join('');
+        }
+
+        function renderWorkerRecords() {
+            const container = document.getElementById('workerRecordsList');
+            if (!container) return;
+            if (!currentAttendances.length) {
+                container.innerHTML = '<p class="text-muted">📭 No records found</p>';
+                return;
+            }
+            container.innerHTML = currentAttendances.map(a => `
+                <div class="record-card ${a.type==='deduction'?'deduction':''}">
+                    <div>
+                        <strong>📅 ${formatDate(a.date)}</strong><br/>
+                        <span style="font-size:0.85rem;">📍 ${a.siteName||'N/A'}</span>
+                        ${a.extraTime ? `<span class="badge badge-green" style="margin-left:0.4rem;">⏱️ ${a.extraTime}</span>` : ''}
+                        ${a.type==='deduction' ? `<span class="badge badge-red" style="margin-left:0.4rem;">Deduction</span>` : ''}
+                    </div>
+                    <div style="display:flex; align-items:center; gap:0.6rem;">
+                        <span style="font-weight:700; color:${a.type==='deduction'?'#dc2626':'#059669'};">${a.type==='deduction'?'-':'+'} ₹${(a.payment||0).toLocaleString()}</span>
+                        <button class="del-rec btn btn-danger btn-sm" data-id="${a.id}"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+            `).join('');
+
+            document.querySelectorAll('.del-rec').forEach(btn => {
+                btn.onclick = async () => {
+                    if (confirm('Delete this record?')) {
+                        await remove(ref(db, `attendance/${currentWorkerId}/${btn.dataset.id}`));
+                        showToast('Deleted');
+                        updateAdminStats();
+                    }
+                };
+            });
+        }
+
+        // ========== ADD WORKER ==========
+        async function addWorker() {
+            const name = document.getElementById('newName').value.trim();
+            const dob = document.getElementById('newDob').value;
+            const phone = document.getElementById('newPhone').value.trim();
+            const dr = parseFloat(document.getElementById('newDayRate').value) || 350;
+            const hr = parseFloat(document.getElementById('newHourlyRate').value) || 50;
+            if (!name || !dob) return showToast('Name and DOB required', 'error');
+
+            const year = dob.split('-')[0];
+            const lid = (name + year).toLowerCase().replace(/\s/g, '');
+            const nr = await push(workersRef, { name, dob, phone, loginId: lid, createdAt: Date.now() });
+            await set(ref(db, `workerRates/${nr.key}`), { dayRate: dr, hourlyRate: hr });
+            showToast(`✅ Worker "${name}" added! Login ID: ${lid}`);
+            document.getElementById('newName').value = '';
+            document.getElementById('newDob').value = '';
+            document.getElementById('newPhone').value = '';
+        }
+
+        // ========== PDF GENERATION ==========
+        async function generatePDF(w, atts) {
+            if (!atts.length) return showToast('No data to export', 'error');
+            const { earn, ded, net } = calcTotals(atts);
+            const rates = await getRates(w.id);
+
+            const div = document.createElement('div');
+            div.style.cssText =
+                'position:absolute; left:-9999px; width:750px; padding:20px; background:white; color:black; font-family:sans-serif;';
+            div.innerHTML = `
+                <h2 style="color:#2563eb;">Vishu Civil Contractor</h2>
+                <h3>Worker: ${w.name}</h3>
+                <p>Login ID: ${w.loginId} | Day Rate: ₹${rates.dayRate} | Extra Hourly: ₹${rates.hourlyRate}</p>
+                <p><strong>Summary:</strong> Earned ₹${earn} | Deduction ₹${ded} | <strong>Net: ₹${net}</strong></p>
+                <table border="1" cellpadding="6" style="width:100%; border-collapse:collapse; margin-top:10px;">
+                    <thead><tr style="background:#2563eb; color:white;"><th>Date</th><th>Site</th><th>Extra</th><th>Amount</th></tr></thead>
+                    <tbody>${atts.map(a => `
+                        <tr>
+                            <td>${formatDate(a.date)}</td>
+                            <td>${a.siteName||'N/A'}</td>
+                            <td>${a.extraTime||'-'}</td>
+                            <td style="color:${a.type==='deduction'?'red':'green'}">${a.type==='deduction'?'-':'+'}₹${(a.payment||0).toLocaleString()}</td>
+                        </tr>
+                    `).join('')}</tbody>
+                </table>
+                <p style="margin-top:15px; font-size:0.8rem;">Generated: ${new Date().toLocaleString()}</p>
+            `;
+            document.body.appendChild(div);
+
+            try {
+                const canvas = await html2canvas(div, { scale: 2 });
+                const img = canvas.toDataURL('image/png');
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                const wd = 190;
+                const h = (canvas.height * wd) / canvas.width;
+                pdf.addImage(img, 'PNG', 10, 10, wd, h);
+                pdf.save(`${w.name}_Report.pdf`);
+                showToast('PDF downloaded!');
+            } catch (e) {
+                showToast('PDF failed', 'error');
+            } finally {
+                div.remove();
+            }
+        }
+
+        // ========== DEFAULT WORKERS ==========
+        const defaultWorkers = [
+            { name: 'Bhutan', dob: '2004-01-01', loginId: 'bhutan2004', phone: '9876543210', dayRate: 350,
+            hourlyRate: 50 },
+            { name: 'Krishna', dob: '2004-03-07', loginId: 'krishna2004', phone: '9876543211', dayRate: 350,
+            hourlyRate: 50 }
+        ];
+
+        async function initDB() {
+            const s = await new Promise(r => onValue(workersRef, r, { onlyOnce: true }));
+            if (!s.exists()) {
+                for (const w of defaultWorkers) {
+                    const nr = await push(workersRef, { name: w.name, dob: w.dob, loginId: w.loginId, phone: w.phone,
+                        createdAt: Date.now() });
+                    await set(ref(db, `workerRates/${nr.key}`), { dayRate: w.dayRate, hourlyRate: w.hourlyRate });
+                }
+            }
+        }
+
+        // ========== BOOT ==========
+        loadRates();
+        loadWorkersList();
+        initDB();
+        initDarkMode();
+        renderLogin();
+
+        window.addEventListener('popstate', () => {
+            const modal = document.getElementById('detailModal');
+            const page = document.getElementById('pageView');
+            if (modal) {
+                modal.remove();
+                document.body.style.overflow = 'auto';
+                goBack();
+            } else if (page) {
+                page.remove();
+                goBack();
+            }
+        });
+    </script>
+</body>
+</html>
