@@ -1,0 +1,1659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Vishu Civil Contractor – Accounting</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: #f8fafc;
+            min-height: 100vh;
+            color: #0f172a;
+            transition: background 0.2s, color 0.2s;
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+
+        body.dark {
+            background: #0f172a;
+            color: #f1f5f9;
+        }
+
+        /* ====== SIMPLE CLEAN APP UI ====== */
+        .app-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        /* Top Header */
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            margin-bottom: 0.5rem;
+        }
+        .app-header h1 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+        .app-header p {
+            font-size: 0.8rem;
+            color: #64748b;
+            margin-top: 0.15rem;
+        }
+        body.dark .app-header p { color: #94a3b8; }
+
+        .header-btn {
+            background: #f1f5f9;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #0f172a;
+            font-size: 1rem;
+            transition: 0.2s;
+        }
+        body.dark .header-btn {
+            background: #1e293b;
+            color: #f1f5f9;
+        }
+        .header-btn:active { transform: scale(0.95); }
+
+        /* Stat Grid - Simple */
+        .stat-grid-simple {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+        .stat-simple {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        body.dark .stat-simple {
+            background: #1e293b;
+            border-color: #334155;
+        }
+        .stat-simple:active { transform: scale(0.98); }
+        .stat-simple .label {
+            font-size: 0.75rem;
+            color: #64748b;
+            font-weight: 500;
+            margin-bottom: 0.3rem;
+        }
+        body.dark .stat-simple .label { color: #94a3b8; }
+        .stat-simple .value {
+            font-size: 1.4rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+        .stat-simple .value.orange { color: #ea580c; }
+        .stat-simple .value.green { color: #16a34a; }
+        .stat-simple .value.blue { color: #2563eb; }
+        .stat-simple .value.red { color: #dc2626; }
+
+        /* Section */
+        .section {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+        body.dark .section {
+            background: #1e293b;
+            border-color: #334155;
+        }
+        .section-header {
+            padding: 1rem 1.2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        body.dark .section-header { border-bottom-color: #334155; }
+        .section-header h3 {
+            font-size: 0.95rem;
+            font-weight: 700;
+        }
+        .section-body {
+            padding: 0.5rem 0;
+        }
+
+        /* List Item */
+        .list-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.85rem 1.2rem;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .list-item:active { background: #f8fafc; }
+        body.dark .list-item:active { background: #0f172a; }
+        .list-item-left {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+        .list-item-left .name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .list-item-left .sub {
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+        body.dark .list-item-left .sub { color: #94a3b8; }
+        .list-item-right {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #94a3b8;
+            font-size: 0.8rem;
+        }
+
+        .badge-pill {
+            display: inline-block;
+            padding: 0.15rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            background: #fef3c7;
+            color: #92400e;
+        }
+        body.dark .badge-pill {
+            background: #78350f;
+            color: #fde68a;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 2rem 1rem;
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.7rem 1.2rem;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+        }
+        .btn:active { transform: scale(0.97); }
+        .btn-primary { background: #2563eb; color: #fff; }
+        .btn-success { background: #16a34a; color: #fff; }
+        .btn-danger { background: #dc2626; color: #fff; }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #e2e8f0;
+            color: #0f172a;
+        }
+        body.dark .btn-outline {
+            border-color: #334155;
+            color: #f1f5f9;
+        }
+        .btn-block { width: 100%; }
+        .btn-sm { padding: 0.45rem 0.9rem; font-size: 0.75rem; }
+
+        /* Inputs */
+        input, select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            background: #fff;
+            font-size: 0.9rem;
+            transition: 0.2s;
+            color: #0f172a;
+        }
+        body.dark input, body.dark select {
+            background: #0f172a;
+            border-color: #334155;
+            color: #f1f5f9;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+        label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.75rem;
+            margin-bottom: 0.35rem;
+            color: #475569;
+        }
+        body.dark label { color: #cbd5e1; }
+
+        .form-group { margin-bottom: 1rem; }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.5);
+            z-index: 2000;
+            overflow-y: auto;
+            padding: 0;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+        }
+        .modal-box {
+            width: 100%;
+            max-width: 600px;
+            background: #fff;
+            border-radius: 20px 20px 0 0;
+            padding: 1.2rem;
+            max-height: 92vh;
+            overflow-y: auto;
+            animation: slideUp 0.25s ease;
+        }
+        body.dark .modal-box { background: #1e293b; }
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+        .modal-header h2 {
+            font-size: 1.15rem;
+            font-weight: 700;
+        }
+        .modal-header .sub {
+            font-size: 0.75rem;
+            color: #64748b;
+            margin-top: 0.15rem;
+        }
+        .close-x {
+            background: #f1f5f9;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+        body.dark .close-x { background: #0f172a; color: #94a3b8; }
+
+        /* Summary pills */
+        .summary-row {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+        .summary-pill {
+            flex: 1;
+            min-width: 70px;
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 0.6rem 0.7rem;
+            text-align: center;
+        }
+        body.dark .summary-pill { background: #0f172a; }
+        .summary-pill .s-label {
+            font-size: 0.65rem;
+            color: #64748b;
+            font-weight: 500;
+        }
+        .summary-pill .s-value {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-top: 0.15rem;
+        }
+        .summary-pill .s-value.green { color: #16a34a; }
+        .summary-pill .s-value.red { color: #dc2626; }
+        .summary-pill .s-value.blue { color: #2563eb; }
+        .summary-pill .s-value.orange { color: #ea580c; }
+
+        /* Segmented Tabs */
+        .segmented {
+            display: flex;
+            background: #f1f5f9;
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 1rem;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+        .segmented::-webkit-scrollbar { display: none; }
+        body.dark .segmented { background: #0f172a; }
+        .segmented button {
+            flex: 1;
+            min-width: fit-content;
+            padding: 0.5rem 0.7rem;
+            border: none;
+            background: transparent;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #64748b;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.3rem;
+        }
+        .segmented button.active {
+            background: #fff;
+            color: #0f172a;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+        body.dark .segmented button.active {
+            background: #1e293b;
+            color: #f1f5f9;
+        }
+
+        /* Record items - simple */
+        .record-simple {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        body.dark .record-simple { border-bottom-color: #334155; }
+        .record-simple:last-child { border-bottom: none; }
+        .record-simple .r-left .r-date {
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+        .record-simple .r-left .r-sub {
+            font-size: 0.75rem;
+            color: #64748b;
+            margin-top: 0.15rem;
+        }
+        .record-simple .r-amount {
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+        .record-simple .r-amount.green { color: #16a34a; }
+        .record-simple .r-amount.red { color: #dc2626; }
+        .record-simple .r-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .del-icon {
+            background: #fef2f2;
+            color: #dc2626;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.75rem;
+        }
+        body.dark .del-icon { background: #450a0a; }
+
+        /* Calendar Simple */
+        .cal-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 2px;
+            margin-top: 0.5rem;
+        }
+        .cal-day-name {
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.65rem;
+            padding: 0.3rem 0;
+            color: #94a3b8;
+        }
+        .cal-date {
+            text-align: center;
+            padding: 0.5rem 0;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            background: #f8fafc;
+            color: #334155;
+        }
+        body.dark .cal-date { background: #0f172a; color: #cbd5e1; }
+        .cal-date.payment { background: #16a34a; color: #fff; font-weight: 700; }
+        .cal-date.deduction { background: #dc2626; color: #fff; font-weight: 700; }
+        .cal-date.mixed { background: linear-gradient(to right, #16a34a 50%, #dc2626 50%); color: #fff; font-weight: 700; }
+        .cal-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+        }
+        .cal-nav button {
+            background: #f1f5f9;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            cursor: pointer;
+            color: #334155;
+        }
+        body.dark .cal-nav button { background: #0f172a; color: #cbd5e1; }
+        .cal-nav .month-label { font-weight: 700; font-size: 0.9rem; }
+
+        /* Settlement Banner */
+        .settle-banner {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 12px;
+            padding: 0.85rem 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        body.dark .settle-banner { background: #052e16; border-color: #166534; }
+        .settle-banner .sb-left {
+            font-size: 0.8rem;
+            color: #166534;
+        }
+        body.dark .settle-banner .sb-left { color: #86efac; }
+        .settle-banner .sb-right {
+            text-align: right;
+        }
+        .settle-banner .sb-right .sb-label {
+            font-size: 0.65rem;
+            color: #16a34a;
+        }
+        .settle-banner .sb-right .sb-value {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #16a34a;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 12px 20px;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 0.85rem;
+            font-weight: 500;
+            z-index: 3000;
+            animation: slideUp 0.3s ease;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+        .toast.success { background: #16a34a; }
+        .toast.error { background: #dc2626; }
+        .toast.info { background: #2563eb; }
+
+        /* Dark toggle button */
+        .dark-toggle {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            z-index: 999;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        body.dark .dark-toggle {
+            background: #1e293b;
+            border-color: #334155;
+        }
+        .dark-toggle i { color: #f59e0b; font-size: 1rem; }
+        body.dark .dark-toggle i { color: #fcd34d; }
+
+        /* Login */
+        .login-wrap {
+            max-width: 380px;
+            margin: 3rem auto;
+            padding: 2rem 1.5rem;
+        }
+        .login-wrap .brand-icon {
+            font-size: 2.5rem;
+            color: #2563eb;
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+        .login-wrap h2 {
+            text-align: center;
+            font-size: 1.3rem;
+            margin-bottom: 0.3rem;
+        }
+        .login-wrap .login-sub {
+            text-align: center;
+            color: #64748b;
+            font-size: 0.8rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Full page view */
+        .page-overlay {
+            position: fixed;
+            inset: 0;
+            background: #f8fafc;
+            z-index: 1500;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+        body.dark .page-overlay { background: #0f172a; }
+        .page-wrap { max-width: 600px; margin: 0 auto; }
+
+        .inline-flex { display: inline-flex; align-items: center; gap: 0.3rem; }
+        .text-muted { color: #64748b; font-size: 0.8rem; }
+        body.dark .text-muted { color: #94a3b8; }
+    </style>
+</head>
+<body>
+
+    <div class="dark-toggle" id="darkToggle">
+        <i class="fas fa-moon"></i>
+    </div>
+
+    <div id="app"></div>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "firebase/app": "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js",
+                "firebase/database": "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import { initializeApp } from "firebase/app";
+        import { getDatabase, ref, push, onValue, remove, get, set } from "firebase/database";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAwnD_POO-SoQymqDrtby0t2uC9Mvgau3Q",
+            authDomain: "utr-cc0a9.firebaseapp.com",
+            databaseURL: "https://utr-cc0a9-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "utr-cc0a9",
+            storageBucket: "utr-cc0a9.firebasestorage.app",
+            messagingSenderId: "157513922891",
+            appId: "1:157513922891:web:c6e172e09fb1775a1fd0ce"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const workersRef = ref(db, 'workers');
+        const ratesRef = ref(db, 'workerRates');
+        const settlementsRef = ref(db, 'settlements');
+
+        let allWorkers = [];
+        let workerRates = {};
+        let allSettlements = {};
+        let currentUser = null;
+        let currentAttendances = [];
+        let currentWorkerId = null;
+        let calendarViewDate = new Date();
+
+        const ADMIN_ID = "7700836128Vishu";
+        const TIME_OPTIONS = ["30 Min","1 Hr","1.5 Hr","2 Hr","2.5 Hr","3 Hr","3.5 Hr","4 Hr","4.5 Hr","5 Hr"];
+        const TIME_HOURS_MAP = {"30 Min":0.5,"1 Hr":1,"1.5 Hr":1.5,"2 Hr":2,"2.5 Hr":2.5,"3 Hr":3,"3.5 Hr":3.5,"4 Hr":4,"4.5 Hr":4.5,"5 Hr":5};
+
+        function timeToHours(t){ return TIME_HOURS_MAP[t] || 0; }
+        function calcExtraPayment(hourlyRate, timeStr){ return timeToHours(timeStr) * hourlyRate; }
+
+        function formatDate(d){
+            if(!d) return '';
+            const p = d.split('-');
+            return p.length===3 ? `${p[2]}-${p[1]}-${p[0]}` : d;
+        }
+        function getToday(){
+            const d = new Date();
+            return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+        }
+        function showToast(msg, type='success'){
+            const t = document.createElement('div');
+            t.className = `toast ${type}`;
+            t.innerHTML = msg;
+            document.body.appendChild(t);
+            setTimeout(()=>t.remove(), 3000);
+        }
+        function calcTotals(atts){
+            let earn=0, ded=0;
+            atts.forEach(a=>{
+                const amt = parseFloat(a.payment)||0;
+                if(a.type==='deduction') ded+=amt; else earn+=amt;
+            });
+            return { earn, ded, net: earn-ded };
+        }
+        function getWorkerSettlement(workerId){ return allSettlements[workerId] || null; }
+
+        function calcTotalsWithSettlement(workerId, atts){
+            const settlement = getWorkerSettlement(workerId);
+            const allTotals = calcTotals(atts);
+            if(!settlement){
+                return { ...allTotals, settledEarn:0, settledDed:0, settledNet:0, pendingEarn:allTotals.earn, pendingDed:allTotals.ded, pendingNet:allTotals.net, settlement:null, pendingAtts:atts, settledAtts:[] };
+            }
+            const settleDate = settlement.settleDate;
+            const settledAtts = atts.filter(a=>a.date <= settleDate);
+            const pendingAtts = atts.filter(a=>a.date > settleDate);
+            const st = calcTotals(settledAtts);
+            const pt = calcTotals(pendingAtts);
+            return { ...allTotals, settledEarn:st.earn, settledDed:st.ded, settledNet:st.net, pendingEarn:pt.earn, pendingDed:pt.ded, pendingNet:pt.net, settlement, pendingAtts, settledAtts };
+        }
+
+        function getWorkerTotals(workerId){
+            return new Promise((resolve)=>{
+                onValue(ref(db, `attendance/${workerId}`), (s)=>{
+                    const d = s.val();
+                    const atts = d ? Object.entries(d).map(([id,val])=>({id, ...val})) : [];
+                    resolve(calcTotals(atts));
+                }, { onlyOnce: true });
+            });
+        }
+        async function getAllWorkersTotals(){
+            const totals = [];
+            for(const w of allWorkers){
+                const t = await getWorkerTotals(w.id);
+                const settlement = getWorkerSettlement(w.id);
+                let pendingNet = t.net, settledNet = 0;
+                if(settlement){
+                    const s = await get(ref(db, `attendance/${w.id}`));
+                    const d = s.val();
+                    const atts = d ? Object.entries(d).map(([id,val])=>({id, ...val})) : [];
+                    const settleDate = settlement.settleDate;
+                    const settledAtts = atts.filter(a=>a.date <= settleDate);
+                    const pendingAtts = atts.filter(a=>a.date > settleDate);
+                    settledNet = calcTotals(settledAtts).net;
+                    pendingNet = calcTotals(pendingAtts).net;
+                }
+                totals.push({ ...w, ...t, pendingNet, settledNet, settlement });
+            }
+            return totals;
+        }
+
+        function initDarkMode(){
+            const dark = localStorage.getItem('darkMode')==='true';
+            if(dark) document.body.classList.add('dark');
+            updateDarkIcon();
+        }
+        function toggleDarkMode(){
+            document.body.classList.toggle('dark');
+            localStorage.setItem('darkMode', document.body.classList.contains('dark'));
+            updateDarkIcon();
+        }
+        function updateDarkIcon(){
+            const icon = document.querySelector('#darkToggle i');
+            if(icon) icon.className = document.body.classList.contains('dark') ? 'fas fa-sun' : 'fas fa-moon';
+        }
+        document.getElementById('darkToggle').addEventListener('click', toggleDarkMode);
+
+        async function getRates(wid){ return workerRates[wid] || { dayRate:350, hourlyRate:50 }; }
+        async function updateRates(wid, dr, hr){
+            await set(ref(db, `workerRates/${wid}`), { dayRate:dr, hourlyRate:hr });
+            workerRates[wid] = { dayRate:dr, hourlyRate:hr };
+            showToast(`✅ Rates updated`);
+        }
+
+        function loadRates(){ onValue(ratesRef, s => { workerRates = s.val() || {}; }); }
+        function loadSettlements(){
+            onValue(settlementsRef, s => {
+                allSettlements = s.val() || {};
+                if(document.getElementById('workersList')) renderWorkersList();
+                if(document.getElementById('adminStats')) updateAdminStats();
+                if(document.getElementById('settlementList')) renderSettlementList();
+            });
+        }
+        function loadWorkersList(){
+            onValue(workersRef, s => {
+                allWorkers = s.val() ? Object.entries(s.val()).map(([id,val])=>({id, ...val})) : [];
+                if(document.getElementById('workersList')) renderWorkersList();
+                if(document.getElementById('adminStats')) updateAdminStats();
+            });
+        }
+
+        // ==================== ADMIN DASHBOARD ====================
+        async function updateAdminStats(){
+            const stats = await getAllWorkersTotals();
+            let totalEarn=0, totalDed=0, totalNet=0, totalPending=0, totalSettled=0;
+            stats.forEach(s=>{
+                totalEarn += s.earn || 0;
+                totalDed += s.ded || 0;
+                totalNet += s.net || 0;
+                totalPending += s.pendingNet || 0;
+                totalSettled += s.settledNet || 0;
+            });
+            document.getElementById('statTotalWorkers') && (document.getElementById('statTotalWorkers').innerText = allWorkers.length);
+            document.getElementById('statTotalEarned') && (document.getElementById('statTotalEarned').innerText = '₹' + totalEarn.toLocaleString());
+            document.getElementById('statTotalDeduction') && (document.getElementById('statTotalDeduction').innerText = '₹' + totalDed.toLocaleString());
+            document.getElementById('statNetPayable') && (document.getElementById('statNetPayable').innerText = '₹' + totalNet.toLocaleString());
+            document.getElementById('statPendingPayable') && (document.getElementById('statPendingPayable').innerText = '₹' + totalPending.toLocaleString());
+            document.getElementById('statSettledAmount') && (document.getElementById('statSettledAmount').innerText = '₹' + totalSettled.toLocaleString());
+            window._adminStats = { stats, totalEarn, totalDed, totalNet, totalPending, totalSettled };
+        }
+
+        function renderAdmin(){
+            const modal = document.getElementById('detailModal');
+            if(modal) modal.remove();
+            const page = document.getElementById('pageView');
+            if(page) page.remove();
+            document.body.style.overflow = 'auto';
+
+            document.getElementById('app').innerHTML = `
+                <div class="app-container">
+                    <div class="app-header">
+                        <div>
+                            <h1>Vishu Civil Contractor</h1>
+                            <p>Admin Dashboard</p>
+                        </div>
+                        <button id="logoutBtn" class="header-btn" title="Logout"><i class="fas fa-sign-out-alt"></i></button>
+                    </div>
+
+                    <div class="stat-grid-simple" id="adminStats">
+                        <div class="stat-simple" onclick="window.viewStatDetail('workers')">
+                            <div class="label">Total Workers</div>
+                            <div class="value" id="statTotalWorkers">0</div>
+                        </div>
+                        <div class="stat-simple" onclick="window.viewStatDetail('earned')">
+                            <div class="label">Total Earned</div>
+                            <div class="value green" id="statTotalEarned">₹0</div>
+                        </div>
+                        <div class="stat-simple" onclick="window.viewStatDetail('deduction')">
+                            <div class="label">Total Deduction</div>
+                            <div class="value red" id="statTotalDeduction">₹0</div>
+                        </div>
+                        <div class="stat-simple" onclick="window.viewStatDetail('net')">
+                            <div class="label">Total Net Payable</div>
+                            <div class="value blue" id="statNetPayable">₹0</div>
+                        </div>
+                        <div class="stat-simple" onclick="window.viewStatDetail('pending')">
+                            <div class="label">Pending Payable</div>
+                            <div class="value orange" id="statPendingPayable">₹0</div>
+                        </div>
+                        <div class="stat-simple" onclick="window.viewStatDetail('settled')">
+                            <div class="label">Settled Amount</div>
+                            <div class="value green" id="statSettledAmount">₹0</div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-header">
+                            <h3>All Workers</h3>
+                            <span class="badge-pill" id="workerCount">0 active</span>
+                        </div>
+                        <div class="section-body" id="workersList"></div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-header">
+                            <h3>Settlement History</h3>
+                        </div>
+                        <div class="section-body" id="settlementList"></div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-header">
+                            <h3><i class="fas fa-user-plus"></i> Add New Worker</h3>
+                        </div>
+                        <div style="padding: 1rem 1.2rem;">
+                            <div class="form-group">
+                                <label>Full Name</label>
+                                <input type="text" id="newName" placeholder="e.g., Ramesh" />
+                            </div>
+                            <div class="form-group">
+                                <label>Date of Birth</label>
+                                <input type="date" id="newDob" />
+                            </div>
+                            <div class="form-group">
+                                <label>Phone</label>
+                                <input type="text" id="newPhone" placeholder="Mobile Number" />
+                            </div>
+                            <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
+                                <div class="form-group">
+                                    <label>Day Rate (₹)</label>
+                                    <input type="number" id="newDayRate" value="350" />
+                                </div>
+                                <div class="form-group">
+                                    <label>Extra ₹/hr</label>
+                                    <input type="number" id="newHourlyRate" value="50" />
+                                </div>
+                            </div>
+                            <button id="addWorkerBtn" class="btn btn-primary btn-block"><i class="fas fa-plus"></i> Add Worker</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('logoutBtn').addEventListener('click', ()=>{ currentUser=null; renderLogin(); });
+            document.getElementById('addWorkerBtn').addEventListener('click', addWorker);
+            renderWorkersList();
+            renderSettlementList();
+            updateAdminStats();
+
+            window.viewStatDetail = (type) => {
+                const stats = window._adminStats?.stats || [];
+                if(!stats.length) return showToast('No data available', 'info');
+                let title='', data=[];
+                if(type==='workers'){
+                    title='All Workers';
+                    data = stats.map(s=>({ name:s.name, id:s.id, loginId:s.loginId, value:'Active' }));
+                } else if(type==='earned'){
+                    title='Total Earned';
+                    data = stats.filter(s=>s.earn>0).sort((a,b)=>b.earn-a.earn).map(s=>({ name:s.name, id:s.id, loginId:s.loginId, value:'₹'+s.earn.toLocaleString() }));
+                } else if(type==='deduction'){
+                    title='Total Deduction';
+                    data = stats.filter(s=>s.ded>0).sort((a,b)=>b.ded-a.ded).map(s=>({ name:s.name, id:s.id, loginId:s.loginId, value:'₹'+s.ded.toLocaleString() }));
+                } else if(type==='net'){
+                    title='Total Net Payable';
+                    data = stats.sort((a,b)=>b.net-a.net).map(s=>({ name:s.name, id:s.id, loginId:s.loginId, value:'₹'+s.net.toLocaleString() }));
+                } else if(type==='pending'){
+                    title='Pending Payable';
+                    data = stats.filter(s=>s.pendingNet!==0).sort((a,b)=>b.pendingNet-a.pendingNet).map(s=>({ name:s.name, id:s.id, loginId:s.loginId, value:'₹'+(s.pendingNet||0).toLocaleString(), extra:s.settlement?`Settled up to: ${formatDate(s.settlement.settleDate)}`:'Not settled' }));
+                } else if(type==='settled'){
+                    title='Settled Amount';
+                    data = stats.filter(s=>s.settledNet!==0).sort((a,b)=>b.settledNet-a.settledNet).map(s=>({ name:s.name, id:s.id, loginId:s.loginId, value:'₹'+(s.settledNet||0).toLocaleString(), extra:s.settlement?`Settled on: ${formatDate(s.settlement.settleDate)}`:'' }));
+                }
+                if(!data.length) return showToast('No data available', 'info');
+                renderStatDetailPage(title, data);
+            };
+        }
+
+        function renderSettlementList(){
+            const container = document.getElementById('settlementList');
+            if(!container) return;
+            const entries = Object.entries(allSettlements);
+            if(!entries.length){
+                container.innerHTML = '<div class="empty-state">📭 No settlements yet</div>';
+                return;
+            }
+            container.innerHTML = entries.map(([wid, s])=>{
+                const worker = allWorkers.find(w=>w.id===wid);
+                const name = worker ? worker.name : 'Unknown';
+                return `
+                    <div class="list-item" style="cursor:default;">
+                        <div class="list-item-left">
+                            <div class="name">${name}</div>
+                            <div class="sub">Up to ${formatDate(s.settleDate)} · ₹${(s.amount||0).toLocaleString()}</div>
+                        </div>
+                        <span class="badge-pill"><i class="fas fa-check-circle"></i> Settled</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderStatDetailPage(title, data){
+            const existing = document.getElementById('pageView');
+            if(existing) existing.remove();
+            const page = document.createElement('div');
+            page.id = 'pageView';
+            page.className = 'page-overlay';
+            page.innerHTML = `
+                <div class="page-wrap">
+                    <div class="app-header">
+                        <div>
+                            <h1>${title}</h1>
+                        </div>
+                        <button id="pageCloseBtn" class="header-btn"><i class="fas fa-times"></i></button>
+                    </div>
+                    <div class="section">
+                        <div class="section-body">
+                            ${data.map(item=>`
+                                <div class="list-item" onclick="window.openWorkerFromStat('${item.id}')">
+                                    <div class="list-item-left">
+                                        <div class="name">${item.name}</div>
+                                        <div class="sub">${item.loginId}</div>
+                                        ${item.extra ? `<div class="sub" style="font-size:0.7rem;color:#94a3b8;">${item.extra}</div>` : ''}
+                                    </div>
+                                    <div style="font-weight:700; font-size:0.9rem;">${item.value}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(page);
+            document.getElementById('pageCloseBtn').onclick = ()=>{ page.remove(); };
+            window.openWorkerFromStat = (wid)=>{
+                const worker = allWorkers.find(w=>w.id===wid);
+                if(worker){ page.remove(); openWorkerDetail(worker); }
+            };
+        }
+
+        function renderWorkersList(){
+            const container = document.getElementById('workersList');
+            if(!container) return;
+            if(!allWorkers.length){
+                container.innerHTML = '<div class="empty-state">No workers added yet</div>';
+                return;
+            }
+            container.innerHTML = allWorkers.map(w=>{
+                const settlement = getWorkerSettlement(w.id);
+                return `
+                    <div class="list-item" onclick="window.openWorkerFromList('${w.id}')">
+                        <div class="list-item-left">
+                            <div class="name">${w.name}</div>
+                            <div class="sub">${w.loginId}</div>
+                        </div>
+                        <div class="list-item-right">
+                            ${settlement ? `<span class="badge-pill"><i class="fas fa-check"></i> Settled</span>` : ''}
+                            <i class="fas fa-chevron-right" style="font-size:0.7rem;"></i>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            window.openWorkerFromList = (wid)=>{
+                const worker = allWorkers.find(w=>w.id===wid);
+                if(worker) openWorkerDetail(worker);
+            };
+            document.getElementById('workerCount') && (document.getElementById('workerCount').innerText = allWorkers.length + ' active');
+        }
+
+        // ==================== WORKER DETAIL MODAL ====================
+        async function openWorkerDetail(w){
+            currentWorkerId = w.id;
+            const rates = await getRates(w.id);
+            await loadWorkerData(w.id);
+            const totals = calcTotalsWithSettlement(w.id, currentAttendances);
+            calendarViewDate = new Date();
+
+            const existing = document.getElementById('detailModal');
+            if(existing) existing.remove();
+
+            const modal = document.createElement('div');
+            modal.id = 'detailModal';
+            modal.className = 'modal-overlay';
+            modal.innerHTML = `
+                <div class="modal-box">
+                    <div class="modal-header">
+                        <div>
+                            <h2>${w.name}</h2>
+                            <div class="sub">${w.loginId}</div>
+                        </div>
+                        <div style="display:flex; gap:0.4rem;">
+                            <button id="deleteWorkerBtn" class="close-x" style="background:#fef2f2;color:#dc2626;" title="Delete"><i class="fas fa-trash"></i></button>
+                            <button id="closeModalBtn" class="close-x"><i class="fas fa-times"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="summary-row">
+                        <div class="summary-pill">
+                            <div class="s-label">Earned</div>
+                            <div class="s-value green">₹${totals.earn.toLocaleString()}</div>
+                        </div>
+                        <div class="summary-pill">
+                            <div class="s-label">Deduction</div>
+                            <div class="s-value red">₹${totals.ded.toLocaleString()}</div>
+                        </div>
+                        <div class="summary-pill">
+                            <div class="s-label">Net</div>
+                            <div class="s-value blue">₹${totals.net.toLocaleString()}</div>
+                        </div>
+                        <div class="summary-pill">
+                            <div class="s-label">Pending</div>
+                            <div class="s-value orange">₹${totals.pendingNet.toLocaleString()}</div>
+                        </div>
+                    </div>
+
+                    <div style="background:#f8fafc; border-radius:12px; padding:0.85rem 1rem; margin-bottom:1rem; display:flex; gap:0.75rem; align-items:flex-end; flex-wrap:wrap;">
+                        <div style="flex:1; min-width:100px;">
+                            <label style="font-size:0.7rem;">Day Rate (₹)</label>
+                            <input type="number" id="dayRate" value="${rates.dayRate}" step="10" style="padding:0.55rem 0.75rem;" />
+                        </div>
+                        <div style="flex:1; min-width:100px;">
+                            <label style="font-size:0.7rem;">Extra ₹/hr</label>
+                            <input type="number" id="hourlyRate" value="${rates.hourlyRate}" step="5" style="padding:0.55rem 0.75rem;" />
+                        </div>
+                        <button id="saveRatesBtn" class="btn btn-primary btn-sm" style="margin-bottom:0.1rem;">Save</button>
+                    </div>
+
+                    <div class="segmented">
+                        <button class="seg-tab active" data-tab="records"><i class="fas fa-list"></i> Records</button>
+                        <button class="seg-tab" data-tab="addAttend"><i class="fas fa-plus"></i> Day</button>
+                        <button class="seg-tab" data-tab="addExtra"><i class="fas fa-clock"></i> Extra</button>
+                        <button class="seg-tab" data-tab="addDeduction"><i class="fas fa-minus"></i> Deduct</button>
+                        <button class="seg-tab" data-tab="settlement"><i class="fas fa-handshake"></i> Settle</button>
+                    </div>
+
+                    <div id="recordsTab" class="tab-content">
+                        <button id="downloadPDF" class="btn btn-outline btn-sm" style="margin-bottom:0.75rem;"><i class="fas fa-download"></i> Download PDF</button>
+                        <div id="workerRecordsList"></div>
+                    </div>
+
+                    <div id="addAttendTab" class="tab-content" style="display:none;">
+                        <div class="form-group">
+                            <label>Date</label>
+                            <input type="date" id="attDate" value="${getToday()}" />
+                        </div>
+                        <div class="form-group">
+                            <label>Site</label>
+                            <input type="text" id="attSite" placeholder="Enter site name" />
+                        </div>
+                        <button id="saveAttendBtn" class="btn btn-primary btn-block"><i class="fas fa-save"></i> Save Attendance</button>
+                    </div>
+
+                    <div id="addExtraTab" class="tab-content" style="display:none;">
+                        <div class="form-group">
+                            <label>Date</label>
+                            <input type="date" id="extraDate" value="${getToday()}" />
+                        </div>
+                        <div class="form-group">
+                            <label>Site</label>
+                            <input type="text" id="extraSite" placeholder="Enter site name" />
+                        </div>
+                        <div class="form-group">
+                            <label>Duration</label>
+                            <div id="timeOptsAdmin" style="display:flex; flex-wrap:wrap; gap:0.35rem;"></div>
+                            <input type="hidden" id="selExtra" />
+                        </div>
+                        <div class="form-group">
+                            <label>Extra Payment</label>
+                            <input type="text" id="extraPayDisplay" readonly style="background:#f1f5f9;" />
+                        </div>
+                        <button id="saveExtraBtn" class="btn btn-success btn-block"><i class="fas fa-clock"></i> Add Extra Time</button>
+                    </div>
+
+                    <div id="addDeductionTab" class="tab-content" style="display:none;">
+                        <div class="form-group">
+                            <label>Date</label>
+                            <input type="date" id="dedDate" value="${getToday()}" />
+                        </div>
+                        <div class="form-group">
+                            <label>Reason</label>
+                            <input type="text" id="dedReason" placeholder="e.g., Advance, Fine" />
+                        </div>
+                        <div class="form-group">
+                            <label>Amount (₹)</label>
+                            <input type="number" id="dedAmount" placeholder="Enter amount" />
+                        </div>
+                        <button id="saveDedBtn" class="btn btn-danger btn-block"><i class="fas fa-minus-circle"></i> Add Deduction</button>
+                    </div>
+
+                    <div id="settlementTab" class="tab-content" style="display:none;">
+                        ${totals.settlement ? `
+                        <div class="settle-banner">
+                            <div class="sb-left">
+                                <strong><i class="fas fa-check-circle"></i> Settled up to ${formatDate(totals.settlement.settleDate)}</strong>
+                                <div style="font-size:0.7rem; opacity:0.8;">On ${new Date(totals.settlement.settledAt).toLocaleString()}</div>
+                            </div>
+                            <div class="sb-right">
+                                <div class="sb-label">Amount</div>
+                                <div class="sb-value">₹${totals.settlement.amount.toLocaleString()}</div>
+                            </div>
+                        </div>
+                        ${totals.settlement.note ? `<div style="font-size:0.75rem; color:#64748b; margin-bottom:0.75rem;"><i class="fas fa-sticky-note"></i> ${totals.settlement.note}</div>` : ''}
+                        <button id="removeSettlementBtn" class="btn btn-outline btn-sm btn-block" style="margin-bottom:1rem;"><i class="fas fa-undo"></i> Remove Settlement</button>
+                        ` : ''}
+
+                        <div class="form-group">
+                            <label>Settle up to Date</label>
+                            <input type="date" id="settleDate" value="${getToday()}" />
+                        </div>
+                        <div class="form-group">
+                            <label>Note (Optional)</label>
+                            <input type="text" id="settleNote" placeholder="e.g., Cash payment" />
+                        </div>
+                        <div class="form-group">
+                            <label>Settlement Amount</label>
+                            <input type="text" id="settleAmountDisplay" readonly style="background:#f0fdf4; font-weight:700; color:#16a34a;" />
+                        </div>
+                        <button id="saveSettlementBtn" class="btn btn-success btn-block"><i class="fas fa-check-circle"></i> Clear Settlement</button>
+                    </div>
+
+                    <div style="margin-top:1.5rem;">
+                        <h4 style="font-size:0.85rem; margin-bottom:0.5rem;">Attendance Calendar</h4>
+                        <div id="adminWorkerCalendar"></div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+
+            // Time options
+            const tContainer = document.getElementById('timeOptsAdmin');
+            if(tContainer){
+                TIME_OPTIONS.forEach(t=>{
+                    const el = document.createElement('span');
+                    el.className = 'time-option';
+                    el.style.cssText = 'padding:0.4rem 0.8rem;border-radius:8px;border:1px solid #e2e8f0;cursor:pointer;font-size:0.75rem;transition:0.15s;';
+                    el.innerText = t;
+                    el.onclick = ()=>{
+                        document.querySelectorAll('#timeOptsAdmin .time-option').forEach(x=>{
+                            x.style.background='transparent'; x.style.color=''; x.style.borderColor='#e2e8f0';
+                        });
+                        el.style.background = '#2563eb'; el.style.color = '#fff'; el.style.borderColor = '#2563eb';
+                        document.getElementById('selExtra').value = t;
+                        const hr = parseFloat(document.getElementById('hourlyRate').value) || 0;
+                        document.getElementById('extraPayDisplay').value = '₹' + calcExtraPayment(hr, t);
+                    };
+                    tContainer.appendChild(el);
+                });
+            }
+
+            // Settlement amount calc
+            const settleDateInput = document.getElementById('settleDate');
+            const settleAmountDisplay = document.getElementById('settleAmountDisplay');
+            function updateSettleAmount(){
+                if(!settleDateInput || !settleAmountDisplay) return;
+                const settleDate = settleDateInput.value;
+                const attsUpTo = currentAttendances.filter(a=>a.date <= settleDate);
+                const t = calcTotals(attsUpTo);
+                settleAmountDisplay.value = '₹' + t.net.toLocaleString() + ' (Net)';
+            }
+            if(settleDateInput){
+                settleDateInput.addEventListener('change', updateSettleAmount);
+                updateSettleAmount();
+            }
+
+            renderWorkerRecords();
+            renderCalendar(currentAttendances, 'adminWorkerCalendar');
+
+            document.getElementById('closeModalBtn').onclick = ()=>{
+                modal.remove();
+                document.body.style.overflow = 'auto';
+                if(currentUser?.isAdmin) renderAdmin();
+                else if(currentUser){ renderWorker(); loadWorkerData(currentUser.id); }
+                else renderLogin();
+            };
+            document.getElementById('deleteWorkerBtn').onclick = async ()=>{
+                if(confirm(`Delete "${w.name}" and all their data?`)){
+                    await remove(ref(db, `workers/${w.id}`));
+                    await remove(ref(db, `attendance/${w.id}`));
+                    await remove(ref(db, `workerRates/${w.id}`));
+                    await remove(ref(db, `settlements/${w.id}`));
+                    modal.remove();
+                    showToast('Worker deleted');
+                    if(currentUser?.isAdmin) renderAdmin();
+                    else renderLogin();
+                }
+            };
+            document.getElementById('saveRatesBtn').onclick = async ()=>{
+                await updateRates(w.id, parseFloat(document.getElementById('dayRate').value), parseFloat(document.getElementById('hourlyRate').value));
+            };
+            document.getElementById('saveAttendBtn').onclick = async ()=>{
+                await saveAttendanceOnly(w.id);
+                document.querySelector('[data-tab="records"]')?.click();
+                renderCalendar(currentAttendances, 'adminWorkerCalendar');
+                renderWorkerRecords();
+                updateAdminStats();
+            };
+            document.getElementById('saveExtraBtn').onclick = async ()=>{
+                await saveExtraOnly(w.id);
+                document.querySelector('[data-tab="records"]')?.click();
+                renderCalendar(currentAttendances, 'adminWorkerCalendar');
+                renderWorkerRecords();
+                updateAdminStats();
+            };
+            document.getElementById('saveDedBtn').onclick = async ()=>{
+                await saveDeduction(w.id);
+                document.querySelector('[data-tab="records"]')?.click();
+                renderCalendar(currentAttendances, 'adminWorkerCalendar');
+                renderWorkerRecords();
+                updateAdminStats();
+            };
+            document.getElementById('saveSettlementBtn').onclick = async ()=>{
+                await saveSettlement(w.id);
+                modal.remove();
+                openWorkerDetail(w);
+            };
+            document.getElementById('removeSettlementBtn')?.addEventListener('click', async ()=>{
+                if(confirm('Remove settlement?')){
+                    await remove(ref(db, `settlements/${w.id}`));
+                    showToast('Settlement removed');
+                    modal.remove();
+                    openWorkerDetail(w);
+                }
+            });
+            document.getElementById('downloadPDF').onclick = ()=> generatePDF(w, currentAttendances);
+
+            document.querySelectorAll('.seg-tab').forEach(btn=>{
+                btn.onclick = ()=>{
+                    document.querySelectorAll('.seg-tab').forEach(b=>b.classList.remove('active'));
+                    btn.classList.add('active');
+                    document.querySelectorAll('.tab-content').forEach(c=>c.style.display='none');
+                    document.getElementById(btn.dataset.tab + 'Tab').style.display = 'block';
+                };
+            });
+        }
+
+        // ==================== SAVE HELPERS ====================
+        async function saveAttendanceOnly(wid){
+            const date = document.getElementById('attDate').value;
+            const site = document.getElementById('attSite').value.trim() || 'Work Site';
+            const rates = await getRates(wid);
+            if(!date) return showToast('Date required', 'error');
+            await push(ref(db, `attendance/${wid}`), { date, siteName:site, payment:rates.dayRate, type:'earning', timestamp:Date.now() });
+            showToast(`✅ Day attendance: +₹${rates.dayRate}`);
+            document.getElementById('attSite').value = '';
+        }
+        async function saveExtraOnly(wid){
+            const date = document.getElementById('extraDate').value;
+            const site = document.getElementById('extraSite').value.trim() || 'Extra Work';
+            const extra = document.getElementById('selExtra').value;
+            const rates = await getRates(wid);
+            if(!date || !extra) return showToast('Date and time required', 'error');
+            const pay = calcExtraPayment(rates.hourlyRate, extra);
+            await push(ref(db, `attendance/${wid}`), { date, siteName:site, payment:pay, extraTime:extra, type:'earning', timestamp:Date.now() });
+            showToast(`⏱️ Extra time: +₹${pay}`);
+            document.getElementById('extraSite').value = '';
+            document.getElementById('selExtra').value = '';
+            document.querySelectorAll('#timeOptsAdmin .time-option').forEach(x=>{ x.style.background='transparent'; x.style.color=''; x.style.borderColor='#e2e8f0'; });
+            document.getElementById('extraPayDisplay').value = '';
+        }
+        async function saveDeduction(wid){
+            const date = document.getElementById('dedDate').value;
+            const reason = document.getElementById('dedReason').value.trim() || 'Deduction';
+            const amt = parseFloat(document.getElementById('dedAmount').value);
+            if(!date || !amt) return showToast('Date and amount required', 'error');
+            await push(ref(db, `attendance/${wid}`), { date, siteName:reason, payment:amt, type:'deduction', timestamp:Date.now() });
+            showToast(`📉 Deduction: -₹${amt}`);
+            document.getElementById('dedReason').value = '';
+            document.getElementById('dedAmount').value = '';
+        }
+        async function saveSettlement(wid){
+            const settleDate = document.getElementById('settleDate').value;
+            const note = document.getElementById('settleNote').value.trim();
+            if(!settleDate) return showToast('Please select settle date', 'error');
+            const attsUpTo = currentAttendances.filter(a=>a.date <= settleDate);
+            if(!attsUpTo.length) return showToast('No records to settle up to this date', 'error');
+            const totals = calcTotals(attsUpTo);
+            if(totals.net === 0) return showToast('Net amount is zero, nothing to settle', 'error');
+            await set(ref(db, `settlements/${wid}`), { settleDate, amount:totals.net, note:note||'', settledAt:Date.now() });
+            showToast(`✅ Settlement cleared! ₹${totals.net.toLocaleString()} up to ${formatDate(settleDate)}`);
+        }
+
+        // ==================== LOAD WORKER DATA ====================
+        function loadWorkerData(wid){
+            onValue(ref(db, `attendance/${wid}`), (s)=>{
+                const d = s.val();
+                currentAttendances = d ? Object.entries(d).map(([id,val])=>({id, ...val})) : [];
+                currentAttendances.sort((a,b)=> new Date(b.date) - new Date(a.date));
+
+                if(document.getElementById('workerRecordsList')) renderWorkerRecords();
+                if(document.getElementById('workerAttendanceList')){
+                    renderWorkerAttendanceList();
+                    const { earn, ded, net } = calcTotals(currentAttendances);
+                    document.getElementById('workerTotalDays') && (document.getElementById('workerTotalDays').innerText = currentAttendances.filter(a=>a.type!=='deduction').length);
+                    document.getElementById('workerTotalEarned') && (document.getElementById('workerTotalEarned').innerText = '₹' + earn.toLocaleString());
+                    document.getElementById('workerTotalDeduction') && (document.getElementById('workerTotalDeduction').innerText = '₹' + ded.toLocaleString());
+                    document.getElementById('workerNetPayment') && (document.getElementById('workerNetPayment').innerText = '₹' + net.toLocaleString());
+                    renderCalendar(currentAttendances, 'workerCalendar');
+                    renderWorkerSettlementBanner(wid);
+                }
+                if(document.getElementById('adminWorkerCalendar')) renderCalendar(currentAttendances, 'adminWorkerCalendar');
+                if(document.getElementById('adminStats')) updateAdminStats();
+                if(document.getElementById('workerSettlementHistory')) renderWorkerSettlementHistory(wid);
+            });
+        }
+
+        function renderWorkerSettlementBanner(wid){
+            const container = document.getElementById('workerSettlementBanner');
+            if(!container) return;
+            const settlement = getWorkerSettlement(wid);
+            if(!settlement){ container.innerHTML = ''; return; }
+            const totals = calcTotalsWithSettlement(wid, currentAttendances);
+            container.innerHTML = `
+                <div class="settle-banner">
+                    <div class="sb-left">
+                        <strong><i class="fas fa-check-circle"></i> Settled up to ${formatDate(settlement.settleDate)}</strong>
+                        <div style="font-size:0.7rem; opacity:0.8;">Cleared: ₹${settlement.amount.toLocaleString()}</div>
+                    </div>
+                    <div class="sb-right">
+                        <div class="sb-label">Pending</div>
+                        <div class="sb-value">₹${totals.pendingNet.toLocaleString()}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderWorkerSettlementHistory(wid){
+            const container = document.getElementById('workerSettlementHistory');
+            if(!container) return;
+            const s = allSettlements[wid];
+            if(!s){
+                container.innerHTML = '<div class="empty-state">📭 No settlement history</div>';
+                return;
+            }
+            container.innerHTML = `
+                <div class="list-item" style="cursor:default;">
+                    <div class="list-item-left">
+                        <div class="name">Settled up to ${formatDate(s.settleDate)}</div>
+                        <div class="sub">On ${new Date(s.settledAt).toLocaleString()}</div>
+                        ${s.note ? `<div class="sub" style="font-size:0.7rem;">${s.note}</div>` : ''}
+                    </div>
+                    <div style="font-weight:700; color:#16a34a;">₹${s.amount.toLocaleString()}</div>
+                </div>
+            `;
+        }
+
+        // ==================== RECORDS ====================
+        function renderWorkerRecords(){
+            const container = document.getElementById('workerRecordsList');
+            if(!container) return;
+            if(!currentAttendances.length){
+                container.innerHTML = '<div class="empty-state">📭 No records found</div>';
+                return;
+            }
+            const settlement = getWorkerSettlement(currentWorkerId);
+            const settleDate = settlement ? settlement.settleDate : null;
+            container.innerHTML = currentAttendances.map(a=>{
+                const isSettled = settleDate && a.date <= settleDate;
+                return `
+                    <div class="record-simple">
+                        <div class="r-left">
+                            <div class="r-date">${formatDate(a.date)}</div>
+                            <div class="r-sub">${a.siteName||'N/A'}${a.extraTime ? ' · ' + a.extraTime : ''}${isSettled ? ' · Settled' : ''}</div>
+                        </div>
+                        <div class="r-actions">
+                            <span class="r-amount ${a.type==='deduction'?'red':'green'}">${a.type==='deduction'?'-':'+'}₹${(a.payment||0).toLocaleString()}</span>
+                            <button class="del-icon del-rec" data-id="${a.id}"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            document.querySelectorAll('.del-rec').forEach(btn=>{
+                btn.onclick = async ()=>{
+                    if(confirm('Delete this record?')){
+                        await remove(ref(db, `attendance/${currentWorkerId}/${btn.dataset.id}`));
+                        showToast('Deleted');
+                        updateAdminStats();
+                    }
+                };
+            });
+        }
+
+        function renderWorkerAttendanceList(){
+            const container = document.getElementById('workerAttendanceList');
+            if(!container) return;
+            if(!currentAttendances.length){
+                container.innerHTML = '<div class="empty-state">📭 No records found</div>';
+                return;
+            }
+            const settlement = getWorkerSettlement(currentUser.id);
+            const settleDate = settlement ? settlement.settleDate : null;
+            container.innerHTML = currentAttendances.map(a=>{
+                const isSettled = settleDate && a.date <= settleDate;
+                return `
+                    <div class="record-simple">
+                        <div class="r-left">
+                            <div class="r-date">${formatDate(a.date)}</div>
+                            <div class="r-sub">${a.siteName||'N/A'}${a.extraTime ? ' · ' + a.extraTime : ''}${isSettled ? ' · Settled' : ' · Pending'}</div>
+                        </div>
+                        <span class="r-amount ${a.type==='deduction'?'red':'green'}">${a.type==='deduction'?'-':'+'}₹${(a.payment||0).toLocaleString()}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ==================== CALENDAR ====================
+        function renderCalendar(attendances, containerId){
+            const container = document.getElementById(containerId);
+            if(!container) return;
+            const year = calendarViewDate.getFullYear();
+            const month = calendarViewDate.getMonth();
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const attMap = new Map();
+            attendances.forEach(a=>{
+                if(!attMap.has(a.date)) attMap.set(a.date, []);
+                attMap.get(a.date).push(a);
+            });
+            const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+            let html = `
+                <div class="cal-nav">
+                    <button class="cal-prev"><i class="fas fa-chevron-left"></i></button>
+                    <span class="month-label">${monthNames[month]} ${year}</span>
+                    <button class="cal-next"><i class="fas fa-chevron-right"></i></button>
+                </div>
+                <div class="cal-grid">
+                    ${['Su','Mo','Tu','We','Th','Fr','Sa'].map(d=>`<div class="cal-day-name">${d}</div>`).join('')}
+            `;
+            for(let i=0;i<firstDay;i++) html += `<div></div>`;
+            for(let day=1;day<=daysInMonth;day++){
+                const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+                const records = attMap.get(dateStr) || [];
+                const hasPayment = records.some(r=>r.type==='earning');
+                const hasDeduction = records.some(r=>r.type==='deduction');
+                let cls = '';
+                if(hasPayment && hasDeduction) cls = 'mixed';
+                else if(hasPayment) cls = 'payment';
+                else if(hasDeduction) cls = 'deduction';
+                html += `<div class="cal-date ${cls}">${day}</div>`;
+            }
+            html += `</div>`;
+            container.innerHTML = html;
+            container.querySelector('.cal-prev')?.addEventListener('click', (e)=>{
+                e.stopPropagation();
+                calendarViewDate.setMonth(calendarViewDate.getMonth() - 1);
+                renderCalendar(attendances, containerId);
+            });
+            container.querySelector('.cal-next')?.addEventListener('click', (e)=>{
+                e.stopPropagation();
+                calendarViewDate.setMonth(calendarViewDate.getMonth() + 1);
+                renderCalendar(attendances, containerId);
+            });
+        }
+
+        // ==================== LOGIN ====================
+        function renderLogin(){
+            document.getElementById('app').innerHTML = `
+                <div class="login-wrap">
+                    <div class="brand-icon"><i class="fas fa-hard-hat"></i></div>
+                    <h2>Vishu Civil Contractor</h2>
+                    <p class="login-sub">Accounting & Attendance Portal</p>
+                    <div class="form-group">
+                        <label>Login ID</label>
+                        <input type="text" id="loginId" placeholder="Enter your Login ID" />
+                    </div>
+                    <button id="loginBtn" class="btn btn-primary btn-block"><i class="fas fa-sign-in-alt"></i> Login</button>
+                    <p style="text-align:center; margin-top:1.5rem; font-size:0.75rem; color:#94a3b8;"><i class="fas fa-phone-alt"></i> Contact: 7700836128</p>
+                </div>
+            `;
+            document.getElementById('loginBtn').addEventListener('click', handleLogin);
+            document.getElementById('loginId').addEventListener('keypress', (e)=>{ if(e.key==='Enter') handleLogin(); });
+            const modal = document.getElementById('detailModal'); if(modal) modal.remove();
+            const page = document.getElementById('pageView'); if(page) page.remove();
+            document.body.style.overflow = 'auto';
+        }
+
+        async function handleLogin(){
+            const lid = document.getElementById('loginId').value.trim().toLowerCase();
+            if(!lid) return showToast('Please enter Login ID', 'error');
+            if(lid === ADMIN_ID.toLowerCase()){
+                currentUser = { id:'admin', name:'Admin', isAdmin:true };
+                showToast('Welcome Admin!', 'success');
+                renderAdmin();
+                return;
+            }
+            const w = allWorkers.find(w=>w.loginId === lid);
+            if(w){
+                currentUser = { id:w.id, name:w.name, loginId:w.loginId, isAdmin:false };
+                showToast(`Welcome ${w.name}!`, 'success');
+                renderWorker();
+                loadWorkerData(w.id);
+            } else {
+                showToast('Invalid Login ID', 'error');
+            }
+        }
+
+        // ==================== WORKER DASHBOARD ====================
+        function renderWorker(){
+            const modal = document.getElementById('detailModal'); if(modal) modal.remove();
+            const page = document.getElementById('pageView'); if(page) page.remove();
+            document.body.style.overflow = 'auto';
+            calendarViewDate = new Date();
+
+            document.getElementById('app').innerHTML = `
+                <div class="app-container">
+                    <div class="app-header">
+                        <div>
+                            <h1>Hello, ${currentUser.name}</h1>
+                            <p>${currentUser.loginId}</p>
+                        </div>
+                        <button id="logoutBtn" class="header-btn" title="Logout"><i class="fas fa-sign-out-alt"></i></button>
+                    </div>
+
+                    <div id="workerSettlementBanner"></div>
+
+                    <div class="stat-grid-simple">
+                        <div class="stat-simple">
+                            <div class="label">Attendance Days</div>
+                            <div class="value" id="workerTotalDays">0</div>
+                        </div>
+                        <div class="stat-simple">
+                            <div class="label">Total Earned</div>
+                            <div class="value green" id="workerTotalEarned">₹0</div>
+                        </div>
+                        <div class="stat-simple">
+                            <div class="label">Deductions</div>
+                            <div class="value red" id="workerTotalDeduction">₹0</div>
+                        </div>
+                        <div class="stat-simple">
+                            <div class="label">Net Payable</div>
+                            <div class="value blue" id="workerNetPayment">₹0</div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-header"><h3>Attendance Calendar</h3></div>
+                        <div style="padding: 0.5rem 1rem 1rem;" id="workerCalendar"></div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-header"><h3>Settlement History</h3></div>
+                        <div class="section-body" id="workerSettlementHistory"></div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-header">
+                            <h3>My Records</h3>
+                            <button id="downloadPDFBtn" class="btn btn-outline btn-sm"><i class="fas fa-download"></i> PDF</button>
+                        </div>
+                        <div style="padding: 0.5rem 1.2rem;" id="workerAttendanceList"></div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('logoutBtn').addEventListener('click', ()=>{ currentUser=null; renderLogin(); });
+            document.getElementById('downloadPDFBtn').addEventListener('click', ()=> generatePDF({ name:currentUser.name, loginId:currentUser.loginId, id:currentUser.id }, currentAttendances));
+            loadWorkerData(currentUser.id);
+        }
+
+        // ==================== ADD WORKER ====================
+        async function addWorker(){
+            const name = document.getElementById('newName').value.trim();
+            const dob = document.getElementById('newDob').value;
+            const phone = document.getElementById('newPhone').value.trim();
+            const dr = parseFloat(document.getElementById('newDayRate').value) || 350;
+            const hr = parseFloat(document.getElementById('newHourlyRate').value) || 50;
+            if(!name || !dob) return showToast('Name and DOB required', 'error');
+            const year = dob.split('-')[0];
+            const lid = (name + year).toLowerCase().replace(/\s/g, '');
+            const nr = await push(workersRef, { name, dob, phone, loginId:lid, createdAt:Date.now() });
+            await set(ref(db, `workerRates/${nr.key}`), { dayRate:dr, hourlyRate:hr });
+            showToast(`✅ Worker "${name}" added! Login ID: ${lid}`);
+            document.getElementById('newName').value = '';
+            document.getElementById('newDob').value = '';
+            document.getElementById('newPhone').value = '';
+        }
+
+        // ==================== PDF ====================
+        async function generatePDF(w, atts){
+            if(!atts.length) return showToast('No data to export', 'error');
+            const { earn, ded, net } = calcTotals(atts);
+            const rates = await getRates(w.id);
+            const settlement = getWorkerSettlement(w.id);
+            const div = document.createElement('div');
+            div.style.cssText = 'position:absolute; left:-9999px; width:750px; padding:20px; background:white; color:black; font-family:sans-serif;';
+            div.innerHTML = `
+                <h2 style="color:#2563eb;">Vishu Civil Contractor</h2>
+                <h3>Worker: ${w.name}</h3>
+                <p>Login ID: ${w.loginId} | Day Rate: ₹${rates.dayRate} | Extra Hourly: ₹${rates.hourlyRate}</p>
+                ${settlement ? `<p style="background:#fef3c7; padding:8px; border-radius:4px;"><strong>🔒 Settled up to: ${formatDate(settlement.settleDate)}</strong> | Amount: ₹${settlement.amount.toLocaleString()}</p>` : ''}
+                <p><strong>Summary:</strong> Earned ₹${earn} | Deduction ₹${ded} | <strong>Net: ₹${net}</strong></p>
+                <table border="1" cellpadding="6" style="width:100%; border-collapse:collapse; margin-top:10px;">
+                    <thead><tr style="background:#2563eb; color:white;"><th>Date</th><th>Site</th><th>Extra</th><th>Amount</th><th>Status</th></tr></thead>
+                    <tbody>${atts.map(a=>{
+                        const isSettled = settlement && a.date <= settlement.settleDate;
+                        return `<tr><td>${formatDate(a.date)}</td><td>${a.siteName||'N/A'}</td><td>${a.extraTime||'-'}</td><td style="color:${a.type==='deduction'?'red':'green'}">${a.type==='deduction'?'-':'+'}₹${(a.payment||0).toLocaleString()}</td><td>${isSettled?'✅ Settled':'⏳ Pending'}</td></tr>`;
+                    }).join('')}</tbody>
+                </table>
+                <p style="margin-top:15px; font-size:0.8rem;">Generated: ${new Date().toLocaleString()}</p>
+            `;
+            document.body.appendChild(div);
+            try {
+                const canvas = await html2canvas(div, { scale:2 });
+                const img = canvas.toDataURL('image/png');
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF('p','mm','a4');
+                const wd = 190;
+                const h = (canvas.height * wd) / canvas.width;
+                pdf.addImage(img, 'PNG', 10, 10, wd, h);
+                pdf.save(`${w.name}_Report.pdf`);
+                showToast('PDF downloaded!');
+            } catch(e){ showToast('PDF failed', 'error'); }
+            finally { div.remove(); }
+        }
+
+        // ==================== INIT ====================
+        const defaultWorkers = [
+            { name:'Bhutan', dob:'2004-01-01', loginId:'bhutan2004', phone:'9876543210', dayRate:350, hourlyRate:50 },
+            { name:'Krishna', dob:'2004-03-07', loginId:'krishna2004', phone:'9876543211', dayRate:350, hourlyRate:50 }
+        ];
+        async function initDB(){
+            const s = await new Promise(r => onValue(workersRef, r, { onlyOnce:true }));
+            if(!s.exists()){
+                for(const w of defaultWorkers){
+                    const nr = await push(workersRef, { name:w.name, dob:w.dob, loginId:w.loginId, phone:w.phone, createdAt:Date.now() });
+                    await set(ref(db, `workerRates/${nr.key}`), { dayRate:w.dayRate, hourlyRate:w.hourlyRate });
+                }
+            }
+        }
+
+        loadRates();
+        loadSettlements();
+        loadWorkersList();
+        initDB();
+        initDarkMode();
+        renderLogin();
+    </script>
+</body>
+</html>
