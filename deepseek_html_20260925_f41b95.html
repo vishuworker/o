@@ -1,0 +1,2007 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#2563eb" />
+<title>Vishu Civil Contractor</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root {
+    --primary: #2563eb;
+    --primary-dark: #1d4ed8;
+    --success: #16a34a;
+    --danger: #dc2626;
+    --warning: #ea580c;
+    --bg: #f1f5f9;
+    --card: #ffffff;
+    --text: #0f172a;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --nav-h: 64px;
+    --header-h: 56px;
+}
+body.dark {
+    --bg: #0f172a;
+    --card: #1e293b;
+    --text: #f1f5f9;
+    --muted: #94a3b8;
+    --border: #334155;
+}
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-font-smoothing: antialiased;
+}
+html, body { height: 100%; overflow-x: hidden; }
+body {
+    background: var(--bg);
+    color: var(--text);
+    transition: background 0.2s, color 0.2s;
+    overscroll-behavior: none;
+}
+#app { max-width: 600px; margin: 0 auto; min-height: 100vh; position: relative; background: var(--bg); }
+
+/* ============ TOP HEADER ============ */
+.app-top {
+    position: sticky; top: 0; z-index: 50;
+    background: var(--card); border-bottom: 1px solid var(--border);
+    padding: 0.85rem 1.1rem;
+    display: flex; justify-content: space-between; align-items: center;
+    min-height: var(--header-h);
+}
+.app-top .title-area h1 { font-size: 1.05rem; font-weight: 700; letter-spacing: -0.3px; }
+.app-top .title-area p { font-size: 0.72rem; color: var(--muted); margin-top: 0.1rem; }
+.app-top-actions { display: flex; gap: 0.4rem; }
+.icon-btn {
+    background: var(--bg); border: none; width: 36px; height: 36px;
+    border-radius: 10px; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: var(--text); font-size: 0.9rem; transition: 0.15s;
+}
+.icon-btn:active { transform: scale(0.92); }
+
+/* ============ PAGE ============ */
+.page { padding: 1rem 1.1rem calc(var(--nav-h) + 1.5rem); }
+
+/* ============ STAT CARDS ============ */
+.stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem; margin-bottom: 1.1rem; }
+.stat {
+    background: var(--card); border-radius: 14px; padding: 0.9rem 1rem;
+    cursor: pointer; transition: 0.15s; border: 1px solid var(--border);
+}
+.stat:active { transform: scale(0.97); }
+.stat .s-label { font-size: 0.7rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }
+.stat .s-value { font-size: 1.35rem; font-weight: 800; letter-spacing: -0.5px; margin-top: 0.25rem; }
+.stat .s-value.green { color: var(--success); }
+.stat .s-value.red { color: var(--danger); }
+.stat .s-value.blue { color: var(--primary); }
+.stat .s-value.orange { color: var(--warning); }
+
+/* ============ CARD ============ */
+.card { background: var(--card); border-radius: 16px; border: 1px solid var(--border); margin-bottom: 1rem; overflow: hidden; }
+.card-head { padding: 0.9rem 1.1rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
+.card-head h3 { font-size: 0.9rem; font-weight: 700; }
+.card-body { padding: 0.4rem 0; }
+.card-body.pad { padding: 1rem 1.1rem; }
+
+/* ============ LIST ITEM ============ */
+.li {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0.85rem 1.1rem; cursor: pointer; transition: 0.15s;
+    border-bottom: 1px solid var(--border);
+}
+.li:last-child { border-bottom: none; }
+.li:active { background: var(--bg); }
+.li-left { display: flex; flex-direction: column; gap: 0.15rem; flex: 1; min-width: 0; }
+.li-left .li-name { font-weight: 600; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.li-left .li-sub { font-size: 0.72rem; color: var(--muted); }
+.li-right { display: flex; align-items: center; gap: 0.5rem; color: var(--muted); font-size: 0.8rem; margin-left: 0.6rem; }
+
+/* ============ AVATAR ============ */
+.avatar {
+    width: 38px; height: 38px; border-radius: 50%; background: var(--primary);
+    color: #fff; display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 0.9rem; flex-shrink: 0; margin-right: 0.75rem;
+}
+.avatar.green { background: var(--success); }
+.avatar.orange { background: var(--warning); }
+.avatar.red { background: var(--danger); }
+
+/* ============ BADGE ============ */
+.badge { display: inline-block; padding: 0.15rem 0.55rem; border-radius: 6px; font-size: 0.65rem; font-weight: 700; background: #fef3c7; color: #92400e; }
+body.dark .badge { background: #78350f; color: #fde68a; }
+.badge.green { background: #dcfce7; color: #166534; }
+body.dark .badge.green { background: #052e16; color: #86efac; }
+.badge.blue { background: #dbeafe; color: #1e40af; }
+body.dark .badge.blue { background: #172554; color: #93c5fd; }
+.badge.red { background: #fee2e2; color: #991b1b; }
+body.dark .badge.red { background: #450a0a; color: #fca5a5; }
+
+/* ============ BUTTONS ============ */
+.btn {
+    padding: 0.75rem 1.2rem; border: none; border-radius: 12px;
+    font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: 0.15s;
+    display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; font-family: inherit;
+}
+.btn:active { transform: scale(0.97); }
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-success { background: var(--success); color: #fff; }
+.btn-danger { background: var(--danger); color: #fff; }
+.btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+.btn-block { width: 100%; }
+.btn-sm { padding: 0.5rem 0.85rem; font-size: 0.75rem; }
+
+/* ============ INPUTS ============ */
+.field { margin-bottom: 0.9rem; }
+.field label {
+    display: block; font-size: 0.72rem; font-weight: 700;
+    margin-bottom: 0.35rem; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.3px;
+}
+input, select, textarea {
+    width: 100%; padding: 0.75rem 1rem; border-radius: 12px;
+    border: 1px solid var(--border); background: var(--card); color: var(--text);
+    font-size: 0.9rem; font-family: inherit; transition: 0.15s;
+}
+input:focus, select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.12); }
+input[readonly] { background: var(--bg); cursor: not-allowed; }
+
+/* ============ SITE SUGGESTION ============ */
+.site-wrap { position: relative; }
+.site-suggest {
+    position: absolute; top: 100%; left: 0; right: 0;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; margin-top: 4px;
+    max-height: 180px; overflow-y: auto;
+    z-index: 100; box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    display: none;
+}
+.site-suggest.show { display: block; }
+.site-suggest-item {
+    padding: 0.65rem 0.9rem; cursor: pointer;
+    font-size: 0.82rem; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 0.5rem;
+}
+.site-suggest-item:last-child { border-bottom: none; }
+.site-suggest-item:active { background: var(--bg); }
+.site-suggest-item i { color: var(--muted); font-size: 0.75rem; }
+.site-suggest-empty { padding: 0.65rem 0.9rem; font-size: 0.75rem; color: var(--muted); text-align: center; }
+
+/* ============ BOTTOM NAV ============ */
+.bottom-nav {
+    position: fixed; bottom: 0; left: 0; right: 0; max-width: 600px;
+    margin: 0 auto; background: var(--card); border-top: 1px solid var(--border);
+    display: flex; justify-content: space-around; align-items: center;
+    height: var(--nav-h); padding-bottom: env(safe-area-inset-bottom); z-index: 100;
+}
+.nav-item {
+    flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 0.15rem; cursor: pointer; color: var(--muted); font-size: 0.6rem;
+    font-weight: 600; padding: 0.5rem 0; transition: 0.15s;
+    background: none; border: none; font-family: inherit;
+}
+.nav-item i { font-size: 1.15rem; }
+.nav-item.active { color: var(--primary); }
+.nav-item:active { transform: scale(0.95); }
+
+/* ============ FAB ============ */
+.fab {
+    position: fixed; bottom: calc(var(--nav-h) + 1rem + env(safe-area-inset-bottom));
+    right: 1.1rem; max-width: 600px; background: var(--primary); color: #fff;
+    width: 52px; height: 52px; border-radius: 16px; border: none;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; cursor: pointer; box-shadow: 0 6px 20px rgba(37,99,235,0.4);
+    z-index: 90; transition: 0.15s;
+}
+.fab:active { transform: scale(0.92); }
+
+/* ============ MODAL / BOTTOM SHEET ============ */
+.sheet-overlay {
+    position: fixed; inset: 0; background: rgba(15,23,42,0.55);
+    z-index: 2000; display: flex; align-items: flex-end; justify-content: center;
+    animation: fadeIn 0.2s;
+}
+@keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
+.sheet {
+    width: 100%; max-width: 600px; background: var(--card);
+    border-radius: 22px 22px 0 0; padding: 1.1rem; max-height: 90vh; overflow-y: auto;
+    animation: slideUp 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    padding-bottom: calc(1.1rem + env(safe-area-inset-bottom));
+}
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.sheet-grab { width: 40px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 0.9rem; }
+.sheet-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; }
+.sheet-head h2 { font-size: 1.1rem; font-weight: 700; }
+.sheet-head .sub { font-size: 0.72rem; color: var(--muted); margin-top: 0.15rem; }
+.x-btn {
+    background: var(--bg); border: none; width: 32px; height: 32px;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: var(--muted); font-size: 0.85rem;
+}
+
+/* ============ TABS ============ */
+.tabs {
+    display: flex; gap: 0.35rem; background: var(--bg); padding: 4px;
+    border-radius: 12px; margin-bottom: 1rem; overflow-x: auto; scrollbar-width: none;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+    flex: 1; min-width: fit-content; padding: 0.5rem 0.8rem; border: none;
+    background: transparent; font-size: 0.72rem; font-weight: 700;
+    color: var(--muted); border-radius: 9px; cursor: pointer;
+    white-space: nowrap; font-family: inherit;
+    display: flex; align-items: center; justify-content: center; gap: 0.3rem;
+}
+.tab.active { background: var(--card); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+
+/* ============ SUMMARY PILLS ============ */
+.summary-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.4rem; margin-bottom: 1rem; }
+.pill { background: var(--bg); border-radius: 10px; padding: 0.6rem 0.4rem; text-align: center; }
+.pill .p-label { font-size: 0.6rem; color: var(--muted); font-weight: 700; text-transform: uppercase; }
+.pill .p-value { font-size: 0.85rem; font-weight: 800; margin-top: 0.15rem; }
+.pill .p-value.green { color: var(--success); }
+.pill .p-value.red { color: var(--danger); }
+.pill .p-value.blue { color: var(--primary); }
+.pill .p-value.orange { color: var(--warning); }
+
+/* ============ RECORD ============ */
+.rec { display: flex; justify-content: space-between; align-items: center; padding: 0.8rem 1.1rem; border-bottom: 1px solid var(--border); }
+.rec:last-child { border-bottom: none; }
+.rec-left .rec-date { font-weight: 700; font-size: 0.85rem; }
+.rec-left .rec-sub { font-size: 0.72rem; color: var(--muted); margin-top: 0.1rem; }
+.rec-right { display: flex; align-items: center; gap: 0.5rem; }
+.rec-amount { font-weight: 800; font-size: 0.9rem; }
+.rec-amount.green { color: var(--success); }
+.rec-amount.red { color: var(--danger); }
+.rec-del { background: #fef2f2; color: var(--danger); border: none; width: 28px; height: 28px; border-radius: 8px; font-size: 0.7rem; cursor: pointer; }
+body.dark .rec-del { background: #450a0a; }
+
+/* ============ CALENDAR ============ */
+.cal-top { display: flex; justify-content: space-between; align-items: center; padding: 0.7rem 1.1rem; border-bottom: 1px solid var(--border); }
+.cal-top .cal-month { font-weight: 800; font-size: 0.95rem; }
+.cal-nav-btn {
+    background: var(--bg); border: none; width: 30px; height: 30px;
+    border-radius: 8px; cursor: pointer; color: var(--text);
+    font-size: 0.75rem; display: flex; align-items: center; justify-content: center;
+}
+.cal-summary { display: flex; gap: 0.5rem; padding: 0.7rem 1.1rem; border-bottom: 1px solid var(--border); font-size: 0.72rem; }
+.cal-summary .cs-item { flex: 1; text-align: center; }
+.cal-summary .cs-item .cs-label { color: var(--muted); font-weight: 600; font-size: 0.65rem; text-transform: uppercase; }
+.cal-summary .cs-item .cs-value { font-weight: 800; font-size: 0.85rem; margin-top: 0.1rem; }
+.cal-summary .cs-value.green { color: var(--success); }
+.cal-summary .cs-value.red { color: var(--danger); }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; padding: 0.6rem 0.7rem 0.9rem; width: 100%; box-sizing: border-box; }
+.cal-dow { text-align: center; font-weight: 700; font-size: 0.6rem; color: var(--muted); padding: 0.25rem 0; text-transform: uppercase; }
+.cal-day {
+    width: 100%; height: 38px; display: flex; align-items: center; justify-content: center;
+    border-radius: 8px; font-size: 0.72rem; font-weight: 600;
+    background: var(--bg); color: var(--text); cursor: pointer;
+    position: relative; transition: 0.15s; box-sizing: border-box;
+}
+.cal-day:active { transform: scale(0.92); }
+.cal-day.empty { background: transparent; cursor: default; pointer-events: none; }
+.cal-day.payment { background: var(--success); color: #fff; }
+.cal-day.deduction { background: var(--danger); color: #fff; }
+.cal-day.mixed { background: linear-gradient(135deg, var(--success) 50%, var(--danger) 50%); color: #fff; }
+.cal-day.today { box-shadow: 0 0 0 2px var(--primary); }
+
+/* ============ SETTLE BANNER ============ */
+.settle-banner {
+    background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+    border: 1px solid #bbf7d0; border-radius: 14px; padding: 0.85rem 1rem;
+    margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; gap: 0.5rem;
+}
+body.dark .settle-banner { background: linear-gradient(135deg, #052e16, #064e3b); border-color: #166534; }
+.settle-banner .sb-l { font-size: 0.78rem; color: #166534; font-weight: 600; }
+body.dark .settle-banner .sb-l { color: #86efac; }
+.settle-banner .sb-l .sb-sub { font-size: 0.68rem; opacity: 0.85; font-weight: 400; margin-top: 0.1rem; }
+.settle-banner .sb-r { text-align: right; }
+.settle-banner .sb-r .sb-label { font-size: 0.62rem; color: #16a34a; font-weight: 700; text-transform: uppercase; }
+.settle-banner .sb-r .sb-value { font-size: 1.05rem; font-weight: 800; color: #16a34a; }
+
+/* ============ LOGIN ============ */
+.login-shell { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 2rem 1.5rem; max-width: 420px; margin: 0 auto; }
+.login-logo {
+    width: 70px; height: 70px; background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: #fff; border-radius: 20px; display: flex; align-items: center; justify-content: center;
+    font-size: 2rem; margin: 0 auto 1.2rem; box-shadow: 0 10px 30px rgba(37,99,235,0.3);
+}
+.login-shell h1 { text-align: center; font-size: 1.5rem; font-weight: 800; letter-spacing: -0.5px; }
+.login-shell .sub { text-align: center; color: var(--muted); font-size: 0.82rem; margin-top: 0.3rem; margin-bottom: 2.2rem; }
+.login-footer { text-align: center; font-size: 0.72rem; color: var(--muted); margin-top: 2rem; }
+
+/* ============ EMPTY STATE ============ */
+.empty { text-align: center; padding: 2.2rem 1rem; color: var(--muted); font-size: 0.82rem; }
+
+/* ============ TOAST ============ */
+.toast {
+    position: fixed; bottom: calc(var(--nav-h) + 1.5rem); left: 50%; transform: translateX(-50%);
+    background: var(--text); color: var(--bg); padding: 0.7rem 1.2rem;
+    border-radius: 12px; font-size: 0.82rem; font-weight: 600; z-index: 5000;
+    animation: toastIn 0.25s; box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    max-width: 90%; text-align: center;
+}
+@keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(15px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+.toast.success { background: var(--success); color: #fff; }
+.toast.error { background: var(--danger); color: #fff; }
+
+/* ============ TIME CHIP ============ */
+.chip-row { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.chip {
+    padding: 0.45rem 0.85rem; border-radius: 9px; border: 1px solid var(--border);
+    background: var(--card); font-size: 0.75rem; font-weight: 600; cursor: pointer; transition: 0.15s;
+}
+.chip.selected { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+/* ============ FULL PAGE ============ */
+.fullpage {
+    position: fixed; inset: 0; background: var(--bg); z-index: 1500;
+    overflow-y: auto; max-width: 600px; margin: 0 auto; padding-bottom: 2rem;
+}
+
+/* ============ LEGEND ============ */
+.cal-legend {
+    display: flex; gap: 0.7rem; padding: 0.6rem 1.1rem 0.8rem;
+    font-size: 0.65rem; color: var(--muted); flex-wrap: wrap;
+    border-top: 1px solid var(--border);
+}
+.cal-legend .lg { display: flex; align-items: center; gap: 0.3rem; }
+.cal-legend .lg-dot { width: 10px; height: 10px; border-radius: 3px; }
+.cal-legend .lg-dot.green { background: var(--success); }
+.cal-legend .lg-dot.red { background: var(--danger); }
+.cal-legend .lg-dot.mixed { background: linear-gradient(135deg, var(--success) 50%, var(--danger) 50%); }
+.cal-legend .lg-dot.gray { background: var(--bg); border: 1px solid var(--border); }
+
+/* ============ WORKER CHIPS ============ */
+.wk-chip {
+    display: flex; align-items: center; gap: 0.6rem;
+    padding: 0.7rem 0; border-bottom: 1px solid var(--border);
+}
+.wk-chip:last-child { border-bottom: none; }
+.wk-chip .avatar { width: 34px; height: 34px; font-size: 0.8rem; margin-right: 0; }
+.wk-chip .wk-info { flex: 1; min-width: 0; }
+.wk-chip .wk-name { font-weight: 700; font-size: 0.82rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wk-chip .wk-sub { font-size: 0.7rem; color: var(--muted); margin-top: 0.05rem; }
+.wk-chip .wk-amount { font-weight: 800; font-size: 0.85rem; }
+.wk-chip .wk-amount.green { color: var(--success); }
+.wk-chip .wk-amount.red { color: var(--danger); }
+
+/* ============ ATTENDANCE PAGE ============ */
+.att-date-row {
+    display: flex; gap: 0.6rem; align-items: flex-end;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 14px; padding: 0.85rem 1rem; margin-bottom: 1rem;
+}
+.att-date-row .field { flex: 1; margin-bottom: 0; }
+.att-date-row label { font-size: 0.65rem; }
+
+.att-select-all {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0.7rem 1.1rem; background: var(--card);
+    border: 1px solid var(--border); border-radius: 14px; margin-bottom: 0.8rem;
+}
+.att-select-all .count {
+    font-size: 0.78rem; color: var(--muted); font-weight: 600;
+}
+.att-select-all .count b { color: var(--primary); font-weight: 800; }
+
+.att-list {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 14px; margin-bottom: 1rem; overflow: hidden;
+}
+
+.att-row {
+    display: flex; align-items: flex-start; gap: 0.7rem;
+    padding: 0.85rem 1rem; border-bottom: 1px solid var(--border);
+    transition: 0.15s;
+}
+.att-row:last-child { border-bottom: none; }
+.att-row.selected { background: rgba(37,99,235,0.04); }
+body.dark .att-row.selected { background: rgba(37,99,235,0.1); }
+
+.att-check {
+    width: 22px; height: 22px; border-radius: 6px;
+    border: 2px solid var(--border); background: var(--card);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; flex-shrink: 0; margin-top: 0.4rem;
+    transition: 0.15s;
+}
+.att-check.on { background: var(--primary); border-color: var(--primary); color: #fff; }
+.att-check i { font-size: 0.7rem; color: transparent; }
+.att-check.on i { color: #fff; }
+
+.att-body { flex: 1; min-width: 0; }
+.att-body .att-name { font-weight: 700; font-size: 0.88rem; }
+.att-body .att-sub { font-size: 0.7rem; color: var(--muted); margin-top: 0.05rem; margin-bottom: 0.5rem; }
+.att-body .att-inputs { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+.att-body .att-inputs .site-wrap { flex: 2; min-width: 130px; }
+.att-body .att-inputs .chip-row-mini { flex: 1; min-width: 100px; }
+.att-body input[type=text] { padding: 0.5rem 0.75rem; font-size: 0.78rem; border-radius: 9px; }
+
+.att-footer {
+    position: fixed; bottom: var(--nav-h); left: 0; right: 0;
+    max-width: 600px; margin: 0 auto;
+    background: var(--card); border-top: 1px solid var(--border);
+    padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom));
+    z-index: 99;
+    display: flex; gap: 0.5rem;
+}
+.att-footer .btn { flex: 1; }
+
+/* Mini chip row inside attendance row */
+.chip-mini {
+    padding: 0.4rem 0.6rem; font-size: 0.7rem; border-radius: 8px;
+    border: 1px solid var(--border); background: var(--card);
+    cursor: pointer; font-weight: 600; transition: 0.15s;
+}
+.chip-mini.selected { background: var(--primary); color: #fff; border-color: var(--primary); }
+</style>
+</head>
+<body>
+
+<div id="app"></div>
+
+<script type="importmap">
+{
+    "imports": {
+        "firebase/app": "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js",
+        "firebase/database": "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js"
+    }
+}
+</script>
+
+<script type="module">
+import { initializeApp } from "firebase/app";
+import { getDatabase, ref, push, onValue, remove, get, set } from "firebase/database";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyAwnD_POO-SoQymqDrtby0t2uC9Mvgau3Q",
+    authDomain: "utr-cc0a9.firebaseapp.com",
+    databaseURL: "https://utr-cc0a9-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "utr-cc0a9",
+    storageBucket: "utr-cc0a9.firebasestorage.app",
+    messagingSenderId: "157513922891",
+    appId: "1:157513922891:web:c6e172e09fb1775a1fd0ce"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const workersRef = ref(db, 'workers');
+const ratesRef = ref(db, 'workerRates');
+const settlementsRef = ref(db, 'settlements');
+
+let allWorkers = [];
+let workerRates = {};
+let allSettlements = {};
+let allAttendanceByWorker = {};
+let currentUser = null;
+let currentAttendances = [];
+let currentWorkerId = null;
+let calendarViewDate = new Date();
+let globalCalViewDate = new Date();
+let currentTab = 'home';
+let workerTab = 'home';
+
+// Attendance page state
+let attPageDate = getToday();
+let attPageSelections = {}; // { wid: { selected:bool, site:string, extra:string } }
+
+const ADMIN_ID = "7700836128Vishu";
+const TIME_OPTIONS = ["30 Min","1 Hr","1.5 Hr","2 Hr","2.5 Hr","3 Hr","3.5 Hr","4 Hr","4.5 Hr","5 Hr"];
+const TIME_HOURS_MAP = {"30 Min":0.5,"1 Hr":1,"1.5 Hr":1.5,"2 Hr":2,"2.5 Hr":2.5,"3 Hr":3,"3.5 Hr":3.5,"4 Hr":4,"4.5 Hr":4.5,"5 Hr":5};
+const SESSION_KEY = "vcc_session";
+const SITE_HISTORY_KEY = "vcc_sites";
+
+/* ==================== HELPERS ==================== */
+function timeToHours(t){ return TIME_HOURS_MAP[t] || 0; }
+function calcExtraPayment(hr, t){ return timeToHours(t) * hr; }
+function formatDate(d){
+    if(!d) return '';
+    const p = d.split('-');
+    return p.length===3 ? `${p[2]}-${p[1]}-${p[0]}` : d;
+}
+function getToday(){
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function formatMonthYear(d){
+    const m = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    return `${m[d.getMonth()]} ${d.getFullYear()}`;
+}
+function showToast(msg, type='success'){
+    const t = document.createElement('div');
+    t.className = `toast ${type}`;
+    t.innerHTML = msg;
+    document.body.appendChild(t);
+    setTimeout(()=>t.remove(), 2400);
+}
+function calcTotals(atts){
+    let earn=0, ded=0;
+    atts.forEach(a=>{
+        const amt = parseFloat(a.payment)||0;
+        if(a.type==='deduction') ded+=amt; else earn+=amt;
+    });
+    return { earn, ded, net: earn-ded };
+}
+function getWorkerSettlement(workerId){ return allSettlements[workerId] || null; }
+function calcTotalsWithSettlement(workerId, atts){
+    const settlement = getWorkerSettlement(workerId);
+    const allTotals = calcTotals(atts);
+    if(!settlement){
+        return { ...allTotals, settledNet:0, pendingNet:allTotals.net, settlement:null };
+    }
+    const settleDate = settlement.settleDate;
+    const settledAtts = atts.filter(a=>a.date <= settleDate);
+    const pendingAtts = atts.filter(a=>a.date > settleDate);
+    const st = calcTotals(settledAtts);
+    const pt = calcTotals(pendingAtts);
+    return { ...allTotals, settledNet:st.net, pendingNet:pt.net, settlement, pendingAtts, settledAtts };
+}
+function initials(name){
+    return (name||'?').split(' ').map(x=>x[0]).join('').slice(0,2).toUpperCase();
+}
+function darkToggleIcon(){
+    return document.body.classList.contains('dark') ? 'fa-sun' : 'fa-moon';
+}
+function initDark(){
+    const dark = localStorage.getItem('vcc_dark')==='true';
+    if(dark) document.body.classList.add('dark');
+}
+function toggleDark(){
+    document.body.classList.toggle('dark');
+    localStorage.setItem('vcc_dark', document.body.classList.contains('dark'));
+    document.querySelectorAll('.dark-btn-icon').forEach(i=>{
+        i.className = `fas ${darkToggleIcon()} dark-btn-icon`;
+    });
+}
+initDark();
+
+/* ==================== SITE HISTORY ==================== */
+function getSiteHistory(){
+    try { return JSON.parse(localStorage.getItem(SITE_HISTORY_KEY) || '[]'); } catch(e){ return []; }
+}
+function saveSiteToHistory(site){
+    if(!site || !site.trim()) return;
+    const s = site.trim();
+    const list = getSiteHistory();
+    const idx = list.indexOf(s);
+    if(idx > -1) list.splice(idx, 1);
+    list.unshift(s);
+    const trimmed = list.slice(0, 30);
+    localStorage.setItem(SITE_HISTORY_KEY, JSON.stringify(trimmed));
+}
+
+/* ==================== SESSION ==================== */
+function saveSession(user){ localStorage.setItem(SESSION_KEY, JSON.stringify(user)); }
+function loadSession(){
+    try { return JSON.parse(localStorage.getItem(SESSION_KEY) || 'null'); } catch(e){ return null; }
+}
+function clearSession(){ localStorage.removeItem(SESSION_KEY); }
+
+/* ==================== FIREBASE LOADERS ==================== */
+function loadRates(){ onValue(ratesRef, s => { workerRates = s.val() || {}; }); }
+function loadSettlements(){
+    onValue(settlementsRef, s => {
+        allSettlements = s.val() || {};
+        if(document.getElementById('workersList')) renderWorkersList();
+        if(document.getElementById('adminStats')) updateAdminStats();
+        if(document.getElementById('settlementList')) renderSettlementList();
+        if(document.getElementById('workerSettlementBanner')) renderWorkerSettlementBanner(currentUser?.id);
+    });
+}
+function loadWorkersList(){
+    onValue(workersRef, s => {
+        allWorkers = s.val() ? Object.entries(s.val()).map(([id,val])=>({id, ...val})) : [];
+        if(document.getElementById('workersList')) renderWorkersList();
+        if(document.getElementById('adminStats')) updateAdminStats();
+    });
+}
+function loadAllAttendance(){
+    onValue(ref(db, 'attendance'), (s)=>{
+        allAttendanceByWorker = {};
+        const d = s.val() || {};
+        Object.entries(d).forEach(([wid, recs])=>{
+            allAttendanceByWorker[wid] = recs ? Object.entries(recs).map(([id,val])=>({id, ...val})) : [];
+        });
+        if(document.getElementById('globalCal')) renderGlobalCalendar();
+    });
+}
+async function getRates(wid){ return workerRates[wid] || { dayRate:350, hourlyRate:50 }; }
+
+/* ==================== LOGIN ==================== */
+function renderLogin(){
+    clearSession();
+    currentUser = null;
+    document.getElementById('app').innerHTML = `
+        <div class="login-shell">
+            <div class="login-logo"><i class="fas fa-hard-hat"></i></div>
+            <h1>Vishu Civil Contractor</h1>
+            <p class="sub">Accounting & Attendance</p>
+            <div class="field">
+                <label>Login ID</label>
+                <input type="text" id="loginId" placeholder="Enter your Login ID" autocomplete="off" />
+            </div>
+            <button id="loginBtn" class="btn btn-primary btn-block" style="padding:0.9rem;">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </button>
+            <p class="login-footer"><i class="fas fa-phone-alt"></i> Contact: 7700836128</p>
+        </div>
+    `;
+    document.getElementById('loginBtn').onclick = handleLogin;
+    document.getElementById('loginId').addEventListener('keypress', e=>{
+        if(e.key==='Enter') handleLogin();
+    });
+    setTimeout(()=> document.getElementById('loginId')?.focus(), 200);
+}
+
+async function handleLogin(){
+    const lid = document.getElementById('loginId').value.trim().toLowerCase();
+    if(!lid) return showToast('Please enter Login ID', 'error');
+
+    if(lid === ADMIN_ID.toLowerCase()){
+        currentUser = { id:'admin', name:'Admin', isAdmin:true };
+        saveSession(currentUser);
+        showToast('Welcome Admin!');
+        renderAdmin();
+        return;
+    }
+    const w = allWorkers.find(w => (w.loginId||'').toLowerCase() === lid);
+    if(w){
+        currentUser = { id:w.id, name:w.name, loginId:w.loginId, isAdmin:false };
+        saveSession(currentUser);
+        showToast(`Welcome ${w.name}!`);
+        renderWorker();
+        loadWorkerData(w.id);
+    } else {
+        showToast('Invalid Login ID', 'error');
+    }
+}
+
+function autoLogin(){
+    const s = loadSession();
+    if(!s){ renderLogin(); return; }
+    if(s.isAdmin){
+        currentUser = { id:'admin', name:'Admin', isAdmin:true };
+        renderAdmin();
+        return;
+    }
+    const tryWorker = () => {
+        const w = allWorkers.find(x=>x.id === s.id);
+        if(w){
+            currentUser = { id:w.id, name:w.name, loginId:w.loginId, isAdmin:false };
+            renderWorker();
+            loadWorkerData(w.id);
+        } else if(allWorkers.length > 0){
+            clearSession();
+            renderLogin();
+        } else {
+            setTimeout(tryWorker, 300);
+        }
+    };
+    tryWorker();
+}
+
+/* ==================== ADMIN: STATS ==================== */
+async function getWorkerTotals(workerId){
+    const s = await get(ref(db, `attendance/${workerId}`));
+    const d = s.val();
+    const atts = d ? Object.entries(d).map(([id,val])=>({id, ...val})) : [];
+    return calcTotals(atts);
+}
+async function getAllWorkersTotals(){
+    const out = [];
+    for(const w of allWorkers){
+        const t = await getWorkerTotals(w.id);
+        const settlement = getWorkerSettlement(w.id);
+        let pendingNet = t.net, settledNet = 0;
+        if(settlement){
+            const s = await get(ref(db, `attendance/${w.id}`));
+            const d = s.val();
+            const atts = d ? Object.entries(d).map(([id,val])=>({id, ...val})) : [];
+            const sd = settlement.settleDate;
+            settledNet = calcTotals(atts.filter(a=>a.date <= sd)).net;
+            pendingNet = calcTotals(atts.filter(a=>a.date > sd)).net;
+        }
+        out.push({ ...w, ...t, pendingNet, settledNet, settlement });
+    }
+    return out;
+}
+async function updateAdminStats(){
+    const stats = await getAllWorkersTotals();
+    let totalEarn=0, totalDed=0, totalNet=0, totalPending=0, totalSettled=0;
+    stats.forEach(s=>{
+        totalEarn += s.earn || 0;
+        totalDed += s.ded || 0;
+        totalNet += s.net || 0;
+        totalPending += s.pendingNet || 0;
+        totalSettled += s.settledNet || 0;
+    });
+    const $ = id => document.getElementById(id);
+    $('statTotalWorkers') && ($('statTotalWorkers').innerText = allWorkers.length);
+    $('statTotalEarned') && ($('statTotalEarned').innerText = '₹' + totalEarn.toLocaleString());
+    $('statTotalDeduction') && ($('statTotalDeduction').innerText = '₹' + totalDed.toLocaleString());
+    $('statNetPayable') && ($('statNetPayable').innerText = '₹' + totalNet.toLocaleString());
+    $('statPendingPayable') && ($('statPendingPayable').innerText = '₹' + totalPending.toLocaleString());
+    $('statSettledAmount') && ($('statSettledAmount').innerText = '₹' + totalSettled.toLocaleString());
+    window._adminStats = { stats, totalEarn, totalDed, totalNet, totalPending, totalSettled };
+}
+
+/* ==================== ADMIN SHELL ==================== */
+function adminHeader(){
+    const titles = { home:'Admin Dashboard', attendance:'Mark Attendance', workers:'Workers', history:'Settlements', profile:'Profile' };
+    return `
+    <div class="app-top">
+        <div class="title-area">
+            <h1>${titles[currentTab] || 'Admin'}</h1>
+            <p>Vishu Civil Contractor</p>
+        </div>
+        <div class="app-top-actions">
+            <button class="icon-btn" onclick="window.toggleDark()"><i class="fas ${darkToggleIcon()} dark-btn-icon"></i></button>
+            <button class="icon-btn" onclick="window.adminLogout()"><i class="fas fa-sign-out-alt"></i></button>
+        </div>
+    </div>
+    `;
+}
+function adminBottomNav(){
+    return `
+    <div class="bottom-nav">
+        <button class="nav-item ${currentTab==='home'?'active':''}" onclick="window.adminTab('home')">
+            <i class="fas fa-home"></i><span>Home</span>
+        </button>
+        <button class="nav-item ${currentTab==='attendance'?'active':''}" onclick="window.adminTab('attendance')">
+            <i class="fas fa-clipboard-check"></i><span>Attendance</span>
+        </button>
+        <button class="nav-item ${currentTab==='workers'?'active':''}" onclick="window.adminTab('workers')">
+            <i class="fas fa-users"></i><span>Workers</span>
+        </button>
+        <button class="nav-item ${currentTab==='history'?'active':''}" onclick="window.adminTab('history')">
+            <i class="fas fa-history"></i><span>History</span>
+        </button>
+        <button class="nav-item ${currentTab==='profile'?'active':''}" onclick="window.adminTab('profile')">
+            <i class="fas fa-user"></i><span>Profile</span>
+        </button>
+    </div>
+    `;
+}
+function renderAdmin(){
+    const app = document.getElementById('app');
+    let body = '';
+
+    if(currentTab === 'home'){
+        body = `
+        <div class="page">
+            <div class="stat-grid" id="adminStats">
+                <div class="stat" onclick="window.viewStat('workers')"><div class="s-label">Total Workers</div><div class="s-value" id="statTotalWorkers">0</div></div>
+                <div class="stat" onclick="window.viewStat('earned')"><div class="s-label">Total Earned</div><div class="s-value green" id="statTotalEarned">₹0</div></div>
+                <div class="stat" onclick="window.viewStat('deduction')"><div class="s-label">Deduction</div><div class="s-value red" id="statTotalDeduction">₹0</div></div>
+                <div class="stat" onclick="window.viewStat('net')"><div class="s-label">Net Payable</div><div class="s-value blue" id="statNetPayable">₹0</div></div>
+                <div class="stat" onclick="window.viewStat('pending')"><div class="s-label">Pending</div><div class="s-value orange" id="statPendingPayable">₹0</div></div>
+                <div class="stat" onclick="window.viewStat('settled')"><div class="s-label">Settled</div><div class="s-value green" id="statSettledAmount">₹0</div></div>
+            </div>
+
+            <div class="card">
+                <div class="card-head"><h3><i class="fas fa-calendar-alt" style="margin-right:0.3rem;"></i>Global Attendance Calendar</h3></div>
+                <div id="globalCal"></div>
+                <div class="cal-legend">
+                    <div class="lg"><span class="lg-dot green"></span>Earning</div>
+                    <div class="lg"><span class="lg-dot red"></span>Deduction</div>
+                    <div class="lg"><span class="lg-dot mixed"></span>Both</div>
+                    <div class="lg"><span class="lg-dot gray"></span>No Activity</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-head"><h3>Recent Workers</h3><span class="badge green" id="workerCount">0</span></div>
+                <div class="card-body" id="workersList"></div>
+            </div>
+        </div>
+        `;
+    } else if(currentTab === 'attendance'){
+        body = renderAttendancePage();
+    } else if(currentTab === 'workers'){
+        body = `
+        <div class="page">
+            <div class="card">
+                <div class="card-head"><h3>All Workers</h3><span class="badge green" id="workerCount2">0</span></div>
+                <div class="card-body" id="workersList2"></div>
+            </div>
+        </div>
+        <button class="fab" onclick="window.adminAddWorker()"><i class="fas fa-plus"></i></button>
+        `;
+    } else if(currentTab === 'history'){
+        body = `
+        <div class="page">
+            <div class="card">
+                <div class="card-head"><h3>Settlement History</h3></div>
+                <div class="card-body" id="settlementList"></div>
+            </div>
+        </div>
+        `;
+    } else if(currentTab === 'profile'){
+        body = `
+        <div class="page">
+            <div class="card">
+                <div class="card-body pad" style="text-align:center;">
+                    <div class="avatar" style="width:60px;height:60px;font-size:1.4rem;margin:0 auto 0.75rem;">A</div>
+                    <h2 style="font-size:1.1rem;font-weight:700;">Admin</h2>
+                    <p style="font-size:0.78rem;color:var(--muted);margin-top:0.2rem;">Vishu Civil Contractor</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="li" onclick="window.adminAddWorker()">
+                    <div class="li-left"><div class="li-name"><i class="fas fa-user-plus" style="width:20px;"></i> Add New Worker</div></div>
+                    <i class="fas fa-chevron-right" style="font-size:0.7rem;color:var(--muted);"></i>
+                </div>
+                <div class="li" onclick="window.toggleDark()">
+                    <div class="li-left"><div class="li-name"><i class="fas fa-moon" style="width:20px;"></i> Dark Mode</div></div>
+                    <i class="fas fa-chevron-right" style="font-size:0.7rem;color:var(--muted);"></i>
+                </div>
+                <div class="li" onclick="window.adminLogout()">
+                    <div class="li-left"><div class="li-name" style="color:var(--danger);"><i class="fas fa-sign-out-alt" style="width:20px;"></i> Logout</div></div>
+                    <i class="fas fa-chevron-right" style="font-size:0.7rem;color:var(--muted);"></i>
+                </div>
+            </div>
+            <p style="text-align:center;color:var(--muted);font-size:0.7rem;">Vishu Civil Contractor · v2.2</p>
+        </div>
+        `;
+    }
+
+    app.innerHTML = adminHeader() + body + adminBottomNav();
+
+    if(currentTab === 'home'){
+        renderWorkersList();
+        updateAdminStats();
+        renderGlobalCalendar();
+    } else if(currentTab === 'attendance'){
+        initAttendancePage();
+    } else if(currentTab === 'workers'){
+        renderWorkersList();
+        const el = document.getElementById('workerCount2');
+        if(el) el.innerText = allWorkers.length;
+    } else if(currentTab === 'history'){
+        renderSettlementList();
+    }
+}
+
+window.adminTab = (tab)=>{ currentTab = tab; renderAdmin(); };
+window.adminLogout = ()=>{ clearSession(); currentUser = null; renderLogin(); };
+window.toggleDark = ()=>{
+    toggleDark();
+    document.querySelectorAll('.dark-btn-icon').forEach(i=>{
+        i.className = `fas ${darkToggleIcon()} dark-btn-icon`;
+    });
+};
+
+/* ==================== ATTENDANCE PAGE ==================== */
+function renderAttendancePage(){
+    // initialize selections
+    attPageSelections = {};
+    allWorkers.forEach(w => {
+        attPageSelections[w.id] = { selected:false, site:'', extra:'' };
+    });
+
+    return `
+    <div class="page" style="padding-bottom: calc(var(--nav-h) + 90px);">
+        <div class="att-date-row">
+            <div class="field">
+                <label>Date</label>
+                <input type="date" id="attPageDate" value="${attPageDate}" />
+            </div>
+        </div>
+
+        <div class="att-select-all">
+            <span class="count"><b id="attCount">0</b> selected</span>
+            <button class="btn btn-outline btn-sm" id="attSelectAllBtn" onclick="window.toggleSelectAll()">
+                <i class="fas fa-check-double"></i> Select All
+            </button>
+        </div>
+
+        <div class="att-list" id="attList">
+            ${allWorkers.length ? allWorkers.map(w => renderAttRow(w)).join('') : `<div class="empty">No workers yet</div>`}
+        </div>
+    </div>
+
+    <div class="att-footer">
+        <button class="btn btn-outline" onclick="window.attClearAll()"><i class="fas fa-times"></i> Clear</button>
+        <button class="btn btn-primary" onclick="window.saveBatchAttendance()"><i class="fas fa-save"></i> Save Attendance</button>
+    </div>
+    `;
+}
+
+function renderAttRow(w){
+    const sel = attPageSelections[w.id] || { selected:false, site:'', extra:'' };
+    return `
+    <div class="att-row ${sel.selected?'selected':''}" data-wid="${w.id}">
+        <div class="att-check ${sel.selected?'on':''}" onclick="window.toggleAttWorker('${w.id}')">
+            <i class="fas fa-check"></i>
+        </div>
+        <div class="att-body">
+            <div class="att-name">${w.name}</div>
+            <div class="att-sub">${w.loginId}</div>
+            <div class="att-inputs">
+                <div class="site-wrap">
+                    <input type="text" class="site-input" placeholder="Site name" 
+                           value="${sel.site.replace(/"/g,'&quot;')}" 
+                           data-wid="${w.id}"
+                           oninput="window.attSiteInput('${w.id}', this.value)"
+                           onfocus="window.attSiteFocus('${w.id}', this)" 
+                           onblur="window.attSiteBlur()" />
+                    <div class="site-suggest" id="sug-${w.id}"></div>
+                </div>
+                <select class="extra-sel" data-wid="${w.id}" onchange="window.attExtraChange('${w.id}', this.value)" style="flex:1;min-width:90px;padding:0.5rem 0.6rem;font-size:0.75rem;border-radius:9px;">
+                    <option value="">No extra</option>
+                    ${TIME_OPTIONS.map(t=>`<option value="${t}" ${sel.extra===t?'selected':''}>${t}</option>`).join('')}
+                </select>
+            </div>
+        </div>
+    </div>
+    `;
+}
+
+function initAttendancePage(){
+    const dateEl = document.getElementById('attPageDate');
+    if(dateEl){
+        dateEl.addEventListener('change', ()=>{
+            attPageDate = dateEl.value;
+        });
+    }
+    updateAttCount();
+}
+
+window.toggleAttWorker = (wid)=>{
+    const s = attPageSelections[wid];
+    if(!s) return;
+    s.selected = !s.selected;
+    const row = document.querySelector(`.att-row[data-wid="${wid}"]`);
+    if(row){
+        row.classList.toggle('selected', s.selected);
+        const check = row.querySelector('.att-check');
+        check.classList.toggle('on', s.selected);
+    }
+    updateAttCount();
+};
+
+window.attSiteInput = (wid, val)=>{
+    if(attPageSelections[wid]) attPageSelections[wid].site = val;
+    const sug = document.getElementById('sug-' + wid);
+    if(!sug) return;
+    const q = (val||'').trim().toLowerCase();
+    const hist = getSiteHistory();
+    const filtered = q ? hist.filter(h => h.toLowerCase().includes(q)) : hist;
+    if(!filtered.length){
+        sug.classList.remove('show');
+        return;
+    }
+    sug.innerHTML = filtered.slice(0, 8).map(h => 
+        `<div class="site-suggest-item" onmousedown="event.preventDefault(); window.pickSite('${wid}', '${h.replace(/'/g,"\\'")}')">
+            <i class="fas fa-map-marker-alt"></i> ${h}
+        </div>`
+    ).join('');
+    sug.classList.add('show');
+};
+
+window.attSiteFocus = (wid, el)=>{
+    const val = el.value;
+    window.attSiteInput(wid, val);
+};
+
+window.attSiteBlur = ()=>{
+    setTimeout(()=>{
+        document.querySelectorAll('.site-suggest').forEach(s => s.classList.remove('show'));
+    }, 200);
+};
+
+window.pickSite = (wid, site)=>{
+    const s = attPageSelections[wid];
+    if(!s) return;
+    s.site = site;
+    const input = document.querySelector(`.site-input[data-wid="${wid}"]`);
+    if(input) input.value = site;
+    const sug = document.getElementById('sug-' + wid);
+    if(sug) sug.classList.remove('show');
+};
+
+window.attExtraChange = (wid, val)=>{
+    if(attPageSelections[wid]) attPageSelections[wid].extra = val;
+};
+
+window.toggleSelectAll = ()=>{
+    const allSelected = allWorkers.every(w => attPageSelections[w.id]?.selected);
+    allWorkers.forEach(w=>{
+        if(attPageSelections[w.id]) attPageSelections[w.id].selected = !allSelected;
+    });
+    renderAdmin(); // re-render attendance page
+    // keep date
+    setTimeout(()=>{
+        const d = document.getElementById('attPageDate');
+        if(d) d.value = attPageDate;
+    }, 20);
+};
+
+window.attClearAll = ()=>{
+    allWorkers.forEach(w=>{
+        if(attPageSelections[w.id]){
+            attPageSelections[w.id].selected = false;
+            attPageSelections[w.id].site = '';
+            attPageSelections[w.id].extra = '';
+        }
+    });
+    renderAdmin();
+};
+
+function updateAttCount(){
+    const c = Object.values(attPageSelections).filter(s=>s.selected).length;
+    const el = document.getElementById('attCount');
+    if(el) el.innerText = c;
+}
+
+window.saveBatchAttendance = async ()=>{
+    const date = document.getElementById('attPageDate')?.value || attPageDate;
+    if(!date) return showToast('Please select date', 'error');
+
+    const selected = Object.entries(attPageSelections).filter(([wid,s])=>s.selected);
+    if(!selected.length) return showToast('Please select at least one worker', 'error');
+
+    // Check all selected have site OR we default
+    let count = 0;
+    for(const [wid, s] of selected){
+        const site = (s.site||'').trim() || 'Work Site';
+        const rates = await getRates(wid);
+        let pay = rates.dayRate;
+        let extraTime = '';
+        if(s.extra){
+            pay = calcExtraPayment(rates.hourlyRate, s.extra);
+            extraTime = s.extra;
+        }
+        const payload = { date, siteName:site, payment:pay, type:'earning', timestamp:Date.now() };
+        if(extraTime) payload.extraTime = extraTime;
+        await push(ref(db, `attendance/${wid}`), payload);
+        saveSiteToHistory(site);
+        count++;
+    }
+
+    showToast(`✅ ${count} worker${count!==1?'s':''} ki attendance lag gayi!`);
+    // Reset
+    allWorkers.forEach(w=>{
+        if(attPageSelections[w.id]){
+            attPageSelections[w.id].selected = false;
+            attPageSelections[w.id].site = '';
+            attPageSelections[w.id].extra = '';
+        }
+    });
+    renderAdmin();
+};
+
+/* ==================== GLOBAL CALENDAR ==================== */
+function renderGlobalCalendar(){
+    const c = document.getElementById('globalCal');
+    if(!c) return;
+    const y = globalCalViewDate.getFullYear();
+    const m = globalCalViewDate.getMonth();
+    const first = new Date(y, m, 1).getDay();
+    const days = new Date(y, m+1, 0).getDate();
+    const todayStr = getToday();
+
+    const dayMap = new Map();
+    Object.entries(allAttendanceByWorker).forEach(([wid, atts])=>{
+        atts.forEach(a=>{
+            if(!a.date) return;
+            if(!dayMap.has(a.date)) dayMap.set(a.date, { workers: {}, totalEarn:0, totalDed:0 });
+            const day = dayMap.get(a.date);
+            const w = allWorkers.find(x=>x.id===wid);
+            if(!w) return;
+            if(!day.workers[wid]) day.workers[wid] = { wid, name:w.name, earn:0, ded:0, records:[] };
+            const amt = parseFloat(a.payment)||0;
+            if(a.type==='deduction'){ day.workers[wid].ded += amt; day.totalDed += amt; }
+            else { day.workers[wid].earn += amt; day.totalEarn += amt; }
+            day.workers[wid].records.push(a);
+        });
+    });
+
+    const monthPrefix = `${y}-${String(m+1).padStart(2,'0')}`;
+    let mEarn=0, mDed=0, mDays=0;
+    dayMap.forEach((v, k)=>{
+        if(k.startsWith(monthPrefix)){
+            mEarn += v.totalEarn;
+            mDed += v.totalDed;
+            mDays++;
+        }
+    });
+
+    let html = `
+        <div class="cal-top">
+            <button class="cal-nav-btn" onclick="window.gcalPrev()"><i class="fas fa-chevron-left"></i></button>
+            <span class="cal-month">${formatMonthYear(globalCalViewDate)}</span>
+            <button class="cal-nav-btn" onclick="window.gcalNext()"><i class="fas fa-chevron-right"></i></button>
+        </div>
+        <div class="cal-summary">
+            <div class="cs-item"><div class="cs-label">Days</div><div class="cs-value">${mDays}</div></div>
+            <div class="cs-item"><div class="cs-label">Earned</div><div class="cs-value green">₹${mEarn.toLocaleString()}</div></div>
+            <div class="cs-item"><div class="cs-label">Deduct</div><div class="cs-value red">₹${mDed.toLocaleString()}</div></div>
+        </div>
+        <div class="cal-grid">
+            ${['S','M','T','W','T','F','S'].map(d=>`<div class="cal-dow">${d}</div>`).join('')}
+    `;
+    for(let i=0;i<first;i++) html += `<div class="cal-day empty"></div>`;
+    for(let day=1; day<=days; day++){
+        const ds = `${y}-${String(m+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+        const info = dayMap.get(ds);
+        let cls = '';
+        if(info){
+            const hasEarn = info.totalEarn > 0;
+            const hasDed = info.totalDed > 0;
+            if(hasEarn && hasDed) cls = 'mixed';
+            else if(hasEarn) cls = 'payment';
+            else if(hasDed) cls = 'deduction';
+        }
+        if(ds === todayStr) cls += ' today';
+        html += `<div class="cal-day ${cls}" onclick="window.gcalDetail('${ds}')">${day}</div>`;
+    }
+    html += `</div>`;
+    c.innerHTML = html;
+}
+
+window.gcalPrev = ()=>{ globalCalViewDate.setMonth(globalCalViewDate.getMonth()-1); renderGlobalCalendar(); };
+window.gcalNext = ()=>{ globalCalViewDate.setMonth(globalCalViewDate.getMonth()+1); renderGlobalCalendar(); };
+
+window.gcalDetail = (dateStr)=>{
+    const dayData = { workers: {}, totalEarn:0, totalDed:0 };
+    Object.entries(allAttendanceByWorker).forEach(([wid, atts])=>{
+        atts.forEach(a=>{
+            if(a.date !== dateStr) return;
+            const w = allWorkers.find(x=>x.id===wid);
+            if(!w) return;
+            if(!dayData.workers[wid]) dayData.workers[wid] = { wid, name:w.name, earn:0, ded:0, records:[] };
+            const amt = parseFloat(a.payment)||0;
+            if(a.type==='deduction'){ dayData.workers[wid].ded += amt; dayData.totalDed += amt; }
+            else { dayData.workers[wid].earn += amt; dayData.totalEarn += amt; }
+            dayData.workers[wid].records.push(a);
+        });
+    });
+    const workerList = Object.values(dayData.workers).sort((a,b)=> (b.earn+b.ded) - (a.earn+a.ded));
+
+    const sheet = document.createElement('div');
+    sheet.className = 'sheet-overlay';
+    sheet.onclick = e => { if(e.target === sheet) sheet.remove(); };
+    sheet.innerHTML = `
+        <div class="sheet">
+            <div class="sheet-grab"></div>
+            <div class="sheet-head">
+                <div><h2>${formatDate(dateStr)}</h2><div class="sub">${workerList.length} worker${workerList.length!==1?'s':''} active</div></div>
+                <button class="x-btn" onclick="this.closest('.sheet-overlay').remove()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="summary-row" style="grid-template-columns:1fr 1fr 1fr;">
+                <div class="pill"><div class="p-label">Workers</div><div class="p-value">${workerList.length}</div></div>
+                <div class="pill"><div class="p-label">Earned</div><div class="p-value green">₹${dayData.totalEarn.toLocaleString()}</div></div>
+                <div class="pill"><div class="p-label">Deduct</div><div class="p-value red">₹${dayData.totalDed.toLocaleString()}</div></div>
+            </div>
+            ${workerList.length ? `
+                <div class="card" style="margin-bottom:0;">
+                    <div class="card-body" style="padding:0.4rem 1.1rem;">
+                        ${workerList.map(w=>{
+                            const sites = w.records.map(r=>r.siteName).filter(Boolean).join(', ');
+                            const extras = w.records.filter(r=>r.extraTime).map(r=>r.extraTime).join(', ');
+                            return `
+                            <div class="wk-chip" onclick="window.openWorker('${w.wid}'); this.closest('.sheet-overlay').remove();">
+                                <div class="avatar">${initials(w.name)}</div>
+                                <div class="wk-info">
+                                    <div class="wk-name">${w.name}</div>
+                                    <div class="wk-sub">${sites||'N/A'}${extras?' · '+extras:''}</div>
+                                </div>
+                                <div style="text-align:right;">
+                                    ${w.earn>0?`<div class="wk-amount green">+₹${w.earn.toLocaleString()}</div>`:''}
+                                    ${w.ded>0?`<div class="wk-amount red">-₹${w.ded.toLocaleString()}</div>`:''}
+                                </div>
+                            </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            ` : `<div class="empty">No records on this day</div>`}
+        </div>
+    `;
+    document.body.appendChild(sheet);
+};
+
+/* ==================== WORKERS LIST ==================== */
+function renderWorkersList(){
+    const build = (container) => {
+        if(!container) return;
+        if(!allWorkers.length){
+            container.innerHTML = `<div class="empty">No workers added yet</div>`;
+            return;
+        }
+        container.innerHTML = allWorkers.map(w=>{
+            const settlement = getWorkerSettlement(w.id);
+            return `
+            <div class="li" onclick="window.openWorker('${w.id}')">
+                <div class="avatar">${initials(w.name)}</div>
+                <div class="li-left">
+                    <div class="li-name">${w.name}</div>
+                    <div class="li-sub">${w.loginId}${settlement ? ' · Settled' : ''}</div>
+                </div>
+                <div class="li-right"><i class="fas fa-chevron-right" style="font-size:0.7rem;"></i></div>
+            </div>
+            `;
+        }).join('');
+        const el = document.getElementById('workerCount');
+        if(el) el.innerText = allWorkers.length + ' total';
+    };
+    build(document.getElementById('workersList'));
+    build(document.getElementById('workersList2'));
+}
+window.openWorker = (wid)=>{
+    const worker = allWorkers.find(w=>w.id===wid);
+    if(worker) openWorkerDetail(worker);
+};
+
+function renderSettlementList(){
+    const c = document.getElementById('settlementList');
+    if(!c) return;
+    const entries = Object.entries(allSettlements);
+    if(!entries.length){ c.innerHTML = `<div class="empty">No settlements yet</div>`; return; }
+    c.innerHTML = entries.map(([wid, s])=>{
+        const w = allWorkers.find(x=>x.id===wid);
+        return `
+        <div class="li" style="cursor:default;">
+            <div class="avatar green">${w?initials(w.name):'?'}</div>
+            <div class="li-left">
+                <div class="li-name">${w?w.name:'Unknown'}</div>
+                <div class="li-sub">Up to ${formatDate(s.settleDate)} · ${new Date(s.settledAt).toLocaleDateString()}</div>
+            </div>
+            <div class="li-right" style="font-weight:800;color:var(--success);font-size:0.9rem;">₹${(s.amount||0).toLocaleString()}</div>
+        </div>
+        `;
+    }).join('');
+}
+
+/* ==================== STAT DETAIL ==================== */
+window.viewStat = (type)=>{
+    const stats = window._adminStats?.stats || [];
+    if(!stats.length) return showToast('No data', 'error');
+    let title='', data=[];
+    if(type==='workers'){
+        title='All Workers';
+        data = stats.map(s=>({ name:s.name, id:s.id, loginId:s.loginId, value:'Active', sub:'' }));
+    } else if(type==='earned'){
+        title='Total Earned';
+        data = stats.filter(s=>s.earn>0).sort((a,b)=>b.earn-a.earn).map(s=>({ name:s.name, id:s.id, loginId:s.loginId, value:'₹'+s.earn.toLocaleString(), sub:'' }));
+    } else if(type==='deduction'){
+        title='Total Deduction';
+        data = stats.filter(s=>s.ded>0).sort((a,b)=>b.ded-a.ded).map(s=>({ name:s.name, id:s.id, loginId:s.loginId, value:'₹'+s.ded.toLocaleString(), sub:'' }));
+    } else if(type==='net'){
+        title='Net Payable';
+        data = stats.sort((a,b)=>b.net-a.net).map(s=>({ name:s.name, id:s.id, loginId:s.loginId, value:'₹'+s.net.toLocaleString(), sub:'' }));
+    } else if(type==='pending'){
+        title='Pending Payable';
+        data = stats.filter(s=>s.pendingNet!==0).sort((a,b)=>b.pendingNet-a.pendingNet).map(s=>({ name:s.name, id:s.id, loginId:s.loginId, value:'₹'+(s.pendingNet||0).toLocaleString(), sub:s.settlement?`Settled up to ${formatDate(s.settlement.settleDate)}`:'Not settled' }));
+    } else if(type==='settled'){
+        title='Settled Amount';
+        data = stats.filter(s=>s.settledNet!==0).sort((a,b)=>b.settledNet-a.settledNet).map(s=>({ name:s.name, id:s.id, loginId:s.loginId, value:'₹'+(s.settledNet||0).toLocaleString(), sub:s.settlement?`On ${formatDate(s.settlement.settleDate)}`:'' }));
+    }
+    if(!data.length) return showToast('No data', 'error');
+    openStatPage(title, data);
+}
+
+function openStatPage(title, data){
+    const existing = document.getElementById('fullpage');
+    if(existing) existing.remove();
+    const page = document.createElement('div');
+    page.id = 'fullpage';
+    page.className = 'fullpage';
+    page.innerHTML = `
+        <div class="app-top">
+            <div class="title-area"><h1>${title}</h1></div>
+            <button class="icon-btn" onclick="document.getElementById('fullpage').remove()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="page" style="padding-top:0.5rem;">
+            <div class="card">
+                <div class="card-body">
+                    ${data.map(d=>`
+                        <div class="li" onclick="window.openWorker('${d.id}'); document.getElementById('fullpage').remove();">
+                            <div class="avatar">${initials(d.name)}</div>
+                            <div class="li-left">
+                                <div class="li-name">${d.name}</div>
+                                <div class="li-sub">${d.loginId}${d.sub?' · '+d.sub:''}</div>
+                            </div>
+                            <div class="li-right" style="font-weight:800;color:var(--primary);">${d.value}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(page);
+}
+
+/* ==================== ADD WORKER SHEET ==================== */
+window.adminAddWorker = ()=>{
+    const existing = document.getElementById('sheet');
+    if(existing) existing.remove();
+    const sheet = document.createElement('div');
+    sheet.id = 'sheet';
+    sheet.className = 'sheet-overlay';
+    sheet.onclick = e => { if(e.target === sheet) sheet.remove(); };
+    sheet.innerHTML = `
+        <div class="sheet">
+            <div class="sheet-grab"></div>
+            <div class="sheet-head">
+                <div><h2>Add New Worker</h2><div class="sub">Fill the details below</div></div>
+                <button class="x-btn" onclick="document.getElementById('sheet').remove()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="field"><label>Full Name</label><input id="nName" placeholder="e.g., Ramesh" /></div>
+            <div class="field"><label>Date of Birth</label><input type="date" id="nDob" /></div>
+            <div class="field"><label>Phone</label><input id="nPhone" placeholder="Mobile Number" /></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;">
+                <div class="field"><label>Day Rate (₹)</label><input type="number" id="nDayRate" value="350" /></div>
+                <div class="field"><label>Extra ₹/hr</label><input type="number" id="nHourlyRate" value="50" /></div>
+            </div>
+            <button class="btn btn-primary btn-block" onclick="window.saveNewWorker()"><i class="fas fa-plus"></i> Add Worker</button>
+        </div>
+    `;
+    document.body.appendChild(sheet);
+};
+window.saveNewWorker = async ()=>{
+    const name = document.getElementById('nName').value.trim();
+    const dob = document.getElementById('nDob').value;
+    const phone = document.getElementById('nPhone').value.trim();
+    const dr = parseFloat(document.getElementById('nDayRate').value) || 350;
+    const hr = parseFloat(document.getElementById('nHourlyRate').value) || 50;
+    if(!name || !dob) return showToast('Name and DOB required', 'error');
+    const year = dob.split('-')[0];
+    const lid = (name + year).toLowerCase().replace(/\s/g, '');
+    const nr = await push(workersRef, { name, dob, phone, loginId:lid, createdAt:Date.now() });
+    await set(ref(db, `workerRates/${nr.key}`), { dayRate:dr, hourlyRate:hr });
+    showToast(`✅ Worker added! ID: ${lid}`);
+    document.getElementById('sheet')?.remove();
+};
+
+/* ==================== WORKER DETAIL SHEET ==================== */
+async function openWorkerDetail(w){
+    currentWorkerId = w.id;
+    const rates = await getRates(w.id);
+    await loadWorkerData(w.id);
+    const totals = calcTotalsWithSettlement(w.id, currentAttendances);
+    calendarViewDate = new Date();
+
+    const existing = document.getElementById('sheet');
+    if(existing) existing.remove();
+
+    const sheet = document.createElement('div');
+    sheet.id = 'sheet';
+    sheet.className = 'sheet-overlay';
+    sheet.onclick = e => { if(e.target === sheet) sheet.remove(); };
+    sheet.innerHTML = `
+        <div class="sheet">
+            <div class="sheet-grab"></div>
+            <div class="sheet-head">
+                <div><h2>${w.name}</h2><div class="sub">${w.loginId}</div></div>
+                <div style="display:flex;gap:0.4rem;">
+                    <button class="x-btn" style="background:#fef2f2;color:var(--danger);" onclick="window.deleteWorker('${w.id}','${w.name.replace(/'/g,"\\'")}')"><i class="fas fa-trash"></i></button>
+                    <button class="x-btn" onclick="document.getElementById('sheet').remove()"><i class="fas fa-times"></i></button>
+                </div>
+            </div>
+            <div class="summary-row">
+                <div class="pill"><div class="p-label">Earned</div><div class="p-value green">₹${totals.earn.toLocaleString()}</div></div>
+                <div class="pill"><div class="p-label">Deduct</div><div class="p-value red">₹${totals.ded.toLocaleString()}</div></div>
+                <div class="pill"><div class="p-label">Net</div><div class="p-value blue">₹${totals.net.toLocaleString()}</div></div>
+                <div class="pill"><div class="p-label">Pending</div><div class="p-value orange">₹${totals.pendingNet.toLocaleString()}</div></div>
+            </div>
+            <div style="background:var(--bg);border-radius:12px;padding:0.75rem 1rem;margin-bottom:1rem;display:flex;gap:0.6rem;align-items:flex-end;flex-wrap:wrap;">
+                <div style="flex:1;min-width:90px;">
+                    <label style="font-size:0.65rem;color:var(--muted);font-weight:700;">DAY RATE (₹)</label>
+                    <input type="number" id="wDayRate" value="${rates.dayRate}" step="10" style="padding:0.55rem 0.7rem;font-size:0.85rem;" />
+                </div>
+                <div style="flex:1;min-width:90px;">
+                    <label style="font-size:0.65rem;color:var(--muted);font-weight:700;">EXTRA ₹/HR</label>
+                    <input type="number" id="wHourlyRate" value="${rates.hourlyRate}" step="5" style="padding:0.55rem 0.7rem;font-size:0.85rem;" />
+                </div>
+                <button class="btn btn-primary btn-sm" onclick="window.saveRates('${w.id}')">Save</button>
+            </div>
+            <div class="tabs">
+                <button class="tab active" data-tab="records"><i class="fas fa-list"></i> Records</button>
+                <button class="tab" data-tab="day"><i class="fas fa-plus"></i> Day</button>
+                <button class="tab" data-tab="extra"><i class="fas fa-clock"></i> Extra</button>
+                <button class="tab" data-tab="deduct"><i class="fas fa-minus"></i> Deduct</button>
+                <button class="tab" data-tab="settle"><i class="fas fa-handshake"></i> Settle</button>
+            </div>
+            <div id="tab-records" class="tab-pane">
+                <button class="btn btn-outline btn-sm btn-block" style="margin-bottom:0.75rem;" onclick="window.downloadPDF('${w.id}')"><i class="fas fa-download"></i> Download PDF</button>
+                <div id="wRecords"></div>
+            </div>
+            <div id="tab-day" class="tab-pane" style="display:none;">
+                <div class="field"><label>Date</label><input type="date" id="aDate" value="${getToday()}" /></div>
+                <div class="field">
+                    <label>Site</label>
+                    <div class="site-wrap">
+                        <input id="aSite" placeholder="Site name" 
+                            oninput="window.wdSiteInput(this.value)" 
+                            onfocus="window.wdSiteFocus(this)" 
+                            onblur="window.wdSiteBlur()" autocomplete="off" />
+                        <div class="site-suggest" id="wdSug"></div>
+                    </div>
+                </div>
+                <button class="btn btn-primary btn-block" onclick="window.saveAttend('${w.id}')"><i class="fas fa-save"></i> Save Attendance</button>
+            </div>
+            <div id="tab-extra" class="tab-pane" style="display:none;">
+                <div class="field"><label>Date</label><input type="date" id="eDate" value="${getToday()}" /></div>
+                <div class="field">
+                    <label>Site</label>
+                    <div class="site-wrap">
+                        <input id="eSite" placeholder="Site name"
+                            oninput="window.wdSiteInput2(this.value)" 
+                            onfocus="window.wdSiteFocus2(this)" 
+                            onblur="window.wdSiteBlur()" autocomplete="off" />
+                        <div class="site-suggest" id="wdSug2"></div>
+                    </div>
+                </div>
+                <div class="field"><label>Duration</label>
+                    <div class="chip-row" id="timeChips">
+                        ${TIME_OPTIONS.map(t=>`<span class="chip" data-t="${t}">${t}</span>`).join('')}
+                    </div>
+                </div>
+                <div class="field"><label>Payment</label><input id="ePay" readonly placeholder="₹0" /></div>
+                <button class="btn btn-success btn-block" onclick="window.saveExtra('${w.id}')"><i class="fas fa-clock"></i> Add Extra Time</button>
+            </div>
+            <div id="tab-deduct" class="tab-pane" style="display:none;">
+                <div class="field"><label>Date</label><input type="date" id="dDate" value="${getToday()}" /></div>
+                <div class="field"><label>Reason</label><input id="dReason" placeholder="Advance, Fine..." /></div>
+                <div class="field"><label>Amount (₹)</label><input type="number" id="dAmount" placeholder="Amount" /></div>
+                <button class="btn btn-danger btn-block" onclick="window.saveDeduct('${w.id}')"><i class="fas fa-minus-circle"></i> Add Deduction</button>
+            </div>
+            <div id="tab-settle" class="tab-pane" style="display:none;">
+                ${totals.settlement ? `
+                <div class="settle-banner">
+                    <div class="sb-l"><i class="fas fa-check-circle"></i> Settled<div class="sb-sub">Up to ${formatDate(totals.settlement.settleDate)}</div></div>
+                    <div class="sb-r"><div class="sb-label">Amount</div><div class="sb-value">₹${totals.settlement.amount.toLocaleString()}</div></div>
+                </div>
+                ${totals.settlement.note ? `<p style="font-size:0.75rem;color:var(--muted);margin-bottom:0.75rem;"><i class="fas fa-sticky-note"></i> ${totals.settlement.note}</p>` : ''}
+                <button class="btn btn-outline btn-sm btn-block" style="margin-bottom:1rem;" onclick="window.removeSettle('${w.id}')"><i class="fas fa-undo"></i> Remove Settlement</button>
+                ` : ''}
+                <div class="field"><label>Settle up to Date</label><input type="date" id="sDate" value="${getToday()}" /></div>
+                <div class="field"><label>Note (optional)</label><input id="sNote" placeholder="Cash payment..." /></div>
+                <div class="field"><label>Amount</label><input id="sAmt" readonly placeholder="₹0 (Net)" style="background:var(--bg);font-weight:800;color:var(--success);" /></div>
+                <button class="btn btn-success btn-block" onclick="window.saveSettle('${w.id}')"><i class="fas fa-check-circle"></i> Clear Settlement</button>
+            </div>
+            <div style="margin-top:1.4rem;">
+                <h4 style="font-size:0.82rem;margin-bottom:0.5rem;font-weight:700;">Attendance Calendar</h4>
+                <div class="card" style="margin-bottom:0;"><div id="wCal"></div></div>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(sheet);
+
+    sheet.querySelectorAll('.tab').forEach(t=>{
+        t.onclick = ()=>{
+            sheet.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+            t.classList.add('active');
+            sheet.querySelectorAll('.tab-pane').forEach(p=>p.style.display='none');
+            document.getElementById('tab-' + t.dataset.tab).style.display = 'block';
+        };
+    });
+
+    sheet.querySelectorAll('#timeChips .chip').forEach(chip=>{
+        chip.onclick = ()=>{
+            sheet.querySelectorAll('#timeChips .chip').forEach(x=>x.classList.remove('selected'));
+            chip.classList.add('selected');
+            const t = chip.dataset.t;
+            const hr = parseFloat(document.getElementById('wHourlyRate').value) || 0;
+            document.getElementById('ePay').value = '₹' + calcExtraPayment(hr, t);
+        };
+    });
+
+    const sDateEl = document.getElementById('sDate');
+    const sAmtEl = document.getElementById('sAmt');
+    const upd = ()=>{
+        const sd = sDateEl.value;
+        const attsUp = currentAttendances.filter(a=>a.date <= sd);
+        sAmtEl.value = '₹' + calcTotals(attsUp).net.toLocaleString() + ' (Net)';
+    };
+    sDateEl.addEventListener('change', upd);
+    upd();
+
+    renderWorkerRecords();
+    renderCalendar(currentAttendances, 'wCal');
+}
+
+/* Site suggestion handlers for worker detail */
+window.wdSiteInput = (val)=>{
+    const sug = document.getElementById('wdSug');
+    if(!sug) return;
+    const q = (val||'').trim().toLowerCase();
+    const hist = getSiteHistory();
+    const filtered = q ? hist.filter(h => h.toLowerCase().includes(q)) : hist;
+    if(!filtered.length){ sug.classList.remove('show'); return; }
+    sug.innerHTML = filtered.slice(0, 8).map(h => 
+        `<div class="site-suggest-item" onmousedown="event.preventDefault(); window.wdPickSite('${h.replace(/'/g,"\\'")}')"><i class="fas fa-map-marker-alt"></i> ${h}</div>`
+    ).join('');
+    sug.classList.add('show');
+};
+window.wdSiteFocus = (el)=>{ window.wdSiteInput(el.value); };
+window.wdSiteInput2 = (val)=>{
+    const sug = document.getElementById('wdSug2');
+    if(!sug) return;
+    const q = (val||'').trim().toLowerCase();
+    const hist = getSiteHistory();
+    const filtered = q ? hist.filter(h => h.toLowerCase().includes(q)) : hist;
+    if(!filtered.length){ sug.classList.remove('show'); return; }
+    sug.innerHTML = filtered.slice(0, 8).map(h => 
+        `<div class="site-suggest-item" onmousedown="event.preventDefault(); window.wdPickSite2('${h.replace(/'/g,"\\'")}')"><i class="fas fa-map-marker-alt"></i> ${h}</div>`
+    ).join('');
+    sug.classList.add('show');
+};
+window.wdSiteFocus2 = (el)=>{ window.wdSiteInput2(el.value); };
+window.wdSiteBlur = ()=>{
+    setTimeout(()=>{
+        document.querySelectorAll('.site-suggest').forEach(s => s.classList.remove('show'));
+    }, 200);
+};
+window.wdPickSite = (site)=>{
+    const el = document.getElementById('aSite');
+    if(el) el.value = site;
+    const sug = document.getElementById('wdSug');
+    if(sug) sug.classList.remove('show');
+};
+window.wdPickSite2 = (site)=>{
+    const el = document.getElementById('eSite');
+    if(el) el.value = site;
+    const sug = document.getElementById('wdSug2');
+    if(sug) sug.classList.remove('show');
+};
+
+window.deleteWorker = async (id, name)=>{
+    if(!confirm(`Delete "${name}" and all data?`)) return;
+    await remove(ref(db, `workers/${id}`));
+    await remove(ref(db, `attendance/${id}`));
+    await remove(ref(db, `workerRates/${id}`));
+    await remove(ref(db, `settlements/${id}`));
+    document.getElementById('sheet')?.remove();
+    showToast('Worker deleted');
+};
+window.saveRates = async (id)=>{
+    await set(ref(db, `workerRates/${id}`), {
+        dayRate: parseFloat(document.getElementById('wDayRate').value),
+        hourlyRate: parseFloat(document.getElementById('wHourlyRate').value)
+    });
+    showToast('Rates updated');
+};
+window.saveAttend = async (wid)=>{
+    const date = document.getElementById('aDate').value;
+    const site = document.getElementById('aSite').value.trim() || 'Work Site';
+    const r = await getRates(wid);
+    if(!date) return showToast('Date required', 'error');
+    await push(ref(db, `attendance/${wid}`), { date, siteName:site, payment:r.dayRate, type:'earning', timestamp:Date.now() });
+    saveSiteToHistory(site);
+    showToast(`✅ +₹${r.dayRate}`);
+    document.getElementById('aSite').value = '';
+};
+window.saveExtra = async (wid)=>{
+    const date = document.getElementById('eDate').value;
+    const site = document.getElementById('eSite').value.trim() || 'Extra Work';
+    const sel = document.querySelector('#timeChips .chip.selected');
+    const r = await getRates(wid);
+    if(!date || !sel) return showToast('Date and duration required', 'error');
+    const t = sel.dataset.t;
+    const pay = calcExtraPayment(r.hourlyRate, t);
+    await push(ref(db, `attendance/${wid}`), { date, siteName:site, payment:pay, extraTime:t, type:'earning', timestamp:Date.now() });
+    saveSiteToHistory(site);
+    showToast(`⏱️ +₹${pay}`);
+};
+window.saveDeduct = async (wid)=>{
+    const date = document.getElementById('dDate').value;
+    const reason = document.getElementById('dReason').value.trim() || 'Deduction';
+    const amt = parseFloat(document.getElementById('dAmount').value);
+    if(!date || !amt) return showToast('Date and amount required', 'error');
+    await push(ref(db, `attendance/${wid}`), { date, siteName:reason, payment:amt, type:'deduction', timestamp:Date.now() });
+    showToast(`📉 -₹${amt}`);
+};
+window.saveSettle = async (wid)=>{
+    const sd = document.getElementById('sDate').value;
+    const note = document.getElementById('sNote').value.trim();
+    if(!sd) return showToast('Select date', 'error');
+    const attsUp = currentAttendances.filter(a=>a.date <= sd);
+    if(!attsUp.length) return showToast('No records to settle', 'error');
+    const t = calcTotals(attsUp);
+    if(t.net === 0) return showToast('Net is zero', 'error');
+    await set(ref(db, `settlements/${wid}`), { settleDate:sd, amount:t.net, note, settledAt:Date.now() });
+    showToast(`✅ Settled ₹${t.net.toLocaleString()}`);
+    document.getElementById('sheet')?.remove();
+    const w = allWorkers.find(x=>x.id===wid);
+    if(w) openWorkerDetail(w);
+};
+window.removeSettle = async (wid)=>{
+    if(!confirm('Remove settlement?')) return;
+    await remove(ref(db, `settlements/${wid}`));
+    showToast('Removed');
+    document.getElementById('sheet')?.remove();
+    const w = allWorkers.find(x=>x.id===wid);
+    if(w) openWorkerDetail(w);
+};
+window.downloadPDF = (wid)=>{
+    const w = allWorkers.find(x=>x.id===wid);
+    if(w) generatePDF(w, currentAttendances);
+};
+
+/* ==================== WORKER DATA ==================== */
+function loadWorkerData(wid){
+    onValue(ref(db, `attendance/${wid}`), (s)=>{
+        const d = s.val();
+        currentAttendances = d ? Object.entries(d).map(([id,val])=>({id, ...val})) : [];
+        currentAttendances.sort((a,b)=> new Date(b.date) - new Date(a.date));
+
+        if(document.getElementById('wRecords')) renderWorkerRecords();
+        if(document.getElementById('workerAttendanceList')){
+            renderWorkerAttendanceList();
+            const { earn, ded, net } = calcTotals(currentAttendances);
+            const $ = id => document.getElementById(id);
+            $('workerTotalDays') && ($('workerTotalDays').innerText = currentAttendances.filter(a=>a.type!=='deduction').length);
+            $('workerTotalEarned') && ($('workerTotalEarned').innerText = '₹' + earn.toLocaleString());
+            $('workerTotalDeduction') && ($('workerTotalDeduction').innerText = '₹' + ded.toLocaleString());
+            $('workerNetPayment') && ($('workerNetPayment').innerText = '₹' + net.toLocaleString());
+            renderCalendar(currentAttendances, 'wCal');
+            renderWorkerSettlementBanner(wid);
+        }
+        if(document.getElementById('wCal')) renderCalendar(currentAttendances, 'wCal');
+        if(document.getElementById('adminStats')) updateAdminStats();
+        if(document.getElementById('workerSettlementHistory')) renderWorkerSettlementHistory(wid);
+    });
+}
+
+function renderWorkerRecords(){
+    const c = document.getElementById('wRecords');
+    if(!c) return;
+    if(!currentAttendances.length){ c.innerHTML = `<div class="empty">No records yet</div>`; return; }
+    const st = getWorkerSettlement(currentWorkerId);
+    const sd = st ? st.settleDate : null;
+    c.innerHTML = currentAttendances.map(a=>{
+        const settled = sd && a.date <= sd;
+        return `
+        <div class="rec">
+            <div class="rec-left">
+                <div class="rec-date">${formatDate(a.date)}</div>
+                <div class="rec-sub">${a.siteName||'N/A'}${a.extraTime?' · '+a.extraTime:''}${settled?' · Settled':''}</div>
+            </div>
+            <div class="rec-right">
+                <span class="rec-amount ${a.type==='deduction'?'red':'green'}">${a.type==='deduction'?'-':'+'}₹${(a.payment||0).toLocaleString()}</span>
+                <button class="rec-del" onclick="window.delRec('${currentWorkerId}','${a.id}')"><i class="fas fa-trash"></i></button>
+            </div>
+        </div>
+        `;
+    }).join('');
+}
+window.delRec = async (wid, rid)=>{
+    if(!confirm('Delete this record?')) return;
+    await remove(ref(db, `attendance/${wid}/${rid}`));
+    showToast('Deleted');
+};
+
+function renderWorkerSettlementBanner(wid){
+    const c = document.getElementById('workerSettlementBanner');
+    if(!c) return;
+    if(!wid || wid==='admin'){ c.innerHTML = ''; return; }
+    const s = getWorkerSettlement(wid);
+    if(!s){ c.innerHTML = ''; return; }
+    const t = calcTotalsWithSettlement(wid, currentAttendances);
+    c.innerHTML = `
+        <div class="settle-banner">
+            <div class="sb-l"><i class="fas fa-check-circle"></i> Settled up to ${formatDate(s.settleDate)}<div class="sb-sub">Cleared ₹${s.amount.toLocaleString()}</div></div>
+            <div class="sb-r"><div class="sb-label">Pending</div><div class="sb-value">₹${t.pendingNet.toLocaleString()}</div></div>
+        </div>
+    `;
+}
+function renderWorkerSettlementHistory(wid){
+    const c = document.getElementById('workerSettlementHistory');
+    if(!c) return;
+    const s = allSettlements[wid];
+    if(!s){ c.innerHTML = `<div class="empty">No settlements yet</div>`; return; }
+    c.innerHTML = `
+        <div class="li" style="cursor:default;">
+            <div class="avatar green"><i class="fas fa-check"></i></div>
+            <div class="li-left">
+                <div class="li-name">Settled up to ${formatDate(s.settleDate)}</div>
+                <div class="li-sub">${new Date(s.settledAt).toLocaleDateString()}${s.note?' · '+s.note:''}</div>
+            </div>
+            <div class="li-right" style="font-weight:800;color:var(--success);">₹${s.amount.toLocaleString()}</div>
+        </div>
+    `;
+}
+
+/* ==================== WORKER CALENDAR ==================== */
+function renderCalendar(atts, containerId){
+    const c = document.getElementById(containerId);
+    if(!c) return;
+    const y = calendarViewDate.getFullYear();
+    const m = calendarViewDate.getMonth();
+    const first = new Date(y, m, 1).getDay();
+    const days = new Date(y, m+1, 0).getDate();
+    const map = new Map();
+    atts.forEach(a=>{
+        if(!map.has(a.date)) map.set(a.date, []);
+        map.get(a.date).push(a);
+    });
+
+    const monthPrefix = `${y}-${String(m+1).padStart(2,'0')}`;
+    let mEarn=0, mDed=0, mDays=0;
+    atts.forEach(a=>{
+        if(a.date && a.date.startsWith(monthPrefix)){
+            const amt = parseFloat(a.payment)||0;
+            if(a.type==='deduction') mDed += amt;
+            else { mEarn += amt; mDays++; }
+        }
+    });
+
+    const todayStr = getToday();
+
+    let html = `
+        <div class="cal-top">
+            <button class="cal-nav-btn" onclick="window.calPrev('${containerId}')"><i class="fas fa-chevron-left"></i></button>
+            <span class="cal-month">${formatMonthYear(calendarViewDate)}</span>
+            <button class="cal-nav-btn" onclick="window.calNext('${containerId}')"><i class="fas fa-chevron-right"></i></button>
+        </div>
+        <div class="cal-summary">
+            <div class="cs-item"><div class="cs-label">Days</div><div class="cs-value">${mDays}</div></div>
+            <div class="cs-item"><div class="cs-label">Earned</div><div class="cs-value green">₹${mEarn.toLocaleString()}</div></div>
+            <div class="cs-item"><div class="cs-label">Deduct</div><div class="cs-value red">₹${mDed.toLocaleString()}</div></div>
+        </div>
+        <div class="cal-grid">
+            ${['S','M','T','W','T','F','S'].map(d=>`<div class="cal-dow">${d}</div>`).join('')}
+    `;
+    for(let i=0;i<first;i++) html += `<div class="cal-day empty"></div>`;
+    for(let day=1; day<=days; day++){
+        const ds = `${y}-${String(m+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+        const recs = map.get(ds) || [];
+        const hp = recs.some(r=>r.type==='earning');
+        const hd = recs.some(r=>r.type==='deduction');
+        let cls = '';
+        if(hp && hd) cls='mixed';
+        else if(hp) cls='payment';
+        else if(hd) cls='deduction';
+        if(ds === todayStr) cls += ' today';
+        html += `<div class="cal-day ${cls}" onclick="window.calDetail('${ds}')">${day}</div>`;
+    }
+    html += `</div>`;
+    c.innerHTML = html;
+}
+
+window.calPrev = (id)=>{
+    calendarViewDate.setMonth(calendarViewDate.getMonth() - 1);
+    renderCalendar(currentAttendances, id);
+};
+window.calNext = (id)=>{
+    calendarViewDate.setMonth(calendarViewDate.getMonth() + 1);
+    renderCalendar(currentAttendances, id);
+};
+window.calDetail = (dateStr)=>{
+    const recs = currentAttendances.filter(a=>a.date === dateStr);
+    const sheet = document.createElement('div');
+    sheet.className = 'sheet-overlay';
+    sheet.onclick = e => { if(e.target === sheet) sheet.remove(); };
+    sheet.innerHTML = `
+        <div class="sheet">
+            <div class="sheet-grab"></div>
+            <div class="sheet-head">
+                <div><h2>${formatDate(dateStr)}</h2><div class="sub">Day Details</div></div>
+                <button class="x-btn" onclick="this.closest('.sheet-overlay').remove()"><i class="fas fa-times"></i></button>
+            </div>
+            ${recs.length ? `
+                <div class="card" style="margin-bottom:0;">
+                    <div class="card-body">
+                        ${recs.map(r=>`
+                            <div class="rec" style="padding-left:1.1rem;padding-right:1.1rem;">
+                                <div class="rec-left">
+                                    <div class="rec-date">${r.siteName||'N/A'}</div>
+                                    <div class="rec-sub">${r.extraTime||''}${r.type==='deduction'?' · Deduction':''}</div>
+                                </div>
+                                <span class="rec-amount ${r.type==='deduction'?'red':'green'}">${r.type==='deduction'?'-':'+'}₹${(r.payment||0).toLocaleString()}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            ` : `<div class="empty">No records on this day</div>`}
+        </div>
+    `;
+    document.body.appendChild(sheet);
+};
+
+/* ==================== WORKER SHELL ==================== */
+function renderWorker(){
+    const app = document.getElementById('app');
+    let body = '';
+
+    if(workerTab === 'home'){
+        body = `
+        <div class="page">
+            <div id="workerSettlementBanner"></div>
+            <div class="stat-grid">
+                <div class="stat"><div class="s-label">Attendance</div><div class="s-value" id="workerTotalDays">0</div></div>
+                <div class="stat"><div class="s-label">Earned</div><div class="s-value green" id="workerTotalEarned">₹0</div></div>
+                <div class="stat"><div class="s-label">Deductions</div><div class="s-value red" id="workerTotalDeduction">₹0</div></div>
+                <div class="stat"><div class="s-label">Net Payable</div><div class="s-value blue" id="workerNetPayment">₹0</div></div>
+            </div>
+            <div class="card">
+                <div class="card-head"><h3>Attendance Calendar</h3></div>
+                <div id="wCal"></div>
+            </div>
+        </div>
+        `;
+    } else if(workerTab === 'records'){
+        body = `
+        <div class="page">
+            <div class="card">
+                <div class="card-head">
+                    <h3>My Records</h3>
+                    <button class="btn btn-outline btn-sm" onclick="window.workerPDF()"><i class="fas fa-download"></i></button>
+                </div>
+                <div class="card-body" id="workerAttendanceList"></div>
+            </div>
+        </div>
+        `;
+    } else if(workerTab === 'settle'){
+        body = `
+        <div class="page">
+            <div class="card">
+                <div class="card-head"><h3>Settlement History</h3></div>
+                <div class="card-body" id="workerSettlementHistory"></div>
+            </div>
+        </div>
+        `;
+    } else if(workerTab === 'profile'){
+        body = `
+        <div class="page">
+            <div class="card">
+                <div class="card-body pad" style="text-align:center;">
+                    <div class="avatar" style="width:60px;height:60px;font-size:1.4rem;margin:0 auto 0.75rem;">${initials(currentUser.name)}</div>
+                    <h2 style="font-size:1.1rem;font-weight:700;">${currentUser.name}</h2>
+                    <p style="font-size:0.78rem;color:var(--muted);margin-top:0.2rem;">${currentUser.loginId}</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="li" onclick="window.workerPDF()">
+                    <div class="li-left"><div class="li-name"><i class="fas fa-download" style="width:20px;"></i> Download Report</div></div>
+                    <i class="fas fa-chevron-right" style="font-size:0.7rem;color:var(--muted);"></i>
+                </div>
+                <div class="li" onclick="window.toggleDark()">
+                    <div class="li-left"><div class="li-name"><i class="fas fa-moon" style="width:20px;"></i> Dark Mode</div></div>
+                    <i class="fas fa-chevron-right" style="font-size:0.7rem;color:var(--muted);"></i>
+                </div>
+                <div class="li" onclick="window.workerLogout()">
+                    <div class="li-left"><div class="li-name" style="color:var(--danger);"><i class="fas fa-sign-out-alt" style="width:20px;"></i> Logout</div></div>
+                    <i class="fas fa-chevron-right" style="font-size:0.7rem;color:var(--muted);"></i>
+                </div>
+            </div>
+            <p style="text-align:center;color:var(--muted);font-size:0.7rem;">Vishu Civil Contractor · v2.2</p>
+        </div>
+        `;
+    }
+
+    app.innerHTML = `
+        <div class="app-top">
+            <div class="title-area">
+                <h1>Hello, ${currentUser.name.split(' ')[0]}</h1>
+                <p>${currentUser.loginId}</p>
+            </div>
+            <div class="app-top-actions">
+                <button class="icon-btn" onclick="window.toggleDark()"><i class="fas ${darkToggleIcon()} dark-btn-icon"></i></button>
+                <button class="icon-btn" onclick="window.workerLogout()"><i class="fas fa-sign-out-alt"></i></button>
+            </div>
+        </div>
+        ${body}
+        <div class="bottom-nav">
+            <button class="nav-item ${workerTab==='home'?'active':''}" onclick="window.workerTabFn('home')"><i class="fas fa-home"></i><span>Home</span></button>
+            <button class="nav-item ${workerTab==='records'?'active':''}" onclick="window.workerTabFn('records')"><i class="fas fa-list"></i><span>Records</span></button>
+            <button class="nav-item ${workerTab==='settle'?'active':''}" onclick="window.workerTabFn('settle')"><i class="fas fa-handshake"></i><span>Settled</span></button>
+            <button class="nav-item ${workerTab==='profile'?'active':''}" onclick="window.workerTabFn('profile')"><i class="fas fa-user"></i><span>Profile</span></button>
+        </div>
+    `;
+
+    if(workerTab === 'home'){
+        renderCalendar(currentAttendances, 'wCal');
+        renderWorkerSettlementBanner(currentUser.id);
+        const { earn, ded, net } = calcTotals(currentAttendances);
+        const $ = id => document.getElementById(id);
+        $('workerTotalDays') && ($('workerTotalDays').innerText = currentAttendances.filter(a=>a.type!=='deduction').length);
+        $('workerTotalEarned') && ($('workerTotalEarned').innerText = '₹' + earn.toLocaleString());
+        $('workerTotalDeduction') && ($('workerTotalDeduction').innerText = '₹' + ded.toLocaleString());
+        $('workerNetPayment') && ($('workerNetPayment').innerText = '₹' + net.toLocaleString());
+    } else if(workerTab === 'records'){
+        renderWorkerAttendanceList();
+    } else if(workerTab === 'settle'){
+        renderWorkerSettlementHistory(currentUser.id);
+    }
+}
+window.workerTabFn = (t)=>{ workerTab = t; renderWorker(); };
+window.workerLogout = ()=>{ clearSession(); currentUser = null; renderLogin(); };
+window.workerPDF = ()=>{
+    generatePDF({ name:currentUser.name, loginId:currentUser.loginId, id:currentUser.id }, currentAttendances);
+};
+
+function renderWorkerAttendanceList(){
+    const c = document.getElementById('workerAttendanceList');
+    if(!c) return;
+    if(!currentAttendances.length){ c.innerHTML = `<div class="empty">No records yet</div>`; return; }
+    const st = getWorkerSettlement(currentUser.id);
+    const sd = st ? st.settleDate : null;
+    c.innerHTML = currentAttendances.map(a=>{
+        const settled = sd && a.date <= sd;
+        return `
+        <div class="rec">
+            <div class="rec-left">
+                <div class="rec-date">${formatDate(a.date)}</div>
+                <div class="rec-sub">${a.siteName||'N/A'}${a.extraTime?' · '+a.extraTime:''} · ${settled?'Settled':'Pending'}</div>
+            </div>
+            <span class="rec-amount ${a.type==='deduction'?'red':'green'}">${a.type==='deduction'?'-':'+'}₹${(a.payment||0).toLocaleString()}</span>
+        </div>
+        `;
+    }).join('');
+}
+
+/* ==================== PDF ==================== */
+async function generatePDF(w, atts){
+    if(!atts.length) return showToast('No data to export', 'error');
+    const { earn, ded, net } = calcTotals(atts);
+    const rates = await getRates(w.id);
+    const settlement = getWorkerSettlement(w.id);
+    const div = document.createElement('div');
+    div.style.cssText = 'position:absolute;left:-9999px;width:750px;padding:20px;background:white;color:black;font-family:sans-serif;';
+    div.innerHTML = `
+        <h2 style="color:#2563eb;">Vishu Civil Contractor</h2>
+        <h3>Worker: ${w.name}</h3>
+        <p>Login ID: ${w.loginId} | Day Rate: ₹${rates.dayRate} | Extra: ₹${rates.hourlyRate}/hr</p>
+        ${settlement ? `<p style="background:#fef3c7;padding:8px;border-radius:4px;"><strong>Settled up to ${formatDate(settlement.settleDate)}</strong> | ₹${settlement.amount.toLocaleString()}</p>` : ''}
+        <p><strong>Summary:</strong> Earned ₹${earn} | Deduction ₹${ded} | Net ₹${net}</p>
+        <table border="1" cellpadding="6" style="width:100%;border-collapse:collapse;margin-top:10px;">
+            <thead><tr style="background:#2563eb;color:white;"><th>Date</th><th>Site</th><th>Extra</th><th>Amount</th><th>Status</th></tr></thead>
+            <tbody>${atts.map(a=>{
+                const s = settlement && a.date <= settlement.settleDate;
+                return `<tr><td>${formatDate(a.date)}</td><td>${a.siteName||'N/A'}</td><td>${a.extraTime||'-'}</td><td style="color:${a.type==='deduction'?'red':'green'}">${a.type==='deduction'?'-':'+'}₹${(a.payment||0).toLocaleString()}</td><td>${s?'Settled':'Pending'}</td></tr>`;
+            }).join('')}</tbody>
+        </table>
+        <p style="margin-top:15px;font-size:0.8rem;">Generated: ${new Date().toLocaleString()}</p>
+    `;
+    document.body.appendChild(div);
+    try {
+        const canvas = await html2canvas(div, { scale:2 });
+        const img = canvas.toDataURL('image/png');
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('p','mm','a4');
+        const wd = 190;
+        const h = (canvas.height * wd) / canvas.width;
+        pdf.addImage(img, 'PNG', 10, 10, wd, h);
+        pdf.save(`${w.name}_Report.pdf`);
+        showToast('PDF downloaded');
+    } catch(e){ showToast('PDF failed', 'error'); }
+    finally { div.remove(); }
+}
+
+/* ==================== INIT ==================== */
+const defaultWorkers = [
+    { name:'Bhutan', dob:'2004-01-01', loginId:'bhutan2004', phone:'9876543210', dayRate:350, hourlyRate:50 },
+    { name:'Krishna', dob:'2004-03-07', loginId:'krishna2004', phone:'9876543211', dayRate:350, hourlyRate:50 }
+];
+async function initDB(){
+    const s = await new Promise(r => onValue(workersRef, r, { onlyOnce:true }));
+    if(!s.exists()){
+        for(const w of defaultWorkers){
+            const nr = await push(workersRef, { name:w.name, dob:w.dob, loginId:w.loginId, phone:w.phone, createdAt:Date.now() });
+            await set(ref(db, `workerRates/${nr.key}`), { dayRate:w.dayRate, hourlyRate:w.hourlyRate });
+        }
+    }
+}
+
+async function boot(){
+    loadRates();
+    loadSettlements();
+    loadWorkersList();
+    loadAllAttendance();
+    await initDB();
+    setTimeout(()=> autoLogin(), 700);
+}
+boot();
+</script>
+</body>
+</html>
