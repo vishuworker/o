@@ -1,0 +1,2632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#2563eb" />
+<title>Vishu Civil Contractor</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root {
+    --primary: #2563eb;
+    --primary-dark: #1d4ed8;
+    --success: #16a34a;
+    --danger: #dc2626;
+    --warning: #ea580c;
+    --purple: #7c3aed;
+    --bg: #f1f5f9;
+    --card: #ffffff;
+    --text: #0f172a;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --nav-h: 64px;
+    --header-h: 56px;
+}
+body.dark {
+    --bg: #0f172a;
+    --card: #1e293b;
+    --text: #f1f5f9;
+    --muted: #94a3b8;
+    --border: #334155;
+}
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-font-smoothing: antialiased;
+}
+html, body { height: 100%; overflow-x: hidden; }
+body {
+    background: var(--bg);
+    color: var(--text);
+    transition: background 0.2s, color 0.2s;
+    overscroll-behavior: none;
+}
+#app { max-width: 600px; margin: 0 auto; min-height: 100vh; position: relative; background: var(--bg); }
+
+/* TOP HEADER WITH LOGO */
+.app-top {
+    position: sticky; top: 0; z-index: 50;
+    background: var(--card); border-bottom: 1px solid var(--border);
+    padding: 0.7rem 1.1rem;
+    display: flex; justify-content: space-between; align-items: center;
+    min-height: var(--header-h);
+}
+.app-top .brand {
+    display: flex; align-items: center; gap: 0.6rem; flex: 1; min-width: 0;
+}
+.app-top .brand-logo {
+    width: 36px; height: 36px; border-radius: 10px; object-fit: cover;
+    background: var(--primary); flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(37,99,235,0.25);
+}
+.app-top .title-area h1 { font-size: 0.95rem; font-weight: 700; letter-spacing: -0.3px; line-height: 1.2; }
+.app-top .title-area p { font-size: 0.7rem; color: var(--muted); margin-top: 0.1rem; }
+.app-top-actions { display: flex; gap: 0.4rem; flex-shrink: 0; }
+.icon-btn {
+    background: var(--bg); border: none; width: 36px; height: 36px;
+    border-radius: 10px; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: var(--text); font-size: 0.9rem; transition: 0.15s;
+}
+.icon-btn:active { transform: scale(0.92); }
+
+.page { padding: 1rem 1.1rem calc(var(--nav-h) + 1.5rem); }
+
+.stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem; margin-bottom: 1.1rem; }
+.stat {
+    background: var(--card); border-radius: 14px; padding: 0.9rem 1rem;
+    cursor: pointer; transition: 0.15s; border: 1px solid var(--border);
+}
+.stat:active { transform: scale(0.97); }
+.stat .s-label { font-size: 0.68rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }
+.stat .s-value { font-size: 1.35rem; font-weight: 800; letter-spacing: -0.5px; margin-top: 0.25rem; }
+.stat .s-value.green { color: var(--success); }
+.stat .s-value.red { color: var(--danger); }
+.stat .s-value.blue { color: var(--primary); }
+.stat .s-value.orange { color: var(--warning); }
+.stat .s-value.purple { color: var(--purple); }
+
+.card { background: var(--card); border-radius: 16px; border: 1px solid var(--border); margin-bottom: 1rem; overflow: hidden; }
+.card-head { padding: 0.9rem 1.1rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
+.card-head h3 { font-size: 0.9rem; font-weight: 700; }
+.card-body { padding: 0.4rem 0; }
+.card-body.pad { padding: 1rem 1.1rem; }
+
+.li {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0.85rem 1.1rem; cursor: pointer; transition: 0.15s;
+    border-bottom: 1px solid var(--border);
+}
+.li:last-child { border-bottom: none; }
+.li:active { background: var(--bg); }
+.li-left { display: flex; flex-direction: column; gap: 0.15rem; flex: 1; min-width: 0; }
+.li-left .li-name { font-weight: 600; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.li-left .li-sub { font-size: 0.72rem; color: var(--muted); }
+.li-right { display: flex; align-items: center; gap: 0.5rem; color: var(--muted); font-size: 0.8rem; margin-left: 0.6rem; }
+
+.avatar {
+    width: 38px; height: 38px; border-radius: 50%; background: var(--primary);
+    color: #fff; display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 0.9rem; flex-shrink: 0; margin-right: 0.75rem;
+    overflow: hidden; position: relative;
+}
+.avatar img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+}
+.avatar.green { background: var(--success); }
+.avatar.orange { background: var(--warning); }
+.avatar.red { background: var(--danger); }
+.avatar.purple { background: var(--purple); }
+
+.badge { display: inline-block; padding: 0.15rem 0.55rem; border-radius: 6px; font-size: 0.65rem; font-weight: 700; background: #fef3c7; color: #92400e; }
+body.dark .badge { background: #78350f; color: #fde68a; }
+.badge.green { background: #dcfce7; color: #166534; }
+body.dark .badge.green { background: #052e16; color: #86efac; }
+.badge.blue { background: #dbeafe; color: #1e40af; }
+body.dark .badge.blue { background: #172554; color: #93c5fd; }
+.badge.red { background: #fee2e2; color: #991b1b; }
+body.dark .badge.red { background: #450a0a; color: #fca5a5; }
+.badge.purple { background: #ede9fe; color: #5b21b6; }
+body.dark .badge.purple { background: #3b0764; color: #c4b5fd; }
+
+.btn {
+    padding: 0.75rem 1.2rem; border: none; border-radius: 12px;
+    font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: 0.15s;
+    display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; font-family: inherit;
+}
+.btn:active { transform: scale(0.97); }
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-success { background: var(--success); color: #fff; }
+.btn-danger { background: var(--danger); color: #fff; }
+.btn-purple { background: var(--purple); color: #fff; }
+.btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+.btn-block { width: 100%; }
+.btn-sm { padding: 0.5rem 0.85rem; font-size: 0.75rem; }
+
+.field { margin-bottom: 0.9rem; }
+.field label {
+    display: block; font-size: 0.72rem; font-weight: 700;
+    margin-bottom: 0.35rem; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.3px;
+}
+input, select, textarea {
+    width: 100%; padding: 0.75rem 1rem; border-radius: 12px;
+    border: 1px solid var(--border); background: var(--card); color: var(--text);
+    font-size: 0.9rem; font-family: inherit; transition: 0.15s;
+}
+input:focus, select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.12); }
+input[readonly] { background: var(--bg); cursor: not-allowed; }
+
+.site-wrap { position: relative; }
+.site-suggest {
+    position: absolute; top: 100%; left: 0; right: 0;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; margin-top: 4px;
+    max-height: 180px; overflow-y: auto;
+    z-index: 100; box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    display: none;
+}
+.site-suggest.show { display: block; }
+.site-suggest-item {
+    padding: 0.65rem 0.9rem; cursor: pointer;
+    font-size: 0.82rem; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 0.5rem;
+}
+.site-suggest-item:last-child { border-bottom: none; }
+.site-suggest-item:active { background: var(--bg); }
+.site-suggest-item i { color: var(--muted); font-size: 0.75rem; }
+
+.bottom-nav {
+    position: fixed; bottom: 0; left: 0; right: 0; max-width: 600px;
+    margin: 0 auto; background: var(--card); border-top: 1px solid var(--border);
+    display: flex; justify-content: space-around; align-items: center;
+    height: var(--nav-h); padding-bottom: env(safe-area-inset-bottom); z-index: 100;
+}
+.nav-item {
+    flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 0.15rem; cursor: pointer; color: var(--muted); font-size: 0.58rem;
+    font-weight: 600; padding: 0.5rem 0; transition: 0.15s;
+    background: none; border: none; font-family: inherit;
+}
+.nav-item i { font-size: 1.1rem; }
+.nav-item.active { color: var(--primary); }
+.nav-item:active { transform: scale(0.95); }
+
+.fab {
+    position: fixed; bottom: calc(var(--nav-h) + 1rem + env(safe-area-inset-bottom));
+    right: 1.1rem; max-width: 600px; background: var(--primary); color: #fff;
+    width: 52px; height: 52px; border-radius: 16px; border: none;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; cursor: pointer; box-shadow: 0 6px 20px rgba(37,99,235,0.4);
+    z-index: 90; transition: 0.15s;
+}
+.fab:active { transform: scale(0.92); }
+
+.sheet-overlay {
+    position: fixed; inset: 0; background: rgba(15,23,42,0.55);
+    z-index: 2000; display: flex; align-items: flex-end; justify-content: center;
+    animation: fadeIn 0.2s;
+}
+@keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
+.sheet {
+    width: 100%; max-width: 600px; background: var(--card);
+    border-radius: 22px 22px 0 0; padding: 1.1rem; max-height: 90vh; overflow-y: auto;
+    animation: slideUp 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    padding-bottom: calc(1.1rem + env(safe-area-inset-bottom));
+}
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.sheet-grab { width: 40px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 0.9rem; }
+.sheet-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; }
+.sheet-head h2 { font-size: 1.1rem; font-weight: 700; }
+.sheet-head .sub { font-size: 0.72rem; color: var(--muted); margin-top: 0.15rem; }
+.x-btn {
+    background: var(--bg); border: none; width: 32px; height: 32px;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: var(--muted); font-size: 0.85rem;
+}
+
+.tabs {
+    display: flex; gap: 0.35rem; background: var(--bg); padding: 4px;
+    border-radius: 12px; margin-bottom: 1rem; overflow-x: auto; scrollbar-width: none;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+    flex: 1; min-width: fit-content; padding: 0.5rem 0.8rem; border: none;
+    background: transparent; font-size: 0.7rem; font-weight: 700;
+    color: var(--muted); border-radius: 9px; cursor: pointer;
+    white-space: nowrap; font-family: inherit;
+    display: flex; align-items: center; justify-content: center; gap: 0.3rem;
+}
+.tab.active { background: var(--card); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+
+.summary-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.4rem; margin-bottom: 1rem; }
+.pill { background: var(--bg); border-radius: 10px; padding: 0.6rem 0.4rem; text-align: center; }
+.pill .p-label { font-size: 0.6rem; color: var(--muted); font-weight: 700; text-transform: uppercase; }
+.pill .p-value { font-size: 0.85rem; font-weight: 800; margin-top: 0.15rem; }
+.pill .p-value.green { color: var(--success); }
+.pill .p-value.red { color: var(--danger); }
+.pill .p-value.blue { color: var(--primary); }
+.pill .p-value.orange { color: var(--warning); }
+.pill .p-value.purple { color: var(--purple); }
+
+.rec { display: flex; justify-content: space-between; align-items: center; padding: 0.8rem 1.1rem; border-bottom: 1px solid var(--border); gap: 0.5rem; }
+.rec:last-child { border-bottom: none; }
+.rec-left { flex: 1; min-width: 0; }
+.rec-left .rec-date { font-weight: 700; font-size: 0.85rem; }
+.rec-left .rec-sub { font-size: 0.72rem; color: var(--muted); margin-top: 0.1rem; }
+.rec-right { display: flex; align-items: center; gap: 0.4rem; flex-shrink: 0; }
+.rec-amount { font-weight: 800; font-size: 0.88rem; }
+.rec-amount.green { color: var(--success); }
+.rec-amount.red { color: var(--danger); }
+.rec-amount.purple { color: var(--purple); }
+.rec-action { background: var(--bg); color: var(--muted); border: none; width: 28px; height: 28px; border-radius: 8px; font-size: 0.7rem; cursor: pointer; transition: 0.15s; }
+.rec-action:hover { background: var(--primary); color: #fff; }
+.rec-action.danger { background: #fef2f2; color: var(--danger); }
+body.dark .rec-action.danger { background: #450a0a; }
+.rec-action.danger:hover { background: var(--danger); color: #fff; }
+
+.cal-top { display: flex; justify-content: space-between; align-items: center; padding: 0.7rem 1.1rem; border-bottom: 1px solid var(--border); }
+.cal-top .cal-month { font-weight: 800; font-size: 0.95rem; }
+.cal-nav-btn {
+    background: var(--bg); border: none; width: 30px; height: 30px;
+    border-radius: 8px; cursor: pointer; color: var(--text);
+    font-size: 0.75rem; display: flex; align-items: center; justify-content: center;
+}
+.cal-summary { display: flex; gap: 0.5rem; padding: 0.7rem 1.1rem; border-bottom: 1px solid var(--border); font-size: 0.72rem; }
+.cal-summary .cs-item { flex: 1; text-align: center; }
+.cal-summary .cs-item .cs-label { color: var(--muted); font-weight: 600; font-size: 0.6rem; text-transform: uppercase; }
+.cal-summary .cs-item .cs-value { font-weight: 800; font-size: 0.8rem; margin-top: 0.1rem; }
+.cal-summary .cs-value.green { color: var(--success); }
+.cal-summary .cs-value.red { color: var(--danger); }
+.cal-summary .cs-value.purple { color: var(--purple); }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; padding: 0.6rem 0.7rem 0.9rem; width: 100%; box-sizing: border-box; }
+.cal-dow { text-align: center; font-weight: 700; font-size: 0.6rem; color: var(--muted); padding: 0.25rem 0; text-transform: uppercase; }
+.cal-day {
+    width: 100%; height: 38px; display: flex; align-items: center; justify-content: center;
+    border-radius: 8px; font-size: 0.72rem; font-weight: 600;
+    background: var(--bg); color: var(--text); cursor: pointer;
+    position: relative; transition: 0.15s; box-sizing: border-box;
+}
+.cal-day:active { transform: scale(0.92); }
+.cal-day.empty { background: transparent; cursor: default; pointer-events: none; }
+.cal-day.payment { background: var(--success); color: #fff; }
+.cal-day.deduction { background: var(--purple); color: #fff; }
+.cal-day.mixed { background: linear-gradient(135deg, var(--success) 50%, var(--purple) 50%); color: #fff; }
+.cal-day.today { box-shadow: 0 0 0 2px var(--primary); }
+
+.clear-card {
+    background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+    border: 1.5px solid #93c5fd;
+    border-radius: 16px;
+    padding: 1rem 1.1rem;
+    margin-bottom: 1rem;
+}
+body.dark .clear-card {
+    background: linear-gradient(135deg, #1e3a8a, #1e40af);
+    border-color: #3b82f6;
+}
+.clear-card .cc-head {
+    display: flex; align-items: center; gap: 0.5rem;
+    font-size: 0.82rem; font-weight: 800;
+    color: #1e40af; margin-bottom: 0.6rem;
+}
+body.dark .clear-card .cc-head { color: #93c5fd; }
+.clear-card .cc-amount {
+    font-size: 1.5rem; font-weight: 800; color: #1e40af;
+    letter-spacing: -0.5px;
+}
+body.dark .clear-card .cc-amount { color: #bfdbfe; }
+.clear-card .cc-info {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    flex-wrap: wrap; gap: 0.5rem; margin-top: 0.3rem;
+}
+.clear-card .cc-date {
+    font-size: 0.72rem; color: #1e40af; opacity: 0.85;
+}
+body.dark .clear-card .cc-date { color: #93c5fd; }
+.clear-card .cc-pending {
+    text-align: right;
+    background: rgba(255,255,255,0.5);
+    padding: 0.4rem 0.75rem;
+    border-radius: 10px;
+}
+body.dark .clear-card .cc-pending { background: rgba(0,0,0,0.2); }
+.clear-card .cc-pending .ccp-label {
+    font-size: 0.6rem; color: #1e40af; font-weight: 700; text-transform: uppercase;
+}
+body.dark .clear-card .cc-pending .ccp-label { color: #93c5fd; }
+.clear-card .cc-pending .ccp-value {
+    font-size: 1rem; font-weight: 800; color: var(--warning);
+}
+.clear-card .cc-breakdown {
+    display: flex; gap: 0.5rem; margin-top: 0.75rem; flex-wrap: wrap;
+}
+.clear-card .cc-bk {
+    flex: 1; min-width: 100px;
+    background: rgba(255,255,255,0.55);
+    border-radius: 10px; padding: 0.5rem 0.7rem;
+}
+body.dark .clear-card .cc-bk { background: rgba(0,0,0,0.2); }
+.clear-card .cc-bk .ccb-label {
+    font-size: 0.6rem; font-weight: 700; color: #1e40af;
+    text-transform: uppercase; letter-spacing: 0.3px;
+}
+body.dark .clear-card .cc-bk .ccb-label { color: #93c5fd; }
+.clear-card .cc-bk .ccb-value {
+    font-size: 0.9rem; font-weight: 800; margin-top: 0.15rem;
+}
+.clear-card .cc-bk .ccb-value.green { color: var(--success); }
+.clear-card .cc-bk .ccb-value.purple { color: var(--purple); }
+.clear-card .cc-bk .ccb-value.blue { color: var(--primary); }
+
+/* LOGIN */
+.login-shell { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 2rem 1.5rem; max-width: 420px; margin: 0 auto; }
+.login-logo-img {
+    width: 100px; height: 100px; object-fit: contain;
+    margin: 0 auto 1rem; display: block;
+    border-radius: 20px;
+    background: #fff;
+    padding: 8px;
+    box-shadow: 0 10px 30px rgba(37,99,235,0.25);
+}
+.login-shell h1 { text-align: center; font-size: 1.5rem; font-weight: 800; letter-spacing: -0.5px; }
+.login-shell .sub { text-align: center; color: var(--muted); font-size: 0.82rem; margin-top: 0.3rem; margin-bottom: 2.2rem; }
+.login-footer { text-align: center; font-size: 0.72rem; color: var(--muted); margin-top: 2rem; }
+
+.empty { text-align: center; padding: 2.2rem 1rem; color: var(--muted); font-size: 0.82rem; }
+
+.toast {
+    position: fixed; bottom: calc(var(--nav-h) + 1.5rem); left: 50%; transform: translateX(-50%);
+    background: var(--text); color: var(--bg); padding: 0.7rem 1.2rem;
+    border-radius: 12px; font-size: 0.82rem; font-weight: 600; z-index: 5000;
+    animation: toastIn 0.25s; box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    max-width: 90%; text-align: center;
+}
+@keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(15px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+.toast.success { background: var(--success); color: #fff; }
+.toast.error { background: var(--danger); color: #fff; }
+
+.chip-row { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.chip {
+    padding: 0.45rem 0.85rem; border-radius: 9px; border: 1px solid var(--border);
+    background: var(--card); font-size: 0.75rem; font-weight: 600; cursor: pointer; transition: 0.15s;
+}
+.chip.selected { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+.fullpage {
+    position: fixed; inset: 0; background: var(--bg); z-index: 1500;
+    overflow-y: auto; max-width: 600px; margin: 0 auto; padding-bottom: 2rem;
+}
+
+.cal-legend {
+    display: flex; gap: 0.7rem; padding: 0.6rem 1.1rem 0.8rem;
+    font-size: 0.65rem; color: var(--muted); flex-wrap: wrap;
+    border-top: 1px solid var(--border);
+}
+.cal-legend .lg { display: flex; align-items: center; gap: 0.3rem; }
+.cal-legend .lg-dot { width: 10px; height: 10px; border-radius: 3px; }
+.cal-legend .lg-dot.green { background: var(--success); }
+.cal-legend .lg-dot.purple { background: var(--purple); }
+.cal-legend .lg-dot.mixed { background: linear-gradient(135deg, var(--success) 50%, var(--purple) 50%); }
+.cal-legend .lg-dot.gray { background: var(--bg); border: 1px solid var(--border); }
+
+.wk-chip {
+    display: flex; align-items: center; gap: 0.6rem;
+    padding: 0.7rem 0; border-bottom: 1px solid var(--border);
+}
+.wk-chip:last-child { border-bottom: none; }
+.wk-chip .avatar { width: 34px; height: 34px; font-size: 0.8rem; margin-right: 0; }
+.wk-chip .wk-info { flex: 1; min-width: 0; }
+.wk-chip .wk-name { font-weight: 700; font-size: 0.82rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wk-chip .wk-sub { font-size: 0.7rem; color: var(--muted); margin-top: 0.05rem; }
+.wk-chip .wk-amount { font-weight: 800; font-size: 0.85rem; }
+.wk-chip .wk-amount.green { color: var(--success); }
+.wk-chip .wk-amount.purple { color: var(--purple); }
+
+.att-date-row {
+    display: flex; gap: 0.6rem; align-items: flex-end;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 14px; padding: 0.85rem 1rem; margin-bottom: 1rem;
+}
+.att-date-row .field { flex: 1; margin-bottom: 0; }
+.att-date-row label { font-size: 0.65rem; }
+
+.att-select-all {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0.7rem 1.1rem; background: var(--card);
+    border: 1px solid var(--border); border-radius: 14px; margin-bottom: 0.8rem;
+}
+.att-select-all .count { font-size: 0.78rem; color: var(--muted); font-weight: 600; }
+.att-select-all .count b { color: var(--primary); font-weight: 800; }
+
+.att-list {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 14px; margin-bottom: 1rem; overflow: hidden;
+}
+
+.att-row {
+    display: flex; align-items: flex-start; gap: 0.7rem;
+    padding: 0.85rem 1rem; border-bottom: 1px solid var(--border);
+    transition: 0.15s;
+}
+.att-row:last-child { border-bottom: none; }
+.att-row.selected { background: rgba(37,99,235,0.04); }
+body.dark .att-row.selected { background: rgba(37,99,235,0.1); }
+
+.att-check {
+    width: 22px; height: 22px; border-radius: 6px;
+    border: 2px solid var(--border); background: var(--card);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; flex-shrink: 0; margin-top: 0.4rem;
+    transition: 0.15s;
+}
+.att-check.on { background: var(--primary); border-color: var(--primary); color: #fff; }
+.att-check i { font-size: 0.7rem; color: transparent; }
+.att-check.on i { color: #fff; }
+
+.att-body { flex: 1; min-width: 0; }
+.att-body .att-name { font-weight: 700; font-size: 0.88rem; }
+.att-body .att-sub { font-size: 0.7rem; color: var(--muted); margin-top: 0.05rem; margin-bottom: 0.5rem; }
+.att-body .att-inputs { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+.att-body .att-inputs .site-wrap { flex: 2; min-width: 130px; }
+.att-body input[type=text] { padding: 0.5rem 0.75rem; font-size: 0.78rem; border-radius: 9px; }
+
+.att-footer {
+    position: fixed; bottom: var(--nav-h); left: 0; right: 0;
+    max-width: 600px; margin: 0 auto;
+    background: var(--card); border-top: 1px solid var(--border);
+    padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom));
+    z-index: 99; display: flex; gap: 0.5rem;
+}
+.att-footer .btn { flex: 1; }
+
+.info-box {
+    background: #eff6ff; border: 1px solid #bfdbfe;
+    border-radius: 12px; padding: 0.85rem 1rem;
+    font-size: 0.78rem; color: #1e40af;
+    display: flex; gap: 0.5rem; align-items: flex-start;
+    margin-bottom: 1rem;
+}
+body.dark .info-box {
+    background: #172554; border-color: #1e40af; color: #93c5fd;
+}
+.info-box i { margin-top: 0.15rem; flex-shrink: 0; }
+
+.hint { font-size: 0.72rem; color: var(--muted); margin-top: 0.3rem; font-style: italic; }
+
+/* PROFILE IMAGE UPLOAD */
+.profile-img-wrap {
+    position: relative;
+    width: 100px; height: 100px;
+    margin: 0 auto 0.75rem;
+}
+.profile-img-wrap .profile-img {
+    width: 100%; height: 100%; border-radius: 50%;
+    object-fit: cover; background: var(--primary);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 2rem; font-weight: 800;
+    overflow: hidden; border: 3px solid var(--card);
+    box-shadow: 0 8px 24px rgba(37,99,235,0.25);
+}
+.profile-img-wrap .profile-img img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+}
+.profile-img-wrap .edit-badge {
+    position: absolute; bottom: 0; right: 0;
+    width: 34px; height: 34px; border-radius: 50%;
+    background: var(--primary); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 0.85rem;
+    border: 3px solid var(--card);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    transition: 0.15s;
+}
+.profile-img-wrap .edit-badge:active { transform: scale(0.9); }
+
+/* ==================== TEAM AVATARS - COMPACT & NON-CLICKABLE ==================== */
+.team-section {
+    background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+    border-radius: 18px;
+    padding: 1rem 0.9rem;
+    margin-bottom: 1rem;
+    border: 1px solid #93c5fd;
+    overflow: hidden;
+}
+body.dark .team-section {
+    background: linear-gradient(135deg, #1e3a8a, #1e40af);
+    border-color: #3b82f6;
+}
+.team-title {
+    font-size: 0.78rem;
+    font-weight: 800;
+    color: #1e40af;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+body.dark .team-title { color: #bfdbfe; }
+.team-title .count-badge {
+    background: rgba(255,255,255,0.6);
+    color: #1e40af;
+    padding: 0.1rem 0.5rem;
+    border-radius: 20px;
+    font-size: 0.65rem;
+    font-weight: 700;
+}
+body.dark .team-title .count-badge { background: rgba(0,0,0,0.25); color: #bfdbfe; }
+
+.team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
+    gap: 0.7rem;
+    max-height: none;
+}
+
+.team-member {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+    animation: floatMember 3s ease-in-out infinite;
+}
+.team-member:nth-child(2n) { animation-delay: 0.4s; }
+.team-member:nth-child(3n) { animation-delay: 0.8s; }
+.team-member:nth-child(5n) { animation-delay: 1.2s; }
+
+@keyframes floatMember {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+.team-member .tm-img {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    background: #fff;
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--primary);
+    font-weight: 800;
+    font-size: 1rem;
+    border: 3px solid #fff;
+    box-shadow: 0 4px 12px rgba(37,99,235,0.25);
+}
+.team-member .tm-img img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+}
+.team-member.admin-member .tm-img {
+    border-color: #fbbf24;
+    box-shadow: 0 4px 12px rgba(251,191,36,0.5);
+}
+.team-member .tm-name {
+    font-size: 0.62rem;
+    font-weight: 700;
+    color: #1e40af;
+    max-width: 64px;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+body.dark .team-member .tm-name { color: #bfdbfe; }
+</style>
+</head>
+<body>
+
+<div id="app"></div>
+
+<script type="importmap">
+{
+    "imports": {
+        "firebase/app": "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js",
+        "firebase/database": "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js"
+    }
+}
+</script>
+
+<script type="module">
+import { initializeApp } from "firebase/app";
+import { getDatabase, ref, push, onValue, remove, get, set } from "firebase/database";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyAwnD_POO-SoQymqDrtby0t2uC9Mvgau3Q",
+    authDomain: "utr-cc0a9.firebaseapp.com",
+    databaseURL: "https://utr-cc0a9-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "utr-cc0a9",
+    storageBucket: "utr-cc0a9.firebasestorage.app",
+    messagingSenderId: "157513922891",
+    appId: "1:157513922891:web:c6e172e09fb1775a1fd0ce"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const workersRef = ref(db, 'workers');
+const ratesRef = ref(db, 'workerRates');
+const settlementsRef = ref(db, 'settlements');
+const adminRef = ref(db, 'adminProfile');
+
+// CLOUDINARY CONFIG
+const CLOUDINARY_CLOUD = 'digyet8lg';
+const CLOUDINARY_PRESET = 'vcc_upload';
+const CLOUDINARY_UPLOAD_URL = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`;
+
+// COMPANY LOGO
+const COMPANY_LOGO = 'https://res.cloudinary.com/digyet8lg/image/upload/v1784533328/IMG_20260720_130752_svoboa.png';
+
+let allWorkers = [];
+let workerRates = {};
+let allSettlements = {};
+let allAttendanceByWorker = {};
+let adminProfile = { name: 'Admin', profileImage: '' };
+let currentUser = null;
+let currentAttendances = [];
+let currentWorkerId = null;
+let calendarViewDate = new Date();
+let globalCalViewDate = new Date();
+let currentTab = 'home';
+let workerTab = 'home';
+
+let attPageDate = getToday();
+let attPageSelections = {};
+
+const ADMIN_ID = "7700836128Vishu";
+const TIME_OPTIONS = ["30 Min","1 Hr","1.5 Hr","2 Hr","2.5 Hr","3 Hr","3.5 Hr","4 Hr","4.5 Hr","5 Hr"];
+const TIME_HOURS_MAP = {"30 Min":0.5,"1 Hr":1,"1.5 Hr":1.5,"2 Hr":2,"2.5 Hr":2.5,"3 Hr":3,"3.5 Hr":3.5,"4 Hr":4,"4.5 Hr":4.5,"5 Hr":5};
+const SESSION_KEY = "vcc_session";
+const SITE_HISTORY_KEY = "vcc_sites";
+
+/* ==================== HELPERS ==================== */
+function timeToHours(t){ return TIME_HOURS_MAP[t] || 0; }
+function calcExtraPayment(hr, t){ return timeToHours(t) * hr; }
+function formatDate(d){
+    if(!d) return '';
+    const p = d.split('-');
+    return p.length===3 ? `${p[2]}-${p[1]}-${p[0]}` : d;
+}
+function getToday(){
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function formatMonthYear(d){
+    const m = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    return `${m[d.getMonth()]} ${d.getFullYear()}`;
+}
+function showToast(msg, type='success'){
+    const t = document.createElement('div');
+    t.className = `toast ${type}`;
+    t.innerHTML = msg;
+    document.body.appendChild(t);
+    setTimeout(()=>t.remove(), 2800);
+}
+
+function normalizeType(type){
+    if(type === 'deduction') return 'diya_hua';
+    if(type === 'dena_hai') return 'diya_hua';
+    if(type === 'diya_hua') return 'diya_hua';
+    return 'earning';
+}
+
+function calcTotals(atts){
+    let earn=0, diyaHua=0;
+    atts.forEach(a=>{
+        const amt = parseFloat(a.payment)||0;
+        const t = normalizeType(a.type);
+        if(t==='diya_hua') diyaHua += amt;
+        else earn += amt;
+    });
+    return { earn, diyaHua, net: earn - diyaHua };
+}
+
+function countHaziri(atts){
+    return atts.filter(a => {
+        const t = normalizeType(a.type);
+        return t === 'earning' && !a.extraTime && !a.isSettlementEntry;
+    }).length;
+}
+
+function getWorkerSettlement(workerId){ return allSettlements[workerId] || null; }
+
+function calcTotalsWithSettlement(workerId, atts){
+    const settlement = getWorkerSettlement(workerId);
+    const allTotals = calcTotals(atts);
+    if(!settlement){
+        return { 
+            ...allTotals, 
+            settledEarn:0, settledDiyaHua:0, settledNet:0, 
+            pendingEarn:allTotals.earn, pendingDiyaHua:allTotals.diyaHua, pendingNet:allTotals.net, 
+            settlement:null 
+        };
+    }
+    const settleDate = settlement.settleDate;
+    const settledAtts = atts.filter(a=>a.date <= settleDate);
+    const pendingAtts = atts.filter(a=>a.date > settleDate);
+    const st = calcTotals(settledAtts);
+    const pt = calcTotals(pendingAtts);
+    return { 
+        ...allTotals, 
+        settledEarn:st.earn, settledDiyaHua:st.diyaHua, settledNet:st.net, 
+        pendingEarn:pt.earn, pendingDiyaHua:pt.diyaHua, pendingNet:pt.net, 
+        settlement, 
+        settledAtts, 
+        pendingAtts 
+    };
+}
+
+function initials(name){
+    return (name||'?').split(' ').map(x=>x[0]).join('').slice(0,2).toUpperCase();
+}
+
+function avatarHTML(name, imageUrl, extraClass=''){
+    const cls = `avatar ${extraClass}`;
+    if(imageUrl){
+        return `<div class="${cls}"><img src="${imageUrl}" alt="${name}" onerror="this.style.display='none'; this.parentElement.textContent='${initials(name)}';" /></div>`;
+    }
+    return `<div class="${cls}">${initials(name)}</div>`;
+}
+
+function darkToggleIcon(){
+    return document.body.classList.contains('dark') ? 'fa-sun' : 'fa-moon';
+}
+function initDark(){
+    const dark = localStorage.getItem('vcc_dark')==='true';
+    if(dark) document.body.classList.add('dark');
+}
+function toggleDark(){
+    document.body.classList.toggle('dark');
+    localStorage.setItem('vcc_dark', document.body.classList.contains('dark'));
+    document.querySelectorAll('.dark-btn-icon').forEach(i=>{
+        i.className = `fas ${darkToggleIcon()} dark-btn-icon`;
+    });
+}
+initDark();
+
+/* ==================== CLOUDINARY UPLOAD ==================== */
+async function uploadToCloudinary(file){
+    return new Promise((resolve, reject)=>{
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('upload_preset', CLOUDINARY_PRESET);
+        
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', CLOUDINARY_UPLOAD_URL, true);
+        xhr.onload = function(){
+            if(xhr.status === 200){
+                try {
+                    const res = JSON.parse(xhr.responseText);
+                    resolve({ secure_url: res.secure_url, public_id: res.public_id });
+                } catch(e){ reject(e); }
+            } else {
+                reject(new Error('Upload failed: ' + xhr.status));
+            }
+        };
+        xhr.onerror = ()=> reject(new Error('Network error'));
+        xhr.send(formData);
+    });
+}
+
+window.pickAndUploadImage = (targetType, workerId)=>{
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = async (e)=>{
+        const file = e.target.files[0];
+        if(!file) return;
+        if(file.size > 5 * 1024 * 1024){
+            return showToast('Image 5MB se choti honi chahiye', 'error');
+        }
+        showToast('⏳ Upload ho rahi hai...', 'success');
+        try {
+            const result = await uploadToCloudinary(file);
+            if(targetType === 'admin'){
+                await set(adminRef, { name: adminProfile.name || 'Admin', profileImage: result.secure_url });
+                adminProfile.profileImage = result.secure_url;
+                showToast('✅ Admin profile image update ho gayi!');
+                renderAdmin();
+            } else if(targetType === 'worker'){
+                const w = allWorkers.find(x=>x.id===workerId);
+                if(!w) return;
+                const updated = { ...w, profileImage: result.secure_url };
+                delete updated.id;
+                await set(ref(db, `workers/${workerId}`), updated);
+                showToast('✅ Profile image update ho gayi!');
+                if(currentUser?.isAdmin) renderAdmin();
+                else renderWorker();
+            }
+        } catch(err){
+            showToast('❌ Upload fail hua. Dobara try karein.', 'error');
+            console.error(err);
+        }
+    };
+    input.click();
+};
+
+window.removeProfileImage = async (targetType, workerId)=>{
+    if(!confirm('Profile image delete karni hai?')) return;
+    if(targetType === 'admin'){
+        await set(adminRef, { name: adminProfile.name || 'Admin', profileImage: '' });
+        adminProfile.profileImage = '';
+        showToast('Admin profile image delete ho gayi');
+        renderAdmin();
+    } else if(targetType === 'worker'){
+        const w = allWorkers.find(x=>x.id===workerId);
+        if(!w) return;
+        const updated = { ...w, profileImage: '' };
+        delete updated.id;
+        await set(ref(db, `workers/${workerId}`), updated);
+        showToast('Profile image delete ho gayi');
+        if(currentUser?.isAdmin) renderAdmin();
+        else renderWorker();
+    }
+};
+
+/* ==================== SITE HISTORY ==================== */
+function getSiteHistory(){
+    try { return JSON.parse(localStorage.getItem(SITE_HISTORY_KEY) || '[]'); } catch(e){ return []; }
+}
+function saveSiteToHistory(site){
+    if(!site || !site.trim()) return;
+    const s = site.trim();
+    const list = getSiteHistory();
+    const idx = list.indexOf(s);
+    if(idx > -1) list.splice(idx, 1);
+    list.unshift(s);
+    localStorage.setItem(SITE_HISTORY_KEY, JSON.stringify(list.slice(0, 30)));
+}
+
+/* ==================== SESSION ==================== */
+function saveSession(user){ localStorage.setItem(SESSION_KEY, JSON.stringify(user)); }
+function loadSession(){
+    try { return JSON.parse(localStorage.getItem(SESSION_KEY) || 'null'); } catch(e){ return null; }
+}
+function clearSession(){ localStorage.removeItem(SESSION_KEY); }
+
+/* ==================== FIREBASE LOADERS ==================== */
+function loadRates(){ onValue(ratesRef, s => { workerRates = s.val() || {}; }); }
+
+function loadAdminProfile(){
+    onValue(adminRef, s => {
+        const d = s.val() || {};
+        adminProfile = { name: d.name || 'Admin', profileImage: d.profileImage || '' };
+    });
+}
+
+function loadSettlements(){
+    onValue(settlementsRef, s => {
+        allSettlements = s.val() || {};
+        if(document.getElementById('workersList')) renderWorkersList();
+        if(document.getElementById('adminStats')) updateAdminStats();
+        if(document.getElementById('settlementList')) renderSettlementList();
+        if(document.getElementById('workerClearBanner')) renderWorkerClearBanner(currentUser?.id);
+    });
+}
+
+function loadWorkersList(){
+    onValue(workersRef, s => {
+        allWorkers = s.val() ? Object.entries(s.val()).map(([id,val])=>({id, ...val})) : [];
+        if(document.getElementById('workersList')) renderWorkersList();
+        if(document.getElementById('adminStats')) updateAdminStats();
+        if(document.getElementById('teamGrid')) renderTeamAvatars();
+    });
+}
+
+function loadAllAttendance(){
+    onValue(ref(db, 'attendance'), (s)=>{
+        allAttendanceByWorker = {};
+        const d = s.val() || {};
+        Object.entries(d).forEach(([wid, recs])=>{
+            allAttendanceByWorker[wid] = recs ? Object.entries(recs).map(([id,val])=>{
+                return { id, ...val, type: normalizeType(val.type) };
+            }) : [];
+        });
+        if(currentWorkerId && allAttendanceByWorker[currentWorkerId]){
+            currentAttendances = [...allAttendanceByWorker[currentWorkerId]].sort((a,b)=> new Date(b.date) - new Date(a.date));
+            if(document.getElementById('wRecords')) renderWorkerRecords();
+            if(document.getElementById('wCal')) renderCalendar(currentAttendances, 'wCal');
+            if(document.getElementById('workerAttendanceList')) renderWorkerAttendanceList();
+        }
+        if(document.getElementById('adminStats')) updateAdminStats();
+        if(document.getElementById('globalCal')) renderGlobalCalendar();
+        if(currentUser && !currentUser.isAdmin && allAttendanceByWorker[currentUser.id]){
+            currentAttendances = [...allAttendanceByWorker[currentUser.id]].sort((a,b)=> new Date(b.date) - new Date(a.date));
+            if(document.getElementById('workerTotalDays')) updateWorkerHomeStats();
+            if(document.getElementById('wCal') && workerTab === 'home') renderCalendar(currentAttendances, 'wCal');
+        }
+    });
+}
+
+async function getRates(wid){ return workerRates[wid] || { dayRate:350, hourlyRate:50 }; }
+
+/* ==================== LOGIN ==================== */
+function renderLogin(){
+    clearSession();
+    currentUser = null;
+    document.getElementById('app').innerHTML = `
+        <div class="login-shell">
+            <img src="${COMPANY_LOGO}" alt="Vishu Civil Contractor" class="login-logo-img" />
+            <h1>Vishu Civil Contractor</h1>
+            <p class="sub">Haziri aur Hisab ka App</p>
+            <div class="field">
+                <label>Login ID</label>
+                <input type="text" id="loginId" placeholder="Apna Login ID daalein" autocomplete="off" />
+            </div>
+            <button id="loginBtn" class="btn btn-primary btn-block" style="padding:0.9rem;">
+                <i class="fas fa-sign-in-alt"></i> Login karein
+            </button>
+            <p class="login-footer"><i class="fas fa-phone-alt"></i> Madad ke liye: 7700836128</p>
+        </div>
+    `;
+    document.getElementById('loginBtn').onclick = handleLogin;
+    document.getElementById('loginId').addEventListener('keypress', e=>{
+        if(e.key==='Enter') handleLogin();
+    });
+    setTimeout(()=> document.getElementById('loginId')?.focus(), 200);
+}
+
+async function handleLogin(){
+    const lid = document.getElementById('loginId').value.trim().toLowerCase();
+    if(!lid) return showToast('Pehle Login ID daalein', 'error');
+
+    if(lid === ADMIN_ID.toLowerCase()){
+        currentUser = { id:'admin', name:'Admin', isAdmin:true };
+        saveSession(currentUser);
+        showToast('Admin login ho gaya!');
+        renderAdmin();
+        return;
+    }
+    const w = allWorkers.find(w => (w.loginId||'').toLowerCase() === lid);
+    if(w){
+        currentUser = { id:w.id, name:w.name, loginId:w.loginId, isAdmin:false, profileImage: w.profileImage || '' };
+        saveSession(currentUser);
+        showToast(`Namaste ${w.name}!`);
+        if(allAttendanceByWorker[w.id]){
+            currentAttendances = [...allAttendanceByWorker[w.id]].sort((a,b)=> new Date(b.date) - new Date(a.date));
+        }
+        workerTab = 'home';
+        renderWorker();
+    } else {
+        showToast('Galat Login ID', 'error');
+    }
+}
+
+function autoLogin(){
+    const s = loadSession();
+    if(!s){ renderLogin(); return; }
+    if(s.isAdmin){
+        currentUser = { id:'admin', name:'Admin', isAdmin:true };
+        renderAdmin();
+        return;
+    }
+    const tryWorker = () => {
+        const w = allWorkers.find(x=>x.id === s.id);
+        if(w){
+            currentUser = { id:w.id, name:w.name, loginId:w.loginId, isAdmin:false, profileImage: w.profileImage || '' };
+            if(allAttendanceByWorker[w.id]){
+                currentAttendances = [...allAttendanceByWorker[w.id]].sort((a,b)=> new Date(b.date) - new Date(a.date));
+            }
+            workerTab = 'home';
+            renderWorker();
+        } else if(allWorkers.length > 0){
+            clearSession();
+            renderLogin();
+        } else {
+            setTimeout(tryWorker, 300);
+        }
+    };
+    tryWorker();
+}
+
+/* ==================== ADMIN: STATS ==================== */
+async function getAllWorkersTotals(){
+    const out = [];
+    for(const w of allWorkers){
+        const atts = allAttendanceByWorker[w.id] || [];
+        const t = calcTotals(atts);
+        const settlement = getWorkerSettlement(w.id);
+        let pendingNet = t.net, settledNet = 0;
+        if(settlement){
+            const sd = settlement.settleDate;
+            const st = calcTotals(atts.filter(a=>a.date <= sd));
+            const pt = calcTotals(atts.filter(a=>a.date > sd));
+            settledNet = st.net;
+            pendingNet = pt.net;
+        }
+        out.push({ ...w, ...t, pendingNet, settledNet, settlement, haziriCount: countHaziri(atts) });
+    }
+    return out;
+}
+
+async function updateAdminStats(){
+    const stats = await getAllWorkersTotals();
+    let totalEarn=0, totalDiyaHua=0, totalNet=0;
+    stats.forEach(s=>{
+        totalEarn += s.earn || 0;
+        totalDiyaHua += s.diyaHua || 0;
+        totalNet += s.net || 0;
+    });
+    const $ = id => document.getElementById(id);
+    $('statTotalWorkers') && ($('statTotalWorkers').innerText = allWorkers.length);
+    $('statTotalEarned') && ($('statTotalEarned').innerText = '₹' + totalEarn.toLocaleString());
+    $('statTotalDiyaHua') && ($('statTotalDiyaHua').innerText = '₹' + totalDiyaHua.toLocaleString());
+    $('statNetPayable') && ($('statNetPayable').innerText = '₹' + totalNet.toLocaleString());
+    window._adminStats = { stats, totalEarn, totalDiyaHua, totalNet };
+}
+
+/* ==================== ADMIN SHELL ==================== */
+function adminHeader(){
+    const titles = { home:'Admin Dashboard', attendance:'Haziri Lagayein', workers:'Sab Majdur', history:'Clear Hisab', profile:'Profile' };
+    return `
+    <div class="app-top">
+        <div class="brand">
+            <img src="${COMPANY_LOGO}" alt="Logo" class="brand-logo" />
+            <div class="title-area">
+                <h1>${titles[currentTab] || 'Admin'}</h1>
+                <p>Vishu Civil Contractor</p>
+            </div>
+        </div>
+        <div class="app-top-actions">
+            <button class="icon-btn" onclick="window.toggleDark()"><i class="fas ${darkToggleIcon()} dark-btn-icon"></i></button>
+            <button class="icon-btn" onclick="window.adminLogout()"><i class="fas fa-sign-out-alt"></i></button>
+        </div>
+    </div>
+    `;
+}
+function adminBottomNav(){
+    return `
+    <div class="bottom-nav">
+        <button class="nav-item ${currentTab==='home'?'active':''}" onclick="window.adminTab('home')">
+            <i class="fas fa-home"></i><span>Home</span>
+        </button>
+        <button class="nav-item ${currentTab==='attendance'?'active':''}" onclick="window.adminTab('attendance')">
+            <i class="fas fa-clipboard-check"></i><span>Haziri</span>
+        </button>
+        <button class="nav-item ${currentTab==='workers'?'active':''}" onclick="window.adminTab('workers')">
+            <i class="fas fa-users"></i><span>Majdur</span>
+        </button>
+        <button class="nav-item ${currentTab==='history'?'active':''}" onclick="window.adminTab('history')">
+            <i class="fas fa-check-circle"></i><span>Clear</span>
+        </button>
+        <button class="nav-item ${currentTab==='profile'?'active':''}" onclick="window.adminTab('profile')">
+            <i class="fas fa-user"></i><span>Profile</span>
+        </button>
+    </div>
+    `;
+}
+function renderAdmin(){
+    const app = document.getElementById('app');
+    let body = '';
+
+    if(currentTab === 'home'){
+        body = `
+        <div class="page">
+            <div class="stat-grid" id="adminStats">
+                <div class="stat" onclick="window.viewStat('workers')"><div class="s-label">Total Majdur</div><div class="s-value" id="statTotalWorkers">0</div></div>
+                <div class="stat" onclick="window.viewStat('earned')"><div class="s-label">Total Kamai</div><div class="s-value green" id="statTotalEarned">₹0</div></div>
+                <div class="stat" onclick="window.viewStat('diyaHua')"><div class="s-label">Diya Hua — Liya Hua</div><div class="s-value purple" id="statTotalDiyaHua">₹0</div></div>
+                <div class="stat" onclick="window.viewStat('net')"><div class="s-label">Lena Hai</div><div class="s-value blue" id="statNetPayable">₹0</div></div>
+            </div>
+
+            <div class="card">
+                <div class="card-head"><h3><i class="fas fa-calendar-alt" style="margin-right:0.3rem;"></i>Sab ka Calendar</h3></div>
+                <div id="globalCal"></div>
+                <div class="cal-legend">
+                    <div class="lg"><span class="lg-dot green"></span>Kamai</div>
+                    <div class="lg"><span class="lg-dot purple"></span>Diya Hua</div>
+                    <div class="lg"><span class="lg-dot mixed"></span>Dono</div>
+                    <div class="lg"><span class="lg-dot gray"></span>Kuch nahi</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-head"><h3>Majdur</h3><span class="badge green" id="workerCount">0</span></div>
+                <div class="card-body" id="workersList"></div>
+            </div>
+        </div>
+        `;
+    } else if(currentTab === 'attendance'){
+        body = renderAttendancePage();
+    } else if(currentTab === 'workers'){
+        body = `
+        <div class="page">
+            <div class="card">
+                <div class="card-head"><h3>Sab Majdur</h3><span class="badge green" id="workerCount2">0</span></div>
+                <div class="card-body" id="workersList2"></div>
+            </div>
+        </div>
+        <button class="fab" onclick="window.adminAddWorker()"><i class="fas fa-plus"></i></button>
+        `;
+    } else if(currentTab === 'history'){
+        body = `
+        <div class="page">
+            <div class="info-box">
+                <i class="fas fa-info-circle"></i>
+                <div>Yahan sabhi majduro ka <b>clear kiya hua hisab</b> dikhega.</div>
+            </div>
+            <div class="card">
+                <div class="card-head"><h3>Clear Hisab</h3></div>
+                <div class="card-body" id="settlementList"></div>
+            </div>
+        </div>
+        `;
+    } else if(currentTab === 'profile'){
+        body = `
+        <div class="page">
+            <div class="card">
+                <div class="card-body pad" style="text-align:center;">
+                    <div class="profile-img-wrap">
+                        <div class="profile-img">
+                            ${adminProfile.profileImage 
+                                ? `<img src="${adminProfile.profileImage}" alt="Admin" onerror="this.parentElement.textContent='A';" />` 
+                                : 'A'}
+                        </div>
+                        <div class="edit-badge" onclick="window.pickAndUploadImage('admin')">
+                            <i class="fas fa-camera"></i>
+                        </div>
+                    </div>
+                    <h2 style="font-size:1.1rem;font-weight:700;">Admin</h2>
+                    <p style="font-size:0.78rem;color:var(--muted);margin-top:0.2rem;">Vishu Civil Contractor</p>
+                    ${adminProfile.profileImage ? `<button class="btn btn-outline btn-sm" style="margin-top:0.5rem;" onclick="window.removeProfileImage('admin')"><i class="fas fa-trash"></i> Image Hatayein</button>` : ''}
+                </div>
+            </div>
+            <div class="card">
+                <div class="li" onclick="window.adminAddWorker()">
+                    <div class="li-left"><div class="li-name"><i class="fas fa-user-plus" style="width:20px;"></i> Naya Majdur Jodein</div></div>
+                    <i class="fas fa-chevron-right" style="font-size:0.7rem;color:var(--muted);"></i>
+                </div>
+                <div class="li" onclick="window.toggleDark()">
+                    <div class="li-left"><div class="li-name"><i class="fas fa-moon" style="width:20px;"></i> Dark Mode</div></div>
+                    <i class="fas fa-chevron-right" style="font-size:0.7rem;color:var(--muted);"></i>
+                </div>
+                <div class="li" onclick="window.adminLogout()">
+                    <div class="li-left"><div class="li-name" style="color:var(--danger);"><i class="fas fa-sign-out-alt" style="width:20px;"></i> Logout</div></div>
+                    <i class="fas fa-chevron-right" style="font-size:0.7rem;color:var(--muted);"></i>
+                </div>
+            </div>
+            <p style="text-align:center;color:var(--muted);font-size:0.7rem;">Vishu Civil Contractor · v5.1</p>
+        </div>
+        `;
+    }
+
+    app.innerHTML = adminHeader() + body + adminBottomNav();
+
+    if(currentTab === 'home'){
+        renderWorkersList();
+        updateAdminStats();
+        renderGlobalCalendar();
+    } else if(currentTab === 'attendance'){
+        initAttendancePage();
+    } else if(currentTab === 'workers'){
+        renderWorkersList();
+        const el = document.getElementById('workerCount2');
+        if(el) el.innerText = allWorkers.length;
+    } else if(currentTab === 'history'){
+        renderSettlementList();
+    }
+}
+
+window.adminTab = (tab)=>{ currentTab = tab; renderAdmin(); };
+window.adminLogout = ()=>{ clearSession(); currentUser = null; renderLogin(); };
+window.toggleDark = ()=>{
+    toggleDark();
+    document.querySelectorAll('.dark-btn-icon').forEach(i=>{
+        i.className = `fas ${darkToggleIcon()} dark-btn-icon`;
+    });
+};
+
+/* ==================== TEAM AVATARS (NON-CLICKABLE) ==================== */
+function renderTeamAvatars(){
+    const c = document.getElementById('teamGrid');
+    if(!c) return;
+    
+    let html = '';
+    
+    // Admin first
+    html += `
+    <div class="team-member admin-member">
+        <div class="tm-img">
+            ${adminProfile.profileImage 
+                ? `<img src="${adminProfile.profileImage}" alt="Admin" onerror="this.parentElement.textContent='A';" />` 
+                : 'A'}
+        </div>
+        <div class="tm-name">Admin</div>
+    </div>
+    `;
+    
+    // Workers - NO onclick
+    allWorkers.forEach(w=>{
+        html += `
+        <div class="team-member">
+            <div class="tm-img">
+                ${w.profileImage 
+                    ? `<img src="${w.profileImage}" alt="${w.name}" onerror="this.parentElement.textContent='${initials(w.name)}';" />` 
+                    : initials(w.name)}
+            </div>
+            <div class="tm-name">${w.name.split(' ')[0]}</div>
+        </div>
+        `;
+    });
+    
+    c.innerHTML = html;
+}
+
+/* ==================== ATTENDANCE PAGE ==================== */
+function renderAttendancePage(){
+    attPageSelections = {};
+    allWorkers.forEach(w => {
+        attPageSelections[w.id] = { selected:false, site:'', extra:'' };
+    });
+
+    return `
+    <div class="page" style="padding-bottom: calc(var(--nav-h) + 90px);">
+        <div class="info-box">
+            <i class="fas fa-info-circle"></i>
+            <div>Jin majduro ki aaj haziri lagani hai unko <b>tick</b> karein, site ka naam likhein, aur neeche <b>Save</b> button dabayein.</div>
+        </div>
+
+        <div class="att-date-row">
+            <div class="field">
+                <label>Date (Tareekh)</label>
+                <input type="date" id="attPageDate" value="${attPageDate}" />
+            </div>
+        </div>
+
+        <div class="att-select-all">
+            <span class="count"><b id="attCount">0</b> majdur chune gaye</span>
+            <button class="btn btn-outline btn-sm" id="attSelectAllBtn" onclick="window.toggleSelectAll()">
+                <i class="fas fa-check-double"></i> Sab Chunein
+            </button>
+        </div>
+
+        <div class="att-list" id="attList">
+            ${allWorkers.length ? allWorkers.map(w => renderAttRow(w)).join('') : `<div class="empty">Abhi koi majdur nahi hai</div>`}
+        </div>
+    </div>
+
+    <div class="att-footer">
+        <button class="btn btn-outline" onclick="window.attClearAll()"><i class="fas fa-times"></i> Hatao</button>
+        <button class="btn btn-primary" onclick="window.saveBatchAttendance()"><i class="fas fa-save"></i> Haziri Lagao</button>
+    </div>
+    `;
+}
+
+function renderAttRow(w){
+    const sel = attPageSelections[w.id] || { selected:false, site:'', extra:'' };
+    return `
+    <div class="att-row ${sel.selected?'selected':''}" data-wid="${w.id}">
+        <div class="att-check ${sel.selected?'on':''}" onclick="window.toggleAttWorker('${w.id}')">
+            <i class="fas fa-check"></i>
+        </div>
+        <div class="att-body">
+            <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.3rem;">
+                ${avatarHTML(w.name, w.profileImage)}
+                <div>
+                    <div class="att-name">${w.name}</div>
+                    <div class="att-sub">${w.loginId}</div>
+                </div>
+            </div>
+            <div class="att-inputs">
+                <div class="site-wrap">
+                    <input type="text" class="site-input" placeholder="Site ka naam" 
+                           value="${sel.site.replace(/"/g,'&quot;')}" 
+                           data-wid="${w.id}"
+                           oninput="window.attSiteInput('${w.id}', this.value)"
+                           onfocus="window.attSiteFocus('${w.id}', this)" 
+                           onblur="window.attSiteBlur()" />
+                    <div class="site-suggest" id="sug-${w.id}"></div>
+                </div>
+                <select class="extra-sel" data-wid="${w.id}" onchange="window.attExtraChange('${w.id}', this.value)" style="flex:1;min-width:90px;padding:0.5rem 0.6rem;font-size:0.75rem;border-radius:9px;">
+                    <option value="">Extra nahi</option>
+                    ${TIME_OPTIONS.map(t=>`<option value="${t}" ${sel.extra===t?'selected':''}>${t}</option>`).join('')}
+                </select>
+            </div>
+        </div>
+    </div>
+    `;
+}
+
+function initAttendancePage(){
+    const dateEl = document.getElementById('attPageDate');
+    if(dateEl){
+        dateEl.addEventListener('change', ()=>{
+            attPageDate = dateEl.value;
+        });
+    }
+    updateAttCount();
+}
+
+window.toggleAttWorker = (wid)=>{
+    const s = attPageSelections[wid];
+    if(!s) return;
+    s.selected = !s.selected;
+    const row = document.querySelector(`.att-row[data-wid="${wid}"]`);
+    if(row){
+        row.classList.toggle('selected', s.selected);
+        const check = row.querySelector('.att-check');
+        check.classList.toggle('on', s.selected);
+    }
+    updateAttCount();
+};
+
+window.attSiteInput = (wid, val)=>{
+    if(attPageSelections[wid]) attPageSelections[wid].site = val;
+    const sug = document.getElementById('sug-' + wid);
+    if(!sug) return;
+    const q = (val||'').trim().toLowerCase();
+    const hist = getSiteHistory();
+    const filtered = q ? hist.filter(h => h.toLowerCase().includes(q)) : hist;
+    if(!filtered.length){ sug.classList.remove('show'); return; }
+    sug.innerHTML = filtered.slice(0, 8).map(h => 
+        `<div class="site-suggest-item" onmousedown="event.preventDefault(); window.pickSite('${wid}', '${h.replace(/'/g,"\\'")}')">
+            <i class="fas fa-map-marker-alt"></i> ${h}
+        </div>`
+    ).join('');
+    sug.classList.add('show');
+};
+
+window.attSiteFocus = (wid, el)=>{ window.attSiteInput(wid, el.value); };
+window.attSiteBlur = ()=>{ setTimeout(()=>{ document.querySelectorAll('.site-suggest').forEach(s => s.classList.remove('show')); }, 200); };
+window.pickSite = (wid, site)=>{
+    const s = attPageSelections[wid];
+    if(!s) return;
+    s.site = site;
+    const input = document.querySelector(`.site-input[data-wid="${wid}"]`);
+    if(input) input.value = site;
+    const sug = document.getElementById('sug-' + wid);
+    if(sug) sug.classList.remove('show');
+};
+window.attExtraChange = (wid, val)=>{
+    if(attPageSelections[wid]) attPageSelections[wid].extra = val;
+};
+
+window.toggleSelectAll = ()=>{
+    const allSelected = allWorkers.every(w => attPageSelections[w.id]?.selected);
+    allWorkers.forEach(w=>{
+        if(attPageSelections[w.id]) attPageSelections[w.id].selected = !allSelected;
+    });
+    renderAdmin();
+    setTimeout(()=>{
+        const d = document.getElementById('attPageDate');
+        if(d) d.value = attPageDate;
+    }, 20);
+};
+
+window.attClearAll = ()=>{
+    allWorkers.forEach(w=>{
+        if(attPageSelections[w.id]){
+            attPageSelections[w.id].selected = false;
+            attPageSelections[w.id].site = '';
+            attPageSelections[w.id].extra = '';
+        }
+    });
+    renderAdmin();
+};
+
+function updateAttCount(){
+    const c = Object.values(attPageSelections).filter(s=>s.selected).length;
+    const el = document.getElementById('attCount');
+    if(el) el.innerText = c;
+}
+
+window.saveBatchAttendance = async ()=>{
+    const date = document.getElementById('attPageDate')?.value || attPageDate;
+    if(!date) return showToast('Pehle date chunein', 'error');
+    const selected = Object.entries(attPageSelections).filter(([wid,s])=>s.selected);
+    if(!selected.length) return showToast('Kam se kam ek majdur chunein', 'error');
+
+    let count = 0;
+    for(const [wid, s] of selected){
+        const site = (s.site||'').trim() || 'Work Site';
+        const rates = await getRates(wid);
+        let pay = rates.dayRate;
+        let extraTime = '';
+        if(s.extra){
+            pay = calcExtraPayment(rates.hourlyRate, s.extra);
+            extraTime = s.extra;
+        }
+        const payload = { date, siteName:site, payment:pay, type:'earning', timestamp:Date.now() };
+        if(extraTime) payload.extraTime = extraTime;
+        await push(ref(db, `attendance/${wid}`), payload);
+        saveSiteToHistory(site);
+        count++;
+    }
+
+    showToast(`✅ ${count} majdur ki haziri lag gayi!`);
+    allWorkers.forEach(w=>{
+        if(attPageSelections[w.id]){
+            attPageSelections[w.id].selected = false;
+            attPageSelections[w.id].site = '';
+            attPageSelections[w.id].extra = '';
+        }
+    });
+    renderAdmin();
+};
+
+/* ==================== GLOBAL CALENDAR ==================== */
+function renderGlobalCalendar(){
+    const c = document.getElementById('globalCal');
+    if(!c) return;
+    const y = globalCalViewDate.getFullYear();
+    const m = globalCalViewDate.getMonth();
+    const first = new Date(y, m, 1).getDay();
+    const days = new Date(y, m+1, 0).getDate();
+    const todayStr = getToday();
+
+    const dayMap = new Map();
+    Object.entries(allAttendanceByWorker).forEach(([wid, atts])=>{
+        atts.forEach(a=>{
+            if(!a.date) return;
+            if(!dayMap.has(a.date)) dayMap.set(a.date, { workers: {}, totalEarn:0, totalDiyaHua:0 });
+            const day = dayMap.get(a.date);
+            const w = allWorkers.find(x=>x.id===wid);
+            if(!w) return;
+            if(!day.workers[wid]) day.workers[wid] = { wid, name:w.name, earn:0, diyaHua:0, records:[] };
+            const amt = parseFloat(a.payment)||0;
+            const t = normalizeType(a.type);
+            if(t==='diya_hua'){ day.workers[wid].diyaHua += amt; day.totalDiyaHua += amt; }
+            else { day.workers[wid].earn += amt; day.totalEarn += amt; }
+            day.workers[wid].records.push(a);
+        });
+    });
+
+    const monthPrefix = `${y}-${String(m+1).padStart(2,'0')}`;
+    let mEarn=0, mDiyaHua=0, mDays=0;
+    dayMap.forEach((v, k)=>{
+        if(k.startsWith(monthPrefix)){
+            mEarn += v.totalEarn; mDiyaHua += v.totalDiyaHua; mDays++;
+        }
+    });
+
+    let html = `
+        <div class="cal-top">
+            <button class="cal-nav-btn" onclick="window.gcalPrev()"><i class="fas fa-chevron-left"></i></button>
+            <span class="cal-month">${formatMonthYear(globalCalViewDate)}</span>
+            <button class="cal-nav-btn" onclick="window.gcalNext()"><i class="fas fa-chevron-right"></i></button>
+        </div>
+        <div class="cal-summary">
+            <div class="cs-item"><div class="cs-label">Din</div><div class="cs-value">${mDays}</div></div>
+            <div class="cs-item"><div class="cs-label">Kamai</div><div class="cs-value green">₹${mEarn.toLocaleString()}</div></div>
+            <div class="cs-item"><div class="cs-label">Diya Hua</div><div class="cs-value purple">₹${mDiyaHua.toLocaleString()}</div></div>
+        </div>
+        <div class="cal-grid">
+            ${['R','S','M','T','W','T','F'].map(d=>`<div class="cal-dow">${d}</div>`).join('')}
+    `;
+    for(let i=0;i<first;i++) html += `<div class="cal-day empty"></div>`;
+    for(let day=1; day<=days; day++){
+        const ds = `${y}-${String(m+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+        const info = dayMap.get(ds);
+        let cls = '';
+        if(info){
+            const hasEarn = info.totalEarn > 0;
+            const hasDed = info.totalDiyaHua > 0;
+            if(hasEarn && hasDed) cls = 'mixed';
+            else if(hasEarn) cls = 'payment';
+            else if(hasDed) cls = 'deduction';
+        }
+        if(ds === todayStr) cls += ' today';
+        html += `<div class="cal-day ${cls}" onclick="window.gcalDetail('${ds}')">${day}</div>`;
+    }
+    html += `</div>`;
+    c.innerHTML = html;
+}
+
+window.gcalPrev = ()=>{ globalCalViewDate.setMonth(globalCalViewDate.getMonth()-1); renderGlobalCalendar(); };
+window.gcalNext = ()=>{ globalCalViewDate.setMonth(globalCalViewDate.getMonth()+1); renderGlobalCalendar(); };
+
+window.gcalDetail = (dateStr)=>{
+    const dayData = { workers: {}, totalEarn:0, totalDiyaHua:0 };
+    Object.entries(allAttendanceByWorker).forEach(([wid, atts])=>{
+        atts.forEach(a=>{
+            if(a.date !== dateStr) return;
+            const w = allWorkers.find(x=>x.id===wid);
+            if(!w) return;
+            if(!dayData.workers[wid]) dayData.workers[wid] = { wid, name:w.name, earn:0, diyaHua:0, records:[] };
+            const amt = parseFloat(a.payment)||0;
+            const t = normalizeType(a.type);
+            if(t==='diya_hua'){ dayData.workers[wid].diyaHua += amt; dayData.totalDiyaHua += amt; }
+            else { dayData.workers[wid].earn += amt; dayData.totalEarn += amt; }
+            dayData.workers[wid].records.push(a);
+        });
+    });
+    const workerList = Object.values(dayData.workers);
+
+    const sheet = document.createElement('div');
+    sheet.className = 'sheet-overlay';
+    sheet.onclick = e => { if(e.target === sheet) sheet.remove(); };
+    sheet.innerHTML = `
+        <div class="sheet">
+            <div class="sheet-grab"></div>
+            <div class="sheet-head">
+                <div><h2>${formatDate(dateStr)}</h2><div class="sub">${workerList.length} majdur</div></div>
+                <button class="x-btn" onclick="this.closest('.sheet-overlay').remove()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="summary-row" style="grid-template-columns:1fr 1fr;">
+                <div class="pill"><div class="p-label">Kamai</div><div class="p-value green">₹${dayData.totalEarn.toLocaleString()}</div></div>
+                <div class="pill"><div class="p-label">Diya Hua</div><div class="p-value purple">₹${dayData.totalDiyaHua.toLocaleString()}</div></div>
+            </div>
+            ${workerList.length ? `
+                <div class="card" style="margin-bottom:0;">
+                    <div class="card-body" style="padding:0.4rem 1.1rem;">
+                        ${workerList.map(w=>{
+                            const worker = allWorkers.find(x=>x.id===w.wid);
+                            const sites = w.records.map(r=>r.siteName).filter(Boolean).join(', ');
+                            const extras = w.records.filter(r=>r.extraTime).map(r=>r.extraTime).join(', ');
+                            return `
+                            <div class="wk-chip" onclick="window.openWorker('${w.wid}'); this.closest('.sheet-overlay').remove();">
+                                ${avatarHTML(w.name, worker?.profileImage)}
+                                <div class="wk-info">
+                                    <div class="wk-name">${w.name}</div>
+                                    <div class="wk-sub">${sites||'N/A'}${extras?' · '+extras:''}</div>
+                                </div>
+                                <div style="text-align:right;">
+                                    ${w.earn>0?`<div class="wk-amount green">+₹${w.earn.toLocaleString()}</div>`:''}
+                                    ${w.diyaHua>0?`<div class="wk-amount purple">-₹${w.diyaHua.toLocaleString()}</div>`:''}
+                                </div>
+                            </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            ` : `<div class="empty">Is din koi kaam nahi hua</div>`}
+        </div>
+    `;
+    document.body.appendChild(sheet);
+};
+
+/* ==================== WORKERS LIST ==================== */
+function renderWorkersList(){
+    const build = (container) => {
+        if(!container) return;
+        if(!allWorkers.length){
+            container.innerHTML = `<div class="empty">Abhi koi majdur nahi joda gaya</div>`;
+            return;
+        }
+        container.innerHTML = allWorkers.map(w=>{
+            const settlement = getWorkerSettlement(w.id);
+            return `
+            <div class="li" onclick="window.openWorker('${w.id}')">
+                ${avatarHTML(w.name, w.profileImage)}
+                <div class="li-left">
+                    <div class="li-name">${w.name}</div>
+                    <div class="li-sub">${w.loginId}${settlement ? ' · Hisab Clear' : ''}</div>
+                </div>
+                <div class="li-right"><i class="fas fa-chevron-right" style="font-size:0.7rem;"></i></div>
+            </div>
+            `;
+        }).join('');
+        const el = document.getElementById('workerCount');
+        if(el) el.innerText = allWorkers.length;
+    };
+    build(document.getElementById('workersList'));
+    build(document.getElementById('workersList2'));
+}
+window.openWorker = (wid)=>{
+    const worker = allWorkers.find(w=>w.id===wid);
+    if(worker) openWorkerDetail(worker);
+};
+
+function renderSettlementList(){
+    const c = document.getElementById('settlementList');
+    if(!c) return;
+    const entries = Object.entries(allSettlements);
+    if(!entries.length){ c.innerHTML = `<div class="empty">Abhi tak kisi ka hisab clear nahi kiya</div>`; return; }
+    c.innerHTML = entries.map(([wid, s])=>{
+        const w = allWorkers.find(x=>x.id===wid);
+        return `
+        <div class="li" style="cursor:default;">
+            ${w ? avatarHTML(w.name, w.profileImage, 'green') : `<div class="avatar green"><i class="fas fa-check"></i></div>`}
+            <div class="li-left">
+                <div class="li-name">${w?w.name:'Unknown'} <span class="badge green" style="margin-left:0.4rem;">Clear</span></div>
+                <div class="li-sub">${formatDate(s.settleDate)} tak ka hisab · ${new Date(s.settledAt).toLocaleDateString()}</div>
+            </div>
+            <div class="li-right" style="font-weight:800;color:var(--success);font-size:0.9rem;">₹${(s.amount||0).toLocaleString()}</div>
+        </div>
+        `;
+    }).join('');
+}
+
+/* ==================== STAT DETAIL ==================== */
+window.viewStat = (type)=>{
+    const stats = window._adminStats?.stats || [];
+    if(!stats.length) return showToast('Koi data nahi', 'error');
+    let title='', data=[];
+    if(type==='workers'){
+        title='Sab Majdur';
+        data = stats.map(s=>({ name:s.name, id:s.id, loginId:s.loginId, value:'Active', sub:'', profileImage:s.profileImage }));
+    } else if(type==='earned'){
+        title='Total Kamai';
+        data = stats.filter(s=>s.earn>0).sort((a,b)=>b.earn-a.earn).map(s=>({ name:s.name, id:s.id, loginId:s.loginId, value:'₹'+s.earn.toLocaleString(), sub:'', profileImage:s.profileImage }));
+    } else if(type==='diyaHua'){
+        title='Diya Hua — Liya Hua';
+        data = stats.filter(s=>s.diyaHua>0).sort((a,b)=>b.diyaHua-a.diyaHua).map(s=>({ name:s.name, id:s.id, loginId:s.loginId, value:'₹'+s.diyaHua.toLocaleString(), sub:'', profileImage:s.profileImage }));
+    } else if(type==='net'){
+        title='Lena Hai';
+        data = stats.sort((a,b)=>b.net-a.net).map(s=>({ name:s.name, id:s.id, loginId:s.loginId, value:'₹'+s.net.toLocaleString(), sub:'', profileImage:s.profileImage }));
+    }
+    if(!data.length) return showToast('Koi data nahi', 'error');
+    openStatPage(title, data);
+}
+
+function openStatPage(title, data){
+    const existing = document.getElementById('fullpage');
+    if(existing) existing.remove();
+    const page = document.createElement('div');
+    page.id = 'fullpage';
+    page.className = 'fullpage';
+    page.innerHTML = `
+        <div class="app-top">
+            <div class="title-area"><h1>${title}</h1></div>
+            <button class="icon-btn" onclick="document.getElementById('fullpage').remove()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="page" style="padding-top:0.5rem;">
+            <div class="card">
+                <div class="card-body">
+                    ${data.map(d=>`
+                        <div class="li" onclick="window.openWorker('${d.id}'); document.getElementById('fullpage').remove();">
+                            ${avatarHTML(d.name, d.profileImage)}
+                            <div class="li-left">
+                                <div class="li-name">${d.name}</div>
+                                <div class="li-sub">${d.loginId}${d.sub?' · '+d.sub:''}</div>
+                            </div>
+                            <div class="li-right" style="font-weight:800;color:var(--primary);">${d.value}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(page);
+}
+
+/* ==================== ADD WORKER SHEET ==================== */
+window.adminAddWorker = ()=>{
+    const existing = document.getElementById('sheet');
+    if(existing) existing.remove();
+    const sheet = document.createElement('div');
+    sheet.id = 'sheet';
+    sheet.className = 'sheet-overlay';
+    sheet.onclick = e => { if(e.target === sheet) sheet.remove(); };
+    sheet.innerHTML = `
+        <div class="sheet">
+            <div class="sheet-grab"></div>
+            <div class="sheet-head">
+                <div><h2>Naya Majdur Jodein</h2><div class="sub">Niche ki jaankari bharein</div></div>
+                <button class="x-btn" onclick="document.getElementById('sheet').remove()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="field"><label>Pura Naam</label><input id="nName" placeholder="jaise: Ramesh" /></div>
+            <div class="field"><label>Janm Tareekh</label><input type="date" id="nDob" /></div>
+            <div class="field"><label>Mobile Number</label><input id="nPhone" placeholder="Mobile Number" /></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;">
+                <div class="field"><label>Din ka Rate (₹)</label><input type="number" id="nDayRate" value="350" /></div>
+                <div class="field"><label>Extra ₹/ghanta</label><input type="number" id="nHourlyRate" value="50" /></div>
+            </div>
+            <button class="btn btn-primary btn-block" onclick="window.saveNewWorker()"><i class="fas fa-plus"></i> Majdur Jodein</button>
+        </div>
+    `;
+    document.body.appendChild(sheet);
+};
+window.saveNewWorker = async ()=>{
+    const name = document.getElementById('nName').value.trim();
+    const dob = document.getElementById('nDob').value;
+    const phone = document.getElementById('nPhone').value.trim();
+    const dr = parseFloat(document.getElementById('nDayRate').value) || 350;
+    const hr = parseFloat(document.getElementById('nHourlyRate').value) || 50;
+    if(!name || !dob) return showToast('Naam aur Janm Tareekh zaruri hai', 'error');
+    const year = dob.split('-')[0];
+    const lid = (name + year).toLowerCase().replace(/\s/g, '');
+    const nr = await push(workersRef, { name, dob, phone, loginId:lid, createdAt:Date.now(), profileImage:'' });
+    await set(ref(db, `workerRates/${nr.key}`), { dayRate:dr, hourlyRate:hr });
+    showToast(`✅ Majdur jod diya! Login ID: ${lid}`);
+    document.getElementById('sheet')?.remove();
+};
+
+/* ==================== WORKER DETAIL SHEET ==================== */
+async function openWorkerDetail(w){
+    currentWorkerId = w.id;
+    const rates = await getRates(w.id);
+    currentAttendances = allAttendanceByWorker[w.id] ? [...allAttendanceByWorker[w.id]].sort((a,b)=> new Date(b.date) - new Date(a.date)) : [];
+    const totals = calcTotalsWithSettlement(w.id, currentAttendances);
+    calendarViewDate = new Date();
+
+    const existing = document.getElementById('sheet');
+    if(existing) existing.remove();
+
+    const sheet = document.createElement('div');
+    sheet.id = 'sheet';
+    sheet.className = 'sheet-overlay';
+    sheet.onclick = e => { if(e.target === sheet) sheet.remove(); };
+    sheet.innerHTML = `
+        <div class="sheet">
+            <div class="sheet-grab"></div>
+            <div class="sheet-head">
+                <div style="display:flex;align-items:center;gap:0.7rem;">
+                    <div class="profile-img-wrap" style="width:50px;height:50px;margin:0;">
+                        <div class="profile-img" style="font-size:1.1rem;">
+                            ${w.profileImage 
+                                ? `<img src="${w.profileImage}" alt="${w.name}" onerror="this.parentElement.textContent='${initials(w.name)}';" />` 
+                                : initials(w.name)}
+                        </div>
+                        <div class="edit-badge" style="width:22px;height:22px;font-size:0.6rem;border-width:2px;" onclick="window.pickAndUploadImage('worker','${w.id}')">
+                            <i class="fas fa-camera"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h2>${w.name}</h2>
+                        <div class="sub">${w.loginId}</div>
+                    </div>
+                </div>
+                <div style="display:flex;gap:0.4rem;">
+                    ${w.profileImage ? `<button class="x-btn" style="background:#fef2f2;color:var(--danger);" onclick="window.removeProfileImage('worker','${w.id}')"><i class="fas fa-image"></i></button>` : ''}
+                    <button class="x-btn" style="background:#fef2f2;color:var(--danger);" onclick="window.deleteWorker('${w.id}','${w.name.replace(/'/g,"\\'")}')"><i class="fas fa-trash"></i></button>
+                    <button class="x-btn" onclick="document.getElementById('sheet').remove()"><i class="fas fa-times"></i></button>
+                </div>
+            </div>
+
+            ${totals.settlement ? `
+            <div class="clear-card">
+                <div class="cc-head"><i class="fas fa-check-circle"></i> Hisab Clear ho chuka hai</div>
+                <div class="cc-info">
+                    <div>
+                        <div class="cc-amount">₹${totals.settledNet.toLocaleString()}</div>
+                        <div class="cc-date">${formatDate(totals.settlement.settleDate)} tak ka clear</div>
+                    </div>
+                    <div class="cc-pending">
+                        <div class="ccp-label">Abhi Baki</div>
+                        <div class="ccp-value">₹${totals.pendingNet.toLocaleString()}</div>
+                    </div>
+                </div>
+                <div class="cc-breakdown">
+                    <div class="cc-bk">
+                        <div class="ccb-label">Us tak ki Kamai</div>
+                        <div class="ccb-value green">₹${totals.settledEarn.toLocaleString()}</div>
+                    </div>
+                    <div class="cc-bk">
+                        <div class="ccb-label">Diya Hua</div>
+                        <div class="ccb-value purple">₹${totals.settledDiyaHua.toLocaleString()}</div>
+                    </div>
+                    <div class="cc-bk">
+                        <div class="ccb-label">Net Clear</div>
+                        <div class="ccb-value blue">₹${totals.settledNet.toLocaleString()}</div>
+                    </div>
+                </div>
+            </div>
+            ` : ''}
+
+            <div class="summary-row">
+                <div class="pill"><div class="p-label">Kamai</div><div class="p-value green">₹${totals.earn.toLocaleString()}</div></div>
+                <div class="pill"><div class="p-label">Diya Hua — Liya Hua</div><div class="p-value purple">₹${totals.diyaHua.toLocaleString()}</div></div>
+                <div class="pill"><div class="p-label">Lena Hai</div><div class="p-value blue">₹${totals.net.toLocaleString()}</div></div>
+            </div>
+
+            <div style="background:var(--bg);border-radius:12px;padding:0.75rem 1rem;margin-bottom:1rem;display:flex;gap:0.6rem;align-items:flex-end;flex-wrap:wrap;">
+                <div style="flex:1;min-width:90px;">
+                    <label style="font-size:0.65rem;color:var(--muted);font-weight:700;">DIN KA RATE (₹)</label>
+                    <input type="number" id="wDayRate" value="${rates.dayRate}" step="10" style="padding:0.55rem 0.7rem;font-size:0.85rem;" />
+                </div>
+                <div style="flex:1;min-width:90px;">
+                    <label style="font-size:0.65rem;color:var(--muted);font-weight:700;">EXTRA ₹/GHANTA</label>
+                    <input type="number" id="wHourlyRate" value="${rates.hourlyRate}" step="5" style="padding:0.55rem 0.7rem;font-size:0.85rem;" />
+                </div>
+                <button class="btn btn-primary btn-sm" onclick="window.saveRates('${w.id}')">Save</button>
+            </div>
+
+            <div class="tabs">
+                <button class="tab active" data-tab="records"><i class="fas fa-list"></i> Kaam</button>
+                <button class="tab" data-tab="day"><i class="fas fa-plus"></i> Haziri</button>
+                <button class="tab" data-tab="extra"><i class="fas fa-clock"></i> Extra</button>
+                <button class="tab" data-tab="diya"><i class="fas fa-hand-holding-usd"></i> Diya Hua</button>
+                <button class="tab" data-tab="settle"><i class="fas fa-handshake"></i> Clear</button>
+            </div>
+
+            <div id="tab-records" class="tab-pane">
+                <button class="btn btn-outline btn-sm btn-block" style="margin-bottom:0.75rem;" onclick="window.downloadPDF('${w.id}')"><i class="fas fa-download"></i> PDF Nikalein</button>
+                <div id="wRecords"></div>
+            </div>
+
+            <div id="tab-day" class="tab-pane" style="display:none;">
+                <div class="info-box"><i class="fas fa-info-circle"></i><div>Din bhar ka kaam likhein. Paisa apne aap add ho jayega.</div></div>
+                <div class="field"><label>Tareekh</label><input type="date" id="aDate" value="${getToday()}" /></div>
+                <div class="field"><label>Site ka Naam</label>
+                    <div class="site-wrap">
+                        <input id="aSite" placeholder="Site ka naam" 
+                            oninput="window.wdSiteInput(this.value)" 
+                            onfocus="window.wdSiteFocus(this)" 
+                            onblur="window.wdSiteBlur()" autocomplete="off" />
+                        <div class="site-suggest" id="wdSug"></div>
+                    </div>
+                </div>
+                <button class="btn btn-primary btn-block" onclick="window.saveAttend('${w.id}')"><i class="fas fa-save"></i> Haziri Lagao</button>
+            </div>
+
+            <div id="tab-extra" class="tab-pane" style="display:none;">
+                <div class="info-box"><i class="fas fa-info-circle"></i><div>Extra kaam ke liye. Ghante chunein, paisa khud calculate hoga.</div></div>
+                <div class="field"><label>Tareekh</label><input type="date" id="eDate" value="${getToday()}" /></div>
+                <div class="field"><label>Site ka Naam</label>
+                    <div class="site-wrap">
+                        <input id="eSite" placeholder="Site ka naam"
+                            oninput="window.wdSiteInput2(this.value)" 
+                            onfocus="window.wdSiteFocus2(this)" 
+                            onblur="window.wdSiteBlur()" autocomplete="off" />
+                        <div class="site-suggest" id="wdSug2"></div>
+                    </div>
+                </div>
+                <div class="field"><label>Kitne Ghante</label>
+                    <div class="chip-row" id="timeChips">
+                        ${TIME_OPTIONS.map(t=>`<span class="chip" data-t="${t}">${t}</span>`).join('')}
+                    </div>
+                </div>
+                <div class="field"><label>Paisa</label><input id="ePay" readonly placeholder="₹0" /></div>
+                <button class="btn btn-success btn-block" onclick="window.saveExtra('${w.id}')"><i class="fas fa-clock"></i> Extra Add karo</button>
+            </div>
+
+            <div id="tab-diya" class="tab-pane" style="display:none;">
+                <div class="info-box"><i class="fas fa-info-circle"></i><div><b>Diya Hua — Liya Hua</b> — jab aapne majdur ko paisa <b>de diya</b> (advance, cash).</div></div>
+                <div class="field"><label>Tareekh</label><input type="date" id="diyaDate" value="${getToday()}" /></div>
+                <div class="field"><label>Kyun Diya</label><input id="diyaReason" placeholder="jaise: Cash diya, Advance" /></div>
+                <div class="field"><label>Kitna Diya (₹)</label><input type="number" id="diyaAmount" placeholder="Amount" /></div>
+                <button class="btn btn-purple btn-block" onclick="window.saveDiyaHua('${w.id}')"><i class="fas fa-hand-holding-usd"></i> Diya Hua Add karo</button>
+            </div>
+
+            <div id="tab-settle" class="tab-pane" style="display:none;">
+                <div class="info-box"><i class="fas fa-info-circle"></i><div><b>Hisab Clear</b> karne se us date tak ka saara hisab clear ho jata hai.</div></div>
+                
+                ${totals.settlement ? `
+                <div class="clear-card">
+                    <div class="cc-head"><i class="fas fa-check-circle"></i> Pichla Hisab Clear</div>
+                    <div class="cc-info">
+                        <div>
+                            <div class="cc-amount">₹${totals.settlement.amount.toLocaleString()}</div>
+                            <div class="cc-date">${formatDate(totals.settlement.settleDate)} tak clear</div>
+                        </div>
+                    </div>
+                    ${totals.settlement.note ? `<div style="font-size:0.75rem;color:#1e40af;margin-top:0.5rem;"><i class="fas fa-sticky-note"></i> ${totals.settlement.note}</div>` : ''}
+                </div>
+                <button class="btn btn-outline btn-sm btn-block" style="margin-bottom:1rem;" onclick="window.removeSettle('${w.id}')"><i class="fas fa-undo"></i> Clear Hatayein</button>
+                ` : ''}
+
+                <div class="field"><label>Kis Tareekh tak Clear karna hai</label><input type="date" id="sDate" value="${getToday()}" /></div>
+                <div class="field"><label>Note (Vyakalpan)</label><input id="sNote" placeholder="jaise: cash diya, bank transfer" /></div>
+                <div class="field"><label>Us tak ki Kamai</label><input id="sEarn" readonly style="background:var(--bg);font-weight:800;color:var(--success);" /></div>
+                <div class="field"><label>Minus Diya Hua</label><input id="sDiya" readonly style="background:var(--bg);font-weight:800;color:var(--purple);" /></div>
+                <div class="field"><label>Net Clear Amount</label><input id="sAmt" readonly placeholder="₹0" style="background:#fef3c7;font-weight:800;color:#92400e;" /></div>
+                <button class="btn btn-success btn-block" onclick="window.saveSettle('${w.id}')"><i class="fas fa-check-circle"></i> Hisab Clear karo</button>
+            </div>
+
+            <div style="margin-top:1.4rem;">
+                <h4 style="font-size:0.82rem;margin-bottom:0.5rem;font-weight:700;">Haziri Calendar</h4>
+                <div class="card" style="margin-bottom:0;"><div id="wCal"></div></div>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(sheet);
+
+    sheet.querySelectorAll('.tab').forEach(t=>{
+        t.onclick = ()=>{
+            sheet.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+            t.classList.add('active');
+            sheet.querySelectorAll('.tab-pane').forEach(p=>p.style.display='none');
+            document.getElementById('tab-' + t.dataset.tab).style.display = 'block';
+        };
+    });
+
+    sheet.querySelectorAll('#timeChips .chip').forEach(chip=>{
+        chip.onclick = ()=>{
+            sheet.querySelectorAll('#timeChips .chip').forEach(x=>x.classList.remove('selected'));
+            chip.classList.add('selected');
+            const t = chip.dataset.t;
+            const hr = parseFloat(document.getElementById('wHourlyRate').value) || 0;
+            document.getElementById('ePay').value = '₹' + calcExtraPayment(hr, t);
+        };
+    });
+
+    const sDateEl = document.getElementById('sDate');
+    const sAmtEl = document.getElementById('sAmt');
+    const sEarnEl = document.getElementById('sEarn');
+    const sDiyaEl = document.getElementById('sDiya');
+    const upd = ()=>{
+        const sd = sDateEl.value;
+        const attsUp = currentAttendances.filter(a=>a.date <= sd);
+        const t = calcTotals(attsUp);
+        sEarnEl.value = '₹' + t.earn.toLocaleString();
+        sDiyaEl.value = '₹' + t.diyaHua.toLocaleString();
+        sAmtEl.value = '₹' + t.net.toLocaleString();
+    };
+    sDateEl.addEventListener('change', upd);
+    upd();
+
+    renderWorkerRecords();
+    renderCalendar(currentAttendances, 'wCal');
+}
+
+window.wdSiteInput = (val)=>{
+    const sug = document.getElementById('wdSug');
+    if(!sug) return;
+    const q = (val||'').trim().toLowerCase();
+    const hist = getSiteHistory();
+    const filtered = q ? hist.filter(h => h.toLowerCase().includes(q)) : hist;
+    if(!filtered.length){ sug.classList.remove('show'); return; }
+    sug.innerHTML = filtered.slice(0, 8).map(h => 
+        `<div class="site-suggest-item" onmousedown="event.preventDefault(); window.wdPickSite('${h.replace(/'/g,"\\'")}')"><i class="fas fa-map-marker-alt"></i> ${h}</div>`
+    ).join('');
+    sug.classList.add('show');
+};
+window.wdSiteFocus = (el)=>{ window.wdSiteInput(el.value); };
+window.wdSiteInput2 = (val)=>{
+    const sug = document.getElementById('wdSug2');
+    if(!sug) return;
+    const q = (val||'').trim().toLowerCase();
+    const hist = getSiteHistory();
+    const filtered = q ? hist.filter(h => h.toLowerCase().includes(q)) : hist;
+    if(!filtered.length){ sug.classList.remove('show'); return; }
+    sug.innerHTML = filtered.slice(0, 8).map(h => 
+        `<div class="site-suggest-item" onmousedown="event.preventDefault(); window.wdPickSite2('${h.replace(/'/g,"\\'")}')"><i class="fas fa-map-marker-alt"></i> ${h}</div>`
+    ).join('');
+    sug.classList.add('show');
+};
+window.wdSiteFocus2 = (el)=>{ window.wdSiteInput2(el.value); };
+window.wdSiteBlur = ()=>{ setTimeout(()=>{ document.querySelectorAll('.site-suggest').forEach(s => s.classList.remove('show')); }, 200); };
+window.wdPickSite = (site)=>{ const el = document.getElementById('aSite'); if(el) el.value = site; const sug = document.getElementById('wdSug'); if(sug) sug.classList.remove('show'); };
+window.wdPickSite2 = (site)=>{ const el = document.getElementById('eSite'); if(el) el.value = site; const sug = document.getElementById('wdSug2'); if(sug) sug.classList.remove('show'); };
+
+window.deleteWorker = async (id, name)=>{
+    if(!confirm(`"${name}" aur unka saara data delete karna hai?`)) return;
+    await remove(ref(db, `workers/${id}`));
+    await remove(ref(db, `attendance/${id}`));
+    await remove(ref(db, `workerRates/${id}`));
+    await remove(ref(db, `settlements/${id}`));
+    document.getElementById('sheet')?.remove();
+    showToast('Majdur delete ho gaya');
+};
+window.saveRates = async (id)=>{
+    await set(ref(db, `workerRates/${id}`), {
+        dayRate: parseFloat(document.getElementById('wDayRate').value),
+        hourlyRate: parseFloat(document.getElementById('wHourlyRate').value)
+    });
+    showToast('Rate update ho gaya');
+};
+window.saveAttend = async (wid)=>{
+    const date = document.getElementById('aDate').value;
+    const site = document.getElementById('aSite').value.trim() || 'Work Site';
+    const r = await getRates(wid);
+    if(!date) return showToast('Tareekh zaruri hai', 'error');
+    await push(ref(db, `attendance/${wid}`), { date, siteName:site, payment:r.dayRate, type:'earning', timestamp:Date.now() });
+    saveSiteToHistory(site);
+    showToast(`✅ ₹${r.dayRate} add ho gaya`);
+    document.getElementById('aSite').value = '';
+};
+window.saveExtra = async (wid)=>{
+    const date = document.getElementById('eDate').value;
+    const site = document.getElementById('eSite').value.trim() || 'Extra Work';
+    const sel = document.querySelector('#timeChips .chip.selected');
+    const r = await getRates(wid);
+    if(!date || !sel) return showToast('Tareekh aur ghante zaruri hai', 'error');
+    const t = sel.dataset.t;
+    const pay = calcExtraPayment(r.hourlyRate, t);
+    await push(ref(db, `attendance/${wid}`), { date, siteName:site, payment:pay, extraTime:t, type:'earning', timestamp:Date.now() });
+    saveSiteToHistory(site);
+    showToast(`⏱️ ₹${pay} add ho gaya`);
+};
+window.saveDiyaHua = async (wid)=>{
+    const date = document.getElementById('diyaDate').value;
+    const reason = document.getElementById('diyaReason').value.trim() || 'Diya Hua';
+    const amt = parseFloat(document.getElementById('diyaAmount').value);
+    if(!date || !amt) return showToast('Tareekh aur rakam zaruri hai', 'error');
+    await push(ref(db, `attendance/${wid}`), { date, siteName:reason, payment:amt, type:'diya_hua', timestamp:Date.now() });
+    showToast(`💸 Diya Hua: ₹${amt}`);
+};
+window.saveSettle = async (wid)=>{
+    const sd = document.getElementById('sDate').value;
+    const note = document.getElementById('sNote').value.trim();
+    if(!sd) return showToast('Tareekh chunein', 'error');
+    const attsUp = currentAttendances.filter(a=>a.date <= sd);
+    if(!attsUp.length) return showToast('Is tareekh tak koi kaam nahi', 'error');
+    const t = calcTotals(attsUp);
+    if(t.net === 0) return showToast('Net paisa zero hai', 'error');
+    
+    await set(ref(db, `settlements/${wid}`), { settleDate:sd, amount:t.net, note, settledAt:Date.now() });
+    
+    const settleDate = new Date(sd);
+    const nextDay = new Date(settleDate);
+    nextDay.setDate(nextDay.getDate() + 1);
+    const nextDayStr = `${nextDay.getFullYear()}-${String(nextDay.getMonth()+1).padStart(2,'0')}-${String(nextDay.getDate()).padStart(2,'0')}`;
+    
+    await push(ref(db, `attendance/${wid}`), {
+        date: nextDayStr,
+        siteName: `Hisab Clear (${formatDate(sd)} tak)`,
+        payment: t.net,
+        type: 'diya_hua',
+        timestamp: Date.now(),
+        isSettlementEntry: true
+    });
+    
+    showToast(`✅ ₹${t.net.toLocaleString()} ka hisab clear ho gaya!`);
+    document.getElementById('sheet')?.remove();
+    const w = allWorkers.find(x=>x.id===wid);
+    if(w) openWorkerDetail(w);
+};
+window.removeSettle = async (wid)=>{
+    if(!confirm('Clear hatana hai?')) return;
+    const atts = allAttendanceByWorker[wid] || [];
+    for(const a of atts){
+        if(a.isSettlementEntry){
+            await remove(ref(db, `attendance/${wid}/${a.id}`));
+        }
+    }
+    await remove(ref(db, `settlements/${wid}`));
+    showToast('Clear hata diya');
+    document.getElementById('sheet')?.remove();
+    const w = allWorkers.find(x=>x.id===wid);
+    if(w) openWorkerDetail(w);
+};
+window.downloadPDF = (wid)=>{
+    const w = allWorkers.find(x=>x.id===wid);
+    if(w) generatePDF(w, currentAttendances);
+};
+
+function renderWorkerRecords(){
+    const c = document.getElementById('wRecords');
+    if(!c) return;
+    if(!currentAttendances.length){ c.innerHTML = `<div class="empty">Abhi koi kaam nahi likha</div>`; return; }
+    const st = getWorkerSettlement(currentWorkerId);
+    const sd = st ? st.settleDate : null;
+    c.innerHTML = currentAttendances.map(a=>{
+        const settled = sd && a.date <= sd;
+        const type = normalizeType(a.type);
+        let label = 'Kaam', sign='+', cls='green';
+        if(type==='diya_hua'){ 
+            label = a.isSettlementEntry ? 'Hisab Clear' : 'Diya Hua'; 
+            sign='-'; cls='purple'; 
+        }
+        return `
+        <div class="rec">
+            <div class="rec-left">
+                <div class="rec-date">${formatDate(a.date)}</div>
+                <div class="rec-sub"><b>${label}</b> · ${a.siteName||'N/A'}${a.extraTime?' · '+a.extraTime:''}${settled?' · <span style="color:#16a34a;">Clear</span>':''}</div>
+            </div>
+            <div class="rec-right">
+                <span class="rec-amount ${cls}">${sign}₹${(a.payment||0).toLocaleString()}</span>
+                <button class="rec-action" onclick="window.editRec('${currentWorkerId}','${a.id}')" title="Edit"><i class="fas fa-pen"></i></button>
+                <button class="rec-action danger" onclick="window.delRec('${currentWorkerId}','${a.id}')" title="Delete"><i class="fas fa-trash"></i></button>
+            </div>
+        </div>
+        `;
+    }).join('');
+}
+
+window.editRec = async (wid, rid)=>{
+    const rec = (allAttendanceByWorker[wid] || []).find(x=>x.id===rid);
+    if(!rec) return;
+    const type = normalizeType(rec.type);
+    const sheet = document.createElement('div');
+    sheet.className = 'sheet-overlay';
+    sheet.onclick = e => { if(e.target === sheet) sheet.remove(); };
+    let typeLabel = 'Kaam';
+    if(type==='diya_hua') typeLabel = rec.isSettlementEntry ? 'Hisab Clear' : 'Diya Hua';
+    else if(rec.extraTime) typeLabel = 'Extra';
+
+    sheet.innerHTML = `
+        <div class="sheet">
+            <div class="sheet-grab"></div>
+            <div class="sheet-head">
+                <div><h2>${typeLabel} Edit</h2><div class="sub">${formatDate(rec.date)}</div></div>
+                <button class="x-btn" onclick="this.closest('.sheet-overlay').remove()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="field"><label>Tareekh</label><input type="date" id="edDate" value="${rec.date}" /></div>
+            <div class="field"><label>${type==='earning'?'Site ka Naam':'Reason'}</label><input id="edSite" value="${(rec.siteName||'').replace(/"/g,'&quot;')}" /></div>
+            ${type==='diya_hua' ? `
+            <div class="field"><label>Rakam (₹)</label><input type="number" id="edAmt" value="${rec.payment||0}" /></div>
+            ` : ''}
+            <button class="btn btn-primary btn-block" onclick="window.saveEditRec('${wid}','${rid}')"><i class="fas fa-save"></i> Save karo</button>
+        </div>
+    `;
+    document.body.appendChild(sheet);
+};
+
+window.saveEditRec = async (wid, rid)=>{
+    const rec = (allAttendanceByWorker[wid] || []).find(x=>x.id===rid);
+    if(!rec) return;
+    const date = document.getElementById('edDate').value;
+    const siteName = document.getElementById('edSite').value.trim();
+    const amtEl = document.getElementById('edAmt');
+    const payload = { date, siteName, payment: parseFloat(rec.payment)||0, type: normalizeType(rec.type), timestamp: rec.timestamp || Date.now() };
+    if(rec.extraTime) payload.extraTime = rec.extraTime;
+    if(rec.isSettlementEntry) payload.isSettlementEntry = true;
+    if(amtEl) payload.payment = parseFloat(amtEl.value) || 0;
+    await set(ref(db, `attendance/${wid}/${rid}`), payload);
+    showToast('Update ho gaya');
+    document.querySelector('.sheet-overlay')?.remove();
+};
+
+window.delRec = async (wid, rid)=>{
+    if(!confirm('Ye entry delete karni hai?')) return;
+    await remove(ref(db, `attendance/${wid}/${rid}`));
+    showToast('Delete ho gaya');
+};
+
+function renderWorkerClearBanner(wid){
+    const c = document.getElementById('workerClearBanner');
+    if(!c) return;
+    if(!wid || wid==='admin'){ c.innerHTML = ''; return; }
+    const s = getWorkerSettlement(wid);
+    if(!s){ c.innerHTML = ''; return; }
+    const t = calcTotalsWithSettlement(wid, currentAttendances);
+    c.innerHTML = `
+        <div class="clear-card">
+            <div class="cc-head"><i class="fas fa-check-circle"></i> Aapka hisab clear ho chuka hai</div>
+            <div class="cc-info">
+                <div>
+                    <div class="cc-amount">₹${s.amount.toLocaleString()}</div>
+                    <div class="cc-date">${formatDate(s.settleDate)} tak ka clear kiya gaya</div>
+                </div>
+                <div class="cc-pending">
+                    <div class="ccp-label">Abhi Baki</div>
+                    <div class="ccp-value">₹${t.pendingNet.toLocaleString()}</div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+function renderWorkerClearHistory(wid){
+    const c = document.getElementById('workerClearHistory');
+    if(!c) return;
+    const s = allSettlements[wid];
+    if(!s){ c.innerHTML = `<div class="empty">Abhi tak kuch clear nahi hua</div>`; return; }
+    c.innerHTML = `
+        <div class="li" style="cursor:default;">
+            <div class="avatar green"><i class="fas fa-check"></i></div>
+            <div class="li-left">
+                <div class="li-name">${formatDate(s.settleDate)} tak ka hisab</div>
+                <div class="li-sub">${new Date(s.settledAt).toLocaleDateString()}${s.note?' · '+s.note:''}</div>
+            </div>
+            <div class="li-right" style="font-weight:800;color:var(--success);">₹${s.amount.toLocaleString()}</div>
+        </div>
+    `;
+}
+
+/* ==================== WORKER CALENDAR ==================== */
+function renderCalendar(atts, containerId){
+    const c = document.getElementById(containerId);
+    if(!c) return;
+    const y = calendarViewDate.getFullYear();
+    const m = calendarViewDate.getMonth();
+    const first = new Date(y, m, 1).getDay();
+    const days = new Date(y, m+1, 0).getDate();
+    const map = new Map();
+    atts.forEach(a=>{
+        if(!map.has(a.date)) map.set(a.date, []);
+        map.get(a.date).push(a);
+    });
+
+    const monthPrefix = `${y}-${String(m+1).padStart(2,'0')}`;
+    let mEarn=0, mDiyaHua=0, mDays=0;
+    atts.forEach(a=>{
+        if(a.date && a.date.startsWith(monthPrefix)){
+            const amt = parseFloat(a.payment)||0;
+            const t = normalizeType(a.type);
+            if(t==='diya_hua') mDiyaHua += amt;
+            else { mEarn += amt; mDays++; }
+        }
+    });
+
+    const todayStr = getToday();
+
+    let html = `
+        <div class="cal-top">
+            <button class="cal-nav-btn" onclick="window.calPrev('${containerId}')"><i class="fas fa-chevron-left"></i></button>
+            <span class="cal-month">${formatMonthYear(calendarViewDate)}</span>
+            <button class="cal-nav-btn" onclick="window.calNext('${containerId}')"><i class="fas fa-chevron-right"></i></button>
+        </div>
+        <div class="cal-summary">
+            <div class="cs-item"><div class="cs-label">Din</div><div class="cs-value">${mDays}</div></div>
+            <div class="cs-item"><div class="cs-label">Kamai</div><div class="cs-value green">₹${mEarn.toLocaleString()}</div></div>
+            <div class="cs-item"><div class="cs-label">Diya Hua</div><div class="cs-value purple">₹${mDiyaHua.toLocaleString()}</div></div>
+        </div>
+        <div class="cal-grid">
+            ${['R','S','M','T','W','T','F'].map(d=>`<div class="cal-dow">${d}</div>`).join('')}
+    `;
+    for(let i=0;i<first;i++) html += `<div class="cal-day empty"></div>`;
+    for(let day=1; day<=days; day++){
+        const ds = `${y}-${String(m+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+        const recs = map.get(ds) || [];
+        const hp = recs.some(r=>normalizeType(r.type)==='earning');
+        const hd = recs.some(r=>normalizeType(r.type)==='diya_hua');
+        let cls = '';
+        if(hp && hd) cls='mixed';
+        else if(hp) cls='payment';
+        else if(hd) cls='deduction';
+        if(ds === todayStr) cls += ' today';
+        html += `<div class="cal-day ${cls}" onclick="window.calDetail('${ds}')">${day}</div>`;
+    }
+    html += `</div>`;
+    c.innerHTML = html;
+}
+
+window.calPrev = (id)=>{
+    calendarViewDate.setMonth(calendarViewDate.getMonth() - 1);
+    renderCalendar(currentAttendances, id);
+};
+window.calNext = (id)=>{
+    calendarViewDate.setMonth(calendarViewDate.getMonth() + 1);
+    renderCalendar(currentAttendances, id);
+};
+window.calDetail = (dateStr)=>{
+    const recs = currentAttendances.filter(a=>a.date === dateStr);
+    const sheet = document.createElement('div');
+    sheet.className = 'sheet-overlay';
+    sheet.onclick = e => { if(e.target === sheet) sheet.remove(); };
+    sheet.innerHTML = `
+        <div class="sheet">
+            <div class="sheet-grab"></div>
+            <div class="sheet-head">
+                <div><h2>${formatDate(dateStr)}</h2><div class="sub">Us din ka kaam</div></div>
+                <button class="x-btn" onclick="this.closest('.sheet-overlay').remove()"><i class="fas fa-times"></i></button>
+            </div>
+            ${recs.length ? `
+                <div class="card" style="margin-bottom:0;">
+                    <div class="card-body">
+                        ${recs.map(r=>{
+                            const type = normalizeType(r.type);
+                            let label = 'Kaam', sign='+', cls='green';
+                            if(type==='diya_hua'){ 
+                                label = r.isSettlementEntry ? 'Hisab Clear' : 'Diya Hua'; 
+                                sign='-'; cls='purple'; 
+                            }
+                            return `
+                            <div class="rec" style="padding-left:1.1rem;padding-right:1.1rem;">
+                                <div class="rec-left">
+                                    <div class="rec-date">${r.siteName||'N/A'}</div>
+                                    <div class="rec-sub"><b>${label}</b>${r.extraTime?' · '+r.extraTime:''}</div>
+                                </div>
+                                <span class="rec-amount ${cls}">${sign}₹${(r.payment||0).toLocaleString()}</span>
+                            </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            ` : `<div class="empty">Is din koi kaam nahi</div>`}
+        </div>
+    `;
+    document.body.appendChild(sheet);
+};
+
+/* ==================== WORKER SHELL ==================== */
+function updateWorkerHomeStats(){
+    const totals = calcTotals(currentAttendances);
+    const haziri = countHaziri(currentAttendances);
+    const $ = id => document.getElementById(id);
+    $('workerTotalDays') && ($('workerTotalDays').innerText = haziri);
+    $('workerTotalEarned') && ($('workerTotalEarned').innerText = '₹' + totals.earn.toLocaleString());
+    $('workerTotalDiyaHua') && ($('workerTotalDiyaHua').innerText = '₹' + totals.diyaHua.toLocaleString());
+    $('workerNetPayment') && ($('workerNetPayment').innerText = '₹' + totals.net.toLocaleString());
+}
+
+function renderWorker(){
+    const app = document.getElementById('app');
+    let body = '';
+    
+    const myWorker = allWorkers.find(x=>x.id === currentUser.id);
+    const myImage = myWorker?.profileImage || '';
+
+    if(workerTab === 'home'){
+        body = `
+        <div class="page">
+            <div id="workerClearBanner"></div>
+            <div class="stat-grid">
+                <div class="stat" onclick="window.workerViewStat('haziri')"><div class="s-label">Haziri</div><div class="s-value" id="workerTotalDays">0</div></div>
+                <div class="stat" onclick="window.workerViewStat('kamai')"><div class="s-label">Kamai</div><div class="s-value green" id="workerTotalEarned">₹0</div></div>
+                <div class="stat" onclick="window.workerViewStat('diyaHua')"><div class="s-label">Diya Hua — Liya Hua</div><div class="s-value purple" id="workerTotalDiyaHua">₹0</div></div>
+                <div class="stat" onclick="window.workerViewStat('lenaHai')"><div class="s-label">Lena Hai</div><div class="s-value blue" id="workerNetPayment">₹0</div></div>
+            </div>
+            
+            <!-- TEAM AVATARS - NON-CLICKABLE -->
+            <div class="team-section">
+                <div class="team-title">
+                    <i class="fas fa-users"></i> Hamari Team
+                    <span class="count-badge" id="teamCount">0</span>
+                </div>
+                <div class="team-grid" id="teamGrid"></div>
+            </div>
+            
+            <div class="card">
+                <div class="card-head"><h3>Mera Calendar</h3></div>
+                <div id="wCal"></div>
+            </div>
+        </div>
+        `;
+    } else if(workerTab === 'records'){
+        body = `
+        <div class="page">
+            <div class="card">
+                <div class="card-head">
+                    <h3>Mera Kaam</h3>
+                    <button class="btn btn-outline btn-sm" onclick="window.workerPDF()"><i class="fas fa-download"></i></button>
+                </div>
+                <div class="card-body" id="workerAttendanceList"></div>
+            </div>
+        </div>
+        `;
+    } else if(workerTab === 'clear'){
+        body = `
+        <div class="page">
+            <div class="info-box">
+                <i class="fas fa-info-circle"></i>
+                <div>Jab aapka hisab clear hota hai to uska record yahan dikhta hai.</div>
+            </div>
+            <div class="card">
+                <div class="card-head"><h3>Clear Hisab</h3></div>
+                <div class="card-body" id="workerClearHistory"></div>
+            </div>
+        </div>
+        `;
+    } else if(workerTab === 'profile'){
+        body = `
+        <div class="page">
+            <div class="card">
+                <div class="card-body pad" style="text-align:center;">
+                    <div class="profile-img-wrap">
+                        <div class="profile-img">
+                            ${myImage 
+                                ? `<img src="${myImage}" alt="${currentUser.name}" onerror="this.parentElement.textContent='${initials(currentUser.name)}';" />` 
+                                : initials(currentUser.name)}
+                        </div>
+                        <div class="edit-badge" onclick="window.pickAndUploadImage('worker','${currentUser.id}')">
+                            <i class="fas fa-camera"></i>
+                        </div>
+                    </div>
+                    <h2 style="font-size:1.1rem;font-weight:700;">${currentUser.name}</h2>
+                    <p style="font-size:0.78rem;color:var(--muted);margin-top:0.2rem;">${currentUser.loginId}</p>
+                    ${myImage ? `<button class="btn btn-outline btn-sm" style="margin-top:0.5rem;" onclick="window.removeProfileImage('worker','${currentUser.id}')"><i class="fas fa-trash"></i> Image Hatayein</button>` : ''}
+                </div>
+            </div>
+            <div class="card">
+                <div class="li" onclick="window.workerPDF()">
+                    <div class="li-left"><div class="li-name"><i class="fas fa-download" style="width:20px;"></i> PDF Nikalein</div></div>
+                    <i class="fas fa-chevron-right" style="font-size:0.7rem;color:var(--muted);"></i>
+                </div>
+                <div class="li" onclick="window.toggleDark()">
+                    <div class="li-left"><div class="li-name"><i class="fas fa-moon" style="width:20px;"></i> Dark Mode</div></div>
+                    <i class="fas fa-chevron-right" style="font-size:0.7rem;color:var(--muted);"></i>
+                </div>
+                <div class="li" onclick="window.workerLogout()">
+                    <div class="li-left"><div class="li-name" style="color:var(--danger);"><i class="fas fa-sign-out-alt" style="width:20px;"></i> Logout</div></div>
+                    <i class="fas fa-chevron-right" style="font-size:0.7rem;color:var(--muted);"></i>
+                </div>
+            </div>
+            <p style="text-align:center;color:var(--muted);font-size:0.7rem;">Vishu Civil Contractor · v5.1</p>
+        </div>
+        `;
+    }
+
+    app.innerHTML = `
+        <div class="app-top">
+            <div class="brand">
+                <img src="${COMPANY_LOGO}" alt="Logo" class="brand-logo" />
+                <div class="title-area">
+                    <h1>Namaste, ${currentUser.name.split(' ')[0]}</h1>
+                    <p>${currentUser.loginId}</p>
+                </div>
+            </div>
+            <div class="app-top-actions">
+                <button class="icon-btn" onclick="window.toggleDark()"><i class="fas ${darkToggleIcon()} dark-btn-icon"></i></button>
+                <button class="icon-btn" onclick="window.workerLogout()"><i class="fas fa-sign-out-alt"></i></button>
+            </div>
+        </div>
+        ${body}
+        <div class="bottom-nav">
+            <button class="nav-item ${workerTab==='home'?'active':''}" onclick="window.workerTabFn('home')"><i class="fas fa-home"></i><span>Home</span></button>
+            <button class="nav-item ${workerTab==='records'?'active':''}" onclick="window.workerTabFn('records')"><i class="fas fa-list"></i><span>Kaam</span></button>
+            <button class="nav-item ${workerTab==='clear'?'active':''}" onclick="window.workerTabFn('clear')"><i class="fas fa-check-circle"></i><span>Clear</span></button>
+            <button class="nav-item ${workerTab==='profile'?'active':''}" onclick="window.workerTabFn('profile')"><i class="fas fa-user"></i><span>Profile</span></button>
+        </div>
+    `;
+
+    if(workerTab === 'home'){
+        renderTeamAvatars();
+        renderCalendar(currentAttendances, 'wCal');
+        renderWorkerClearBanner(currentUser.id);
+        updateWorkerHomeStats();
+        // Update team count
+        const tc = document.getElementById('teamCount');
+        if(tc) tc.innerText = allWorkers.length + 1;
+    } else if(workerTab === 'records'){
+        renderWorkerAttendanceList();
+    } else if(workerTab === 'clear'){
+        renderWorkerClearHistory(currentUser.id);
+    }
+}
+window.workerTabFn = (t)=>{ workerTab = t; renderWorker(); };
+window.workerLogout = ()=>{ clearSession(); currentUser = null; renderLogin(); };
+window.workerPDF = ()=>{
+    generatePDF({ name:currentUser.name, loginId:currentUser.loginId, id:currentUser.id }, currentAttendances);
+};
+
+/* ==================== WORKER VIEW STAT ==================== */
+window.workerViewStat = (type)=>{
+    let title='', data=[];
+    if(type === 'haziri'){
+        title='Meri Haziri';
+        data = currentAttendances.filter(a=>normalizeType(a.type)==='earning' && !a.extraTime && !a.isSettlementEntry).map(a=>({
+            date: a.date,
+            site: a.siteName || 'N/A',
+            amount: a.payment || 0,
+            color: 'green',
+            sign: '+'
+        }));
+    } else if(type === 'kamai'){
+        title='Meri Kamai';
+        data = currentAttendances.filter(a=>normalizeType(a.type)==='earning' && !a.isSettlementEntry).map(a=>({
+            date: a.date,
+            site: (a.extraTime ? `Extra · ${a.extraTime} · ` : '') + (a.siteName || 'N/A'),
+            amount: a.payment || 0,
+            color: 'green',
+            sign: '+'
+        }));
+    } else if(type === 'diyaHua'){
+        title='Diya Hua — Liya Hua';
+        data = currentAttendances.filter(a=>normalizeType(a.type)==='diya_hua').map(a=>({
+            date: a.date,
+            site: (a.isSettlementEntry ? 'Hisab Clear · ' : '') + (a.siteName || 'N/A'),
+            amount: a.payment || 0,
+            color: 'purple',
+            sign: '-',
+            isSettlement: a.isSettlementEntry
+        }));
+    } else if(type === 'lenaHai'){
+        title='Lena Hai';
+        const totals = calcTotals(currentAttendances);
+        data = [{
+            date: 'Total',
+            site: 'Abhi tak ka hisab',
+            amount: totals.net,
+            color: 'blue',
+            sign: ''
+        }];
+    }
+    openWorkerStatPage(title, data);
+};
+
+function openWorkerStatPage(title, data){
+    const existing = document.getElementById('fullpage');
+    if(existing) existing.remove();
+    const page = document.createElement('div');
+    page.id = 'fullpage';
+    page.className = 'fullpage';
+    page.innerHTML = `
+        <div class="app-top">
+            <div class="title-area"><h1>${title}</h1></div>
+            <button class="icon-btn" onclick="document.getElementById('fullpage').remove()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="page" style="padding-top:0.5rem;">
+            <div class="info-box">
+                <i class="fas fa-lock"></i>
+                <div>Ye sirf aapka data hai. Kuch bhi <b>badal ya delete nahi</b> kar sakte.</div>
+            </div>
+            ${data.length ? `
+                <div class="card">
+                    <div class="card-body">
+                        ${data.map(d=>`
+                            <div class="rec">
+                                <div class="rec-left">
+                                    <div class="rec-date">${formatDate(d.date)}</div>
+                                    <div class="rec-sub">${d.site}${d.isSettlement ? ' · <span style="color:#1e40af;">Clear</span>' : ''}</div>
+                                </div>
+                                <div class="rec-right">
+                                    <span class="rec-amount ${d.color}">${d.sign}₹${(d.amount||0).toLocaleString()}</span>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            ` : `<div class="empty">Koi data nahi</div>`}
+        </div>
+    `;
+    document.body.appendChild(page);
+}
+
+function renderWorkerAttendanceList(){
+    const c = document.getElementById('workerAttendanceList');
+    if(!c) return;
+    if(!currentAttendances.length){ c.innerHTML = `<div class="empty">Abhi koi kaam nahi</div>`; return; }
+    const st = getWorkerSettlement(currentUser.id);
+    const sd = st ? st.settleDate : null;
+    c.innerHTML = currentAttendances.map(a=>{
+        const settled = sd && a.date <= sd;
+        const type = normalizeType(a.type);
+        let label = 'Haziri', sign='+', cls='green';
+        if(type==='diya_hua'){ 
+            label = a.isSettlementEntry ? 'Hisab Clear' : 'Diya Hua'; 
+            sign='-'; cls='purple'; 
+        }
+        else if(a.extraTime){ label='Extra'; }
+        return `
+        <div class="rec">
+            <div class="rec-left">
+                <div class="rec-date">${formatDate(a.date)}</div>
+                <div class="rec-sub"><b>${label}</b> · ${a.siteName||'N/A'}${a.extraTime?' · '+a.extraTime:''} · ${settled?'<span style="color:#16a34a;">Clear</span>':'<span style="color:#ea580c;">Baki</span>'}</div>
+            </div>
+            <span class="rec-amount ${cls}">${sign}₹${(a.payment||0).toLocaleString()}</span>
+        </div>
+        `;
+    }).join('');
+}
+
+/* ==================== PDF ==================== */
+async function generatePDF(w, atts){
+    if(!atts.length) return showToast('Koi data nahi', 'error');
+    const totals = calcTotals(atts);
+    const rates = await getRates(w.id);
+    const settlement = getWorkerSettlement(w.id);
+    const div = document.createElement('div');
+    div.style.cssText = 'position:absolute;left:-9999px;width:750px;padding:20px;background:white;color:black;font-family:sans-serif;';
+    div.innerHTML = `
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+            <img src="${COMPANY_LOGO}" style="width:60px;height:60px;object-fit:contain;" />
+            <div>
+                <h2 style="color:#2563eb;margin:0;">Vishu Civil Contractor</h2>
+                <p style="margin:0;font-size:0.8rem;color:#666;">Haziri aur Hisab ka App</p>
+            </div>
+        </div>
+        <h3>Majdur: ${w.name}</h3>
+        <p>Login ID: ${w.loginId} | Din ka Rate: ₹${rates.dayRate} | Extra: ₹${rates.hourlyRate}/hr</p>
+        ${settlement ? `<p style="background:#dbeafe;padding:8px;border-radius:4px;"><strong>${formatDate(settlement.settleDate)} tak hisab clear</strong> | ₹${settlement.amount.toLocaleString()}</p>` : ''}
+        <p><strong>Summary:</strong> Kamai ₹${totals.earn} | Diya Hua ₹${totals.diyaHua} | Lena Hai ₹${totals.net}</p>
+        <table border="1" cellpadding="6" style="width:100%;border-collapse:collapse;margin-top:10px;">
+            <thead><tr style="background:#2563eb;color:white;"><th>Tareekh</th><th>Type</th><th>Site/Reason</th><th>Extra</th><th>Rakam</th><th>Status</th></tr></thead>
+            <tbody>${atts.map(a=>{
+                const s = settlement && a.date <= settlement.settleDate;
+                const type = normalizeType(a.type);
+                let label = 'Kaam', sign='+', color='green';
+                if(type==='diya_hua'){ 
+                    label = a.isSettlementEntry ? 'Hisab Clear' : 'Diya Hua'; 
+                    sign='-'; color='#7c3aed'; 
+                }
+                return `<tr><td>${formatDate(a.date)}</td><td>${label}</td><td>${a.siteName||'N/A'}</td><td>${a.extraTime||'-'}</td><td style="color:${color}">${sign}₹${(a.payment||0).toLocaleString()}</td><td>${s?'Clear':'Baki'}</td></tr>`;
+            }).join('')}</tbody>
+        </table>
+        <p style="margin-top:15px;font-size:0.8rem;">Banaya: ${new Date().toLocaleString()}</p>
+    `;
+    document.body.appendChild(div);
+    try {
+        const canvas = await html2canvas(div, { scale:2 });
+        const img = canvas.toDataURL('image/png');
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('p','mm','a4');
+        const wd = 190;
+        const h = (canvas.height * wd) / canvas.width;
+        pdf.addImage(img, 'PNG', 10, 10, wd, h);
+        pdf.save(`${w.name}_Report.pdf`);
+        showToast('PDF download ho gaya');
+    } catch(e){ showToast('PDF fail hua', 'error'); }
+    finally { div.remove(); }
+}
+
+/* ==================== INIT ==================== */
+const defaultWorkers = [
+    { name:'Bhutan', dob:'2004-01-01', loginId:'bhutan2004', phone:'9876543210', dayRate:350, hourlyRate:50 },
+    { name:'Krishna', dob:'2004-03-07', loginId:'krishna2004', phone:'9876543211', dayRate:350, hourlyRate:50 }
+];
+async function initDB(){
+    const s = await new Promise(r => onValue(workersRef, r, { onlyOnce:true }));
+    if(!s.exists()){
+        for(const w of defaultWorkers){
+            const nr = await push(workersRef, { name:w.name, dob:w.dob, loginId:w.loginId, phone:w.phone, createdAt:Date.now(), profileImage:'' });
+            await set(ref(db, `workerRates/${nr.key}`), { dayRate:w.dayRate, hourlyRate:w.hourlyRate });
+        }
+    }
+}
+
+async function boot(){
+    loadRates();
+    loadAdminProfile();
+    loadSettlements();
+    loadWorkersList();
+    loadAllAttendance();
+    await initDB();
+    setTimeout(()=> autoLogin(), 1000);
+}
+boot();
+</script>
+</body>
+</html>
